@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Investment — Sistema Integral</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy: #0d1b2e; --navy2: #122540; --navy3: #172d4d;
+  --border: #2a4a7a; --border2:#3a5a8a; --blue: #3a6fd8;
+  --blue2: #5b8def; --blue3: #7aa3f0; --white: #f0f4ff;
+  --gray: #7a99c4; --green: #22d68a; --green-bg:#0a2a1a;
+  --red: #ff4d6a; --red-bg: #2a0a12; --amber: #f0b429;
+  --cyan: #22d4f0; --yellow: #e8f43a; --mono: 'JetBrains Mono', monospace;
+}
+
+html,body{background:var(--navy);color:var(--white);font-family:'Inter', sans-serif;font-size:13px;min-height:100vh;overflow-x:hidden}
+
+/* UI Components */
+.top-bar{background:linear-gradient(135deg, var(--navy2), var(--navy3)); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 20px; height:56px; position:sticky; top:0; z-index:200}
+.nav-bar{background:var(--navy2); border-bottom:2px solid var(--border); display:flex; padding:0 20px}
+.nav-tab{padding:0 20px; height:42px; font-size:12px; font-weight:600; color:var(--gray); border:none; background:none; cursor:pointer; border-bottom:2px solid transparent; transition:all .15s; text-transform:uppercase}
+.nav-tab.active{color:var(--white); border-bottom-color:var(--blue); background:rgba(58,111,216,.12)}
+
+.page{display:none} .page.active{display:block}
+.shell{display:grid; grid-template-columns:1fr 420px; min-height:calc(100vh - 98px)}
+.left-panel{border-right:1px solid var(--border); background:var(--navy2); display:flex; flex-direction:column}
+.right-panel{background:var(--navy); display:flex; flex-direction:column}
+
+.panel-hdr{background:var(--navy3); padding:10px 16px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between}
+.sec{background:rgba(58,111,216,.08); padding:4px 16px; font-size:9px; font-weight:700; color:var(--blue3); text-transform:uppercase; margin-top:10px; border-y:1px solid var(--border)}
+
+/* Form Elements */
+.fields{padding:12px 16px; display:flex; flex-direction:column; gap:8px}
+.fr{display:grid; grid-template-columns:140px 1fr; align-items:center}
+.fl2{font-size:11px; color:var(--blue3); text-align:right; padding-right:12px; border-right:1px solid var(--border)}
+.fv{padding-left:12px; display:flex; gap:8px; align-items:center}
+.pi{background:var(--navy); border:1px solid var(--border2); color:var(--yellow); font-family:var(--mono); padding:4px 8px; border-radius:4px; outline:none}
+
+/* Results Display */
+.big-nums{padding:16px; border-bottom:1px solid var(--border)}
+.bnr{display:flex; justify-content:space-between; margin-bottom:10px}
+.bv{font-size:18px; font-weight:700; font-family:var(--mono)}
+.metrics-bar{display:grid; grid-template-columns:repeat(3,1fr); background:var(--navy3); border-bottom:1px solid var(--border)}
+.mc{padding:10px; border-right:1px solid var(--border); text-align:center}
+.mk{font-size:9px; color:var(--blue3); text-transform:uppercase}
+.mv{font-size:14px; font-weight:700; font-family:var(--mono)}
+
+.bk-table{flex:1; overflow-y:auto}
+.bk-row{display:flex; justify-content:space-between; padding:6px 16px; border-bottom:1px solid var(--border); font-size:11px; font-family:var(--mono)}
+
+.tc-fetch-btn{background:var(--blue); color:white; border:none; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:10px; font-weight:700}
+.tc-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; padding:16px}
+.tc-card{background:var(--navy3); border:1px solid var(--border); padding:8px; border-radius:4px}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div style="display:flex; align-items:center; gap:10px">
+    <div style="width:30px; height:30px; background:var(--blue); border-radius:50%"></div>
+    <strong>Portfolio Investment</strong>
+  </div>
+  <div id="clock" style="font-family:var(--mono)">--:--:--</div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-tab active" onclick="showPage('cauc')">Cauciones</button>
+  <button class="nav-tab" onclick="showPage('dcto')">Descuento</button>
+  <button class="nav-tab" onclick="showPage('rend')">Rendimientos (GitHub)</button>
+</div>
+
+<div class="page" id="page-rend">
+  <div class="shell">
+    <div class="left-panel">
+      <div class="panel-hdr"><strong>MOTOR FINANCIERO</strong><span>v2.0</span></div>
+      
+      <div class="sec">Conversión de Tasas (Equivalencia)</div>
+      <div class="fields">
+        <div class="fr"><div class="fl2">Tasa de Origen</div><div class="fv">
+          <input class="pi" type="number" id="r-tasa" oninput="runRend()" style="width:80px">
+          <select class="pi" id="r-tipo" onchange="runRend()">
+            <option value="tna">TNA</option>
+            <option value="tea">TEA</option>
+            <option value="tem">TEM</option>
+          </select>
+        </div></div>
+        <div class="fr"><div class="fl2">Plazo (Días)</div><div class="fv"><input class="pi" type="number" id="r-plazo" value="30" oninput="runRend()" style="width:80px"></div></div>
+      </div>
+
+      <div class="sec">Valuación de Bonos / Instrumentos</div>
+      <div class="fields">
+        <div class="fr"><div class="fl2">Precio Sucio (Dirty)</div><div class="fv"><input class="pi" type="number" id="r-price" oninput="runRend()" placeholder="0.00"></div></div>
+        <div class="fr"><div class="fl2">Interés Corrido</div><div class="fv"><input class="pi" type="number" id="r-accrued" oninput="runRend()" value="0"></div></div>
+      </div>
+
+      <div class="sec">APIs de Mercado</div>
+      <div class="fields">
+        <div class="fr"><div class="fl2">Cotizaciones DolarApi</div><div class="fv"><button class="tc-fetch-btn" onclick="fetchMarket()">SINCRONIZAR</button></div></div>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div id="rend-results">
+        <div class="big-nums">
+          <div class="bnr"><div><div class="mk">PARIDAD</div><div id="res-paridad" class="bv">--%</div></div><div style="text-align:right"><div class="mk">PRECIO LIMPIO</div><div id="res-clean" class="bv">--</div></div></div>
+        </div>
+        <div class="metrics-bar">
+          <div class="mc"><div class="mk">TNA</div><div id="res-tna" class="mv">--</div></div>
+          <div class="mc"><div class="mk">TEA</div><div id="res-tea" class="mv">--</div></div>
+          <div class="mc"><div class="mk">TEM</div><div id="res-tem" class="mv">--</div></div>
+        </div>
+      </div>
+      <div class="sec">Monitor de Divisas</div>
+      <div id="market-grid" class="tc-grid"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Global Helpers
+const fmtN = n => n.toLocaleString('es-AR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+const fmtP = n => n.toFixed(2) + '%';
+const $$ = id => document.getElementById(id);
+
+function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    $$(id === 'cauc' ? 'page-cauc' : id === 'dcto' ? 'page-dcto' : 'page-rend').classList.add('active');
+    event.target.classList.add('active');
+}
+
+// LOGICA RENDIMIENTOS-AR (del Repositorio)
+function runRend() {
+    const tasa = parseFloat($$('r-tasa').value) || 0;
+    const tipo = $$('r-tipo').value;
+    const plazo = parseInt($$('r-plazo').value) || 30;
+    const price = parseFloat($$('r-price').value) || 0;
+    const accrued = parseFloat($$('r-accrued').value) || 0;
+
+    // 1. Conversión de Tasas
+    let tna, tea, tem;
+    const r = tasa / 100;
+    if (tipo === 'tna') {
+        tna = tasa;
+        tem = (r * (plazo / 365)) * 100;
+        tea = (Math.pow(1 + (r * plazo / 365), 365 / plazo) - 1) * 100;
+    } else if (tipo === 'tea') {
+        tea = tasa;
+        tna = (Math.pow(1 + r, plazo / 365) - 1) / (plazo / 365) * 100;
+        tem = (Math.pow(1 + r, plazo / 365) - 1) * 100;
+    } else {
+        tem = tasa;
+        tna = (r * (365 / plazo)) * 100;
+        tea = (Math.pow(1 + r, 365 / plazo) - 1) * 100;
+    }
+
+    // 2. Métricas de Bono
+    const cleanPrice = price - accrued;
+    const techValue = 100 + accrued; // Base 100
+    const parity = price > 0 ? (price / techValue) * 100 : 0;
+
+    // Actualizar UI
+    $$('res-tna').textContent = fmtP(tna);
+    $$('res-tea').textContent = fmtP(tea);
+    $$('res-tem').textContent = fmtP(tem);
+    $$('res-clean').textContent = '$' + fmtN(cleanPrice);
+    $$('res-paridad').textContent = fmtP(parity);
+    $$('res-paridad').style.color = parity < 100 ? 'var(--green)' : 'var(--red)';
+}
+
+// FETCH API
+async function fetchMarket() {
+    const grid = $$('market-grid');
+    grid.innerHTML = 'Cargando...';
+    try {
+        const res = await fetch('https://dolarapi.com/v1/dolares');
+        const data = await res.json();
+        grid.innerHTML = '';
+        data.forEach(d => {
+            grid.innerHTML += `
+                <div class="tc-card">
+                    <div style="font-size:9px; color:var(--blue3)">${d.nombre.toUpperCase()}</div>
+                    <div style="font-size:14px; font-weight:700">$${fmtN(d.venta)}</div>
+                </div>`;
+        });
+    } catch (e) { grid.innerHTML = 'Error de conexión'; }
+}
+
+// Clock
+setInterval(() => { $$('clock').textContent = new Date().toLocaleTimeString(); }, 1000);
+</script>
+
+</body>
+</html>

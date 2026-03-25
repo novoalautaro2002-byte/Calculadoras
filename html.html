@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio Investment — Sistema Integral</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --navy:   #0d1b2e; --navy2:  #122540; --navy3:  #172d4d;
+  --panel:  #1a3358; --card:   #1e3a62; --card2:  #243f6a;
+  --border: #2a4a7a; --border2:#3a5a8a; --blue:   #3a6fd8;
+  --blue2:  #5b8def; --blue3:  #7aa3f0; --blue4:  #a8c4f8;
+  --accent: #4f81e8; --white:  #f0f4ff; --white2: #d0ddf5;
+  --gray:   #7a99c4; --gray2:  #4a6a9a; --green:  #22d68a;
+  --green2: #16a86a; --green-bg:#0a2a1a; --red:    #ff4d6a;
+  --red2:   #cc3a55; --red-bg: #2a0a12; --amber:  #f0b429;
+  --cyan:   #22d4f0; --yellow: #e8f43a; --font:   'Inter', sans-serif;
+  --mono:   'JetBrains Mono', monospace;
+}
+
+html,body{background:var(--navy);color:var(--white);font-family:var(--font);font-size:13px;min-height:100vh;overflow-x:hidden}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:var(--navy2)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+.top-bar{background:linear-gradient(135deg, var(--navy2) 0%, var(--navy3) 100%);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:56px;position:sticky;top:0;z-index:200;box-shadow:0 2px 16px rgba(0,0,0,.4)}
+.logo-area{display:flex;align-items:center;gap:12px}
+.logo-svg{width:40px;height:40px;flex-shrink:0}
+.logo-text{display:flex;flex-direction:column;line-height:1.1}
+.logo-text strong{font-size:16px;font-weight:800;color:var(--white);letter-spacing:-.02em}
+.logo-text span{font-size:10px;font-weight:500;color:var(--blue3);letter-spacing:.08em;text-transform:uppercase}
+.top-badge{font-size:10px;font-weight:600;color:var(--blue4);letter-spacing:.06em;font-family:var(--mono)}
+#clock{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--blue3);background:var(--navy);padding:3px 8px;border:1px solid var(--border);border-radius:4px}
+
+.nav-bar{background:var(--navy2);border-bottom:2px solid var(--border);display:flex;align-items:stretch;padding:0 20px}
+.nav-tab{display:flex;align-items:center;gap:8px;padding:0 22px;height:42px;font-size:12px;font-weight:600;color:var(--gray);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;text-transform:uppercase}
+.nav-tab:hover{color:var(--blue3);background:rgba(58,111,216,.08)}
+.nav-tab.active{color:var(--white);border-bottom-color:var(--blue);background:rgba(58,111,216,.12)}
+
+.page{display:none;min-height:calc(100vh - 98px)}
+.page.active{display:block}
+.shell{display:grid;grid-template-columns:1fr 420px;min-height:calc(100vh - 98px)}
+.left-panel{border-right:1px solid var(--border);display:flex;flex-direction:column;background:var(--navy2)}
+.right-panel{background:var(--navy);display:flex;flex-direction:column}
+
+.panel-hdr{background:linear-gradient(90deg,var(--navy3),var(--navy2));border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.p-cmd{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--blue2)}
+.p-desc{font-size:10px;color:var(--white2);text-transform:uppercase}
+
+.sec{background:rgba(58,111,216,.08);border-bottom:1px solid var(--border);border-top:1px solid var(--border);padding:4px 16px;font-size:9px;font-weight:700;color:var(--blue3);letter-spacing:.15em;text-transform:uppercase;margin-top:6px}
+.fields{padding:8px 16px;display:flex;flex-direction:column;gap:6px}
+.fr{display:grid;grid-template-columns:160px 1fr;align-items:center;gap:10px;min-height:28px}
+.fl2{font-size:11px;color:var(--white2);text-align:right;padding-right:10px;border-right:1px solid var(--border)}
+.fv{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pi{background:var(--navy);border:1px solid var(--border2);color:var(--yellow);font-family:var(--mono);font-size:13px;padding:3px 8px;outline:none;height:28px;border-radius:4px}
+.fu{font-size:10px;color:var(--white2)}
+
+.res-hdr{background:var(--navy2);border-bottom:1px solid var(--border);padding:8px 14px;display:flex;justify-content:space-between;align-items:center}
+.res-title{font-size:10px;font-weight:700;color:var(--blue3);text-transform:uppercase}
+.res-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:3px;border:1px solid}
+.res-badge.col{color:var(--green);border-color:var(--green);background:var(--green-bg)}
+.res-badge.tom{color:var(--red);border-color:var(--red);background:var(--red-bg)}
+
+.big-nums{padding:12px;border-bottom:1px solid var(--border)}
+.bnr{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.bk{font-size:9px;color:var(--blue4);text-transform:uppercase}
+.bv{font-size:17px;font-weight:700;font-family:var(--mono)}
+.bv.blue{color:var(--blue2)} .bv.green{color:var(--green)} .bv.amber{color:var(--amber)} .bv.cyan{color:var(--cyan)} .bv.red{color:var(--red)}
+
+.metrics-bar{background:var(--navy3);border-bottom:1px solid var(--border);display:grid}
+.mc{padding:8px 12px;border-right:1px solid var(--border)}
+.mv{font-size:14px;font-weight:700;font-family:var(--mono)}
+
+.bk-table{flex:1;overflow-y:auto}
+.bk-sec{background:rgba(58,111,216,.1);padding:3px 12px;font-size:9px;font-weight:700;color:var(--blue3);text-transform:uppercase}
+.bk-row{display:flex;justify-content:space-between;padding:5px 12px;border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px}
+.bk-v.cost{color:var(--red)} .bk-v.net{color:var(--green);font-weight:700}
+.bk-row.net-final{background:linear-gradient(90deg,var(--navy3),rgba(58,111,216,.15));border-top:2px solid var(--blue)}
+
+.tc-fetch-btn{background:var(--navy3);border:1px solid var(--border2);color:var(--blue3);font-family:var(--mono);font-size:10px;padding:0 10px;cursor:pointer;height:26px;border-radius:4px}
+.tc-status{font-size:10px;font-family:var(--mono);margin-left:5px}
+.empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--gray2);padding:40px}
+.cursor{display:inline-block;width:8px;height:16px;background:var(--blue);animation:blink 1s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.status-bar{background:var(--navy2);border-top:1px solid var(--border);display:flex;justify-content:space-between;padding:4px 12px;font-size:10px;font-family:var(--mono)}
+.hidden{display:none} .spacer{flex:1}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="logo-area">
+    <svg class="logo-svg" viewBox="0 0 40 40"><circle cx="20" cy="20" r="19" fill="#1a2d5a" stroke="#2a4a8a"/><circle cx="20" cy="20" r="7" fill="#5b8def"/></svg>
+    <div class="logo-text"><strong>Portfolio Investment</strong><span>Sistema Financiero Integral</span></div>
+  </div>
+  <div class="top-right"><span id="clock">--:--:--</span></div>
+</div>
+
+<div class="nav-bar">
+  <button class="nav-tab active" id="nav-cauc" onclick="showPage('cauc')">⬡ Cauciones</button>
+  <button class="nav-tab" id="nav-dcto" onclick="showPage('dcto')">◈ Descuento</button>
+  <button class="nav-tab" id="nav-rend" onclick="showPage('rend')">📈 Rendimientos & APIs</button>
+</div>
+
+<div class="page active" id="page-cauc">
+  <div class="shell">
+    <div class="left-panel">
+      <div class="panel-hdr"><span class="p-cmd">CAUC — Cauciones</span><span class="p-desc">ARS · BYMA</span></div>
+      <div class="sec">PARÁMETROS</div>
+      <div class="fields">
+        <div class="fr"><div class="fl2">Capital</div><div class="fv"><input class="pi" type="number" id="c-capital" oninput="cCalc()"></div></div>
+        <div class="fr"><div class="fl2">TNA %</div><div class="fv"><input class="pi" type="number" id="c-tasa" oninput="cCalc()"></div></div>
+        <div class="fr"><div class="fl2">Plazo (días)</div><div class="fv"><input class="pi" type="number" id="c-plazo" oninput="cCalc()" value="1"></div></div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+    <div class="right-panel">
+        <div class="res-hdr"><span class="res-title">RESULTADOS CAUCIÓN</span></div>
+        <div id="c-results"></div>
+    </div>
+  </div>
+</div>
+
+<div class="page" id="page-rend">
+  <div class="shell">
+    <div class="left-panel">
+      <div class="panel-hdr"><span class="p-cmd">REND — Motor Rendimientos-AR</span><span class="p-desc">APIs · Bonos · Tasas</span></div>
+      
+      <div class="sec">CONVERSOR DE TASAS</div>
+      <div class="fields">
+        <div class="fr">
+            <div class="fl2">Tasa Origen</div>
+            <div class="fv">
+                <input class="pi" type="number" id="r-tasa-input" placeholder="0.00" oninput="rCalc()" style="width:80px">
+                <select class="pi" id="r-tasa-tipo" onchange="rCalc()">
+                    <option value="tna">TNA</option>
+                    <option value="tea">TEA</option>
+                    <option value="tem">TEM</option>
+                </select>
+            </div>
+        </div>
+        <div class="fr"><div class="fl2">Plazo Base</div><div class="fv"><input class="pi" type="number" id="r-plazo" value="30" oninput="rCalc()" style="width:60px"><span class="fu">días</span></div></div>
+      </div>
+
+      <div class="sec">VALUACIÓN DE BONOS</div>
+      <div class="fields">
+        <div class="fr"><div class="fl2">Precio Sucio</div><div class="fv"><input class="pi" type="number" id="r-price" oninput="rCalc()" placeholder="100.00"></div></div>
+        <div class="fr"><div class="fl2">Int. Corridos</div><div class="fv"><input class="pi" type="number" id="r-accrued" oninput="rCalc()" value="0"></div></div>
+      </div>
+
+      <div class="sec">MONITOR DOLARAPI</div>
+      <div class="fields">
+        <div class="fr">
+            <div class="fl2">Precios Online</div>
+            <div class="fv"><button class="tc-fetch-btn" onclick="rFetchAll()">↻ ACTUALIZAR</button><span class="tc-status" id="r-api-status"></span></div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="right-panel">
+      <div class="res-hdr"><span class="res-title">MÉTRICAS RENDIMIENTOS-AR</span></div>
+      <div id="r-results" style="flex:1; overflow-y:auto">
+        <div class="empty"><div class="empty-cmd">REND<span class="cursor"></span></div></div>
+      </div>
+      <div class="bk-sec">TIPOS DE CAMBIO</div>
+      <div id="r-tc-grid" style="padding:10px; display:grid; grid-template-columns:1fr 1fr; gap:8px;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const fmtN = n => n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtP2 = n => n.toFixed(2) + '%';
+const $$ = id => document.getElementById(id);
+
+function tick(){
+  const n=new Date();
+  $$('clock').textContent=n.toLocaleTimeString();
+}
+setInterval(tick,1000);
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  $$('page-'+id).classList.add('active');
+  $$('nav-'+id).classList.add('active');
+}
+
+// LÓGICA RENDIMIENTOS-AR (Tasas y Bonos)
+function rateConverter(rate, fromType, days = 30) {
+    const r = rate / 100;
+    const factor = days / 365;
+    let tna, tea, tem;
+    if (fromType === 'tna') {
+        tna = rate;
+        tem = (r * factor) * 100;
+        tea = (Math.pow(1 + (r * factor), 365 / days) - 1) * 100;
+    } else if (fromType === 'tea') {
+        tea = rate;
+        tem = (Math.pow(1 + r, factor) - 1) * 100;
+        tna = ((Math.pow(1 + r, factor) - 1) / factor) * 100;
+    } else {
+        tem = rate;
+        tna = (r * (365 / days)) * 100;
+        tea = (Math.pow(1 + r, 365 / days) - 1) * 100;
+    }
+    return { tna, tea, tem };
+}
+
+function calculateBondMetrics(dirtyPrice, accruedInterest) {
+    const techValue = 100 + accruedInterest;
+    return {
+        clean: dirtyPrice - accruedInterest,
+        parity: (dirtyPrice / techValue) * 100,
+        tech: techValue
+    };
+}
+
+async function rFetchAll() {
+    const status = $$('r-api-status');
+    const grid = $$('r-tc-grid');
+    status.textContent = 'ACTUALIZANDO...';
+    try {
+        const res = await fetch('https://dolarapi.com/v1/dolares');
+        const data = await res.json();
+        grid.innerHTML = '';
+        data.forEach(d => {
+            grid.innerHTML += `<div style="background:var(--navy3); padding:8px; border-radius:4px; border:1px solid var(--border)">
+                <div style="font-size:9px; color:var(--blue3)">${d.nombre}</div>
+                <div style="font-size:14px; font-weight:700; color:var(--white)">$${fmtN(d.venta)}</div>
+            </div>`;
+        });
+        status.textContent = '✓'; status.style.color = 'var(--green)';
+    } catch(e) { status.textContent = 'ERROR'; }
+}
+
+function rCalc() {
+    const tIn = parseFloat($$('r-tasa-input').value) || 0;
+    const tipo = $$('r-tasa-tipo').value;
+    const plazo = parseInt($$('r-plazo').value) || 30;
+    const price = parseFloat($$('r-price').value) || 0;
+    const accrued = parseFloat($$('r-accrued').value) || 0;
+
+    const rates = rateConverter(tIn, tipo, plazo);
+    const bond = calculateBondMetrics(price, accrued);
+    
+    $$('r-results').innerHTML = `
+        <div class="big-nums">
+            <div class="bnr">
+                <div><div class="bk">PARIDAD</div><div class="bv ${bond.parity < 100 ? 'green' : 'red'}">${fmtP2(bond.parity)}</div></div>
+                <div style="text-align:right"><div class="bk">PRECIO LIMPIO</div><div class="bv cyan">$${fmtN(bond.clean)}</div></div>
+            </div>
+        </div>
+        <div class="metrics-bar" style="grid-template-columns: 1fr 1fr 1fr">
+            <div class="mc"><div class="mk">TNA</div><div class="mv blue">${fmtP2(rates.tna)}</div></div>
+            <div class="mc"><div class="mk">TEA</div><div class="mv green">${fmtP2(rates.tea)}</div></div>
+            <div class="mc"><div class="mk">TEM</div><div class="mv amber">${fmtP2(rates.tem)}</div></div>
+        </div>
+        <div class="bk-table">
+            <div class="bk-sec">VALUACIÓN TÉCNICA</div>
+            <div class="bk-row"><span>Valor Técnico</span><span>$${fmtN(bond.tech)}</span></div>
+            <div class="bk-row"><span>Intereses Corridos</span><span class="bk-v cost">$${fmtN(accrued)}</span></div>
+        </div>
+    `;
+}
+
+// Lógica de Cauciones básica (Original del usuario)
+function cCalc() {
+    const cap = parseFloat($$('c-capital').value) || 0;
+    const tasa = parseFloat($$('c-tasa').value) || 0;
+    const plazo = parseInt($$('c-plazo').value) || 0;
+    if(!cap || !tasa) return;
+    const bruto = cap * (tasa/100) * (plazo/365);
+    $$('c-results').innerHTML = `
+        <div class="big-nums">
+            <div class="bnr"><div><div class="bk">INTERÉS BRUTO</div><div class="bv green">+$${fmtN(bruto)}</div></div></div>
+            <div class="bnr"><div><div class="bk">TOTAL A RECIBIR</div><div class="bv blue">$${fmtN(cap + bruto)}</div></div></div>
+        </div>
+    `;
+}
+</script>
+</body>
+</html>

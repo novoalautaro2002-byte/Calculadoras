@@ -515,7 +515,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .lc-leg-dot.lecap{background:#22d4f0}
 .lc-leg-dot.boncap{background:#f0b429}
 
-.lc-chart-area{position:relative;padding:40px 24px 18px;background:var(--navy)}
+.lc-chart-area{position:relative;padding:44px 24px 18px;background:var(--navy);height:340px}
 
 .lc-curve-stats{
   display:grid;grid-template-columns:repeat(4,1fr);
@@ -925,15 +925,11 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
         <button class="lc-cmtab" id="lc-cm-tna" onclick="lcSetCurveMetric('tna')">TNA</button>
         <button class="lc-cmtab" id="lc-cm-tem" onclick="lcSetCurveMetric('tem')">TEM</button>
       </div>
-      <span style="font-size:10px;font-weight:700;color:var(--white2);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono);margin-left:8px">Eje X:</span>
-      <div class="lc-curve-metric-tabs">
-        <button class="lc-cmtab on-tir" id="lc-cx-date" onclick="lcSetXAxis('date')">FECHA</button>
-        <button class="lc-cmtab" id="lc-cx-days" onclick="lcSetXAxis('days')">DÍAS</button>
-      </div>
       <div class="lc-curve-legend">
         <div class="lc-leg-item"><div class="lc-leg-dot lecap"></div> LECAP</div>
         <div class="lc-leg-item"><div class="lc-leg-dot boncap"></div> BONCAP</div>
       </div>
+      <div style="margin-left:auto;font-size:9px;color:var(--gray2);font-family:var(--mono);letter-spacing:.06em">EJE X: DURATION MODIFICADA (años)</div>
     </div>
 
     <!-- Chart -->
@@ -944,12 +940,12 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
     <!-- Stats bar -->
     <div class="lc-curve-stats">
       <div class="lc-cstat">
-        <div class="lc-cstat-k">TIR mín.</div>
+        <div class="lc-cstat-k" id="lc-st-min-k">TIR mín.</div>
         <div class="lc-cstat-v" id="lc-st-min">—</div>
         <div class="lc-cstat-sub" id="lc-st-min-sub">—</div>
       </div>
       <div class="lc-cstat">
-        <div class="lc-cstat-k">TIR máx.</div>
+        <div class="lc-cstat-k" id="lc-st-max-k">TIR máx.</div>
         <div class="lc-cstat-v" id="lc-st-max">—</div>
         <div class="lc-cstat-sub" id="lc-st-max-sub">—</div>
       </div>
@@ -2086,10 +2082,10 @@ function lcCalcModal() {
   const pagoFinal = bond.pagoFinal;
 
   const yields = lcComputeYields(price, pagoFinal, days);
-  document.getElementById('lc-m-tna').textContent = lcFmtPct(yields.tna);
-  document.getElementById('lc-m-tem').textContent = lcFmtPct(yields.tem);
-  document.getElementById('lc-m-tir').textContent = lcFmtPct(yields.tir);
-  document.getElementById('lc-m-dias').textContent = days;
+  document.getElementById('lc-m-tna').textContent  = lcFmtPct(yields.tna);
+  document.getElementById('lc-m-tem').textContent  = lcFmtPct(yields.tem);
+  document.getElementById('lc-m-tir').textContent  = lcFmtPct(yields.tir);
+  document.getElementById('lc-m-dias').textContent = days + 'd · ' + lcModDuration(days, yields.tir).toFixed(3) + 'y DM';
 
   // Summary
   const costosPct = (arancel + imp) / 100;
@@ -2143,24 +2139,26 @@ document.addEventListener('keydown', e => {
 // ════════════════════════════════════════
 let lcCurveChart = null;
 let lcCurveMetric = 'tir';
-let lcCurveXAxis  = 'date';
 
 // Register datalabels plugin globally
 Chart.register(ChartDataLabels);
+
+// Duration Modificada (años) = (días/365) / (1 + TIR)
+// Para zero-coupon: DurMac = días/365; DurMod = DurMac / (1 + TIR)
+function lcModDuration(days, tir) {
+  const t = days / 365;
+  return t / (1 + tir / 100);
+}
 
 function lcSetCurveMetric(m) {
   lcCurveMetric = m;
   ['tir','tna','tem'].forEach(k => {
     document.getElementById('lc-cm-'+k).className = 'lc-cmtab' + (k===m ? ' on-'+k : '');
   });
-  lcRenderCurve();
-}
-
-function lcSetXAxis(x) {
-  lcCurveXAxis = x;
-  ['date','days'].forEach(k => {
-    document.getElementById('lc-cx-'+k).className = 'lc-cmtab' + (k===x ? ' on-tir' : '');
-  });
+  // Update stats labels
+  const lbl = {tir:'TIR',tna:'TNA',tem:'TEM'}[m];
+  document.getElementById('lc-st-min-k').textContent = lbl + ' mín.';
+  document.getElementById('lc-st-max-k').textContent = lbl + ' máx.';
   lcRenderCurve();
 }
 
@@ -2168,77 +2166,79 @@ function lcRenderCurve() {
   if(!lcData.length) return;
 
   const metricColors = {
-    tir: { line:'#22d68a', grd0:'rgba(34,214,138,.15)', grd1:'rgba(34,214,138,.0)' },
-    tna: { line:'#5b8def', grd0:'rgba(91,141,239,.15)', grd1:'rgba(91,141,239,.0)'  },
-    tem: { line:'#22d4f0', grd0:'rgba(34,212,240,.15)', grd1:'rgba(34,212,240,.0)'  },
+    tir: { line:'#22d68a', grd0:'rgba(34,214,138,.14)', grd1:'rgba(34,214,138,.0)' },
+    tna: { line:'#5b8def', grd0:'rgba(91,141,239,.14)', grd1:'rgba(91,141,239,.0)'  },
+    tem: { line:'#22d4f0', grd0:'rgba(34,212,240,.14)', grd1:'rgba(34,212,240,.0)'  },
   };
   const mc = metricColors[lcCurveMetric];
   const metricLabel = {tir:'TIR (TEA %)', tna:'TNA %', tem:'TEM %'}[lcCurveMetric];
 
-  // Sort filtered instruments by days-to-maturity
+  // Sort filtered instruments by duration modificada
   const sorted = [...lcData]
     .filter(b => lcFilter === 'all' || b.type.toLowerCase() === lcFilter)
-    .sort((a,b) => a.days - b.days);
+    .map(b => ({ ...b, durMod: lcModDuration(b.days, b.tir) }))
+    .sort((a,b) => a.durMod - b.durMod);
   const all = sorted;
 
-  const xVal = b => lcCurveXAxis === 'date'
-    ? new Date(b.maturity + 'T00:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'})
-    : b.days;
+  if(!all.length) return;
 
-  const xLabels = all.map(xVal);
+  // X labels = Duration Modificada rounded to 2 decimals
+  const xLabels = all.map(b => b.durMod.toFixed(2));
 
   // Stats
   const vals = all.map(b => b[lcCurveMetric]);
   const mn = Math.min(...vals), mx = Math.max(...vals);
   const bMin = all[vals.indexOf(mn)], bMax = all[vals.indexOf(mx)];
   const slope = vals.length > 1 ? (vals[vals.length-1] - vals[0]).toFixed(2) : 0;
-  const slopeSign = slope >= 0 ? '+' : '';
+  const slopeSign = +slope >= 0 ? '+' : '';
 
+  const lbl = {tir:'TIR',tna:'TNA',tem:'TEM'}[lcCurveMetric];
   document.getElementById('lc-st-min').textContent     = mn.toFixed(2) + '%';
-  document.getElementById('lc-st-min-sub').textContent = bMin.ticker + ' · ' + lcFmtDate(bMin.maturity);
+  document.getElementById('lc-st-min-sub').textContent = bMin.ticker + ' · Dur ' + bMin.durMod.toFixed(2) + 'y';
   document.getElementById('lc-st-max').textContent     = mx.toFixed(2) + '%';
-  document.getElementById('lc-st-max-sub').textContent = bMax.ticker + ' · ' + lcFmtDate(bMax.maturity);
+  document.getElementById('lc-st-max-sub').textContent = bMax.ticker + ' · Dur ' + bMax.durMod.toFixed(2) + 'y';
   document.getElementById('lc-st-slope').textContent   = slopeSign + slope + '%';
-  document.getElementById('lc-st-slope-sub').textContent = slope > 0 ? 'curva empinada ▲' : slope < 0 ? 'curva invertida ▼' : 'curva plana';
+  document.getElementById('lc-st-slope-sub').textContent = +slope > 0 ? 'curva empinada ▲' : +slope < 0 ? 'curva invertida ▼' : 'curva plana';
   document.getElementById('lc-st-count').textContent   = all.length;
   document.getElementById('lc-st-count-sub').textContent = all.filter(b=>b.type==='LECAP').length + ' LECAP · ' + all.filter(b=>b.type==='BONCAP').length + ' BONCAP';
 
   const canvas = document.getElementById('lc-curve-chart');
   const ctx = canvas.getContext('2d');
 
-  // Gradient fill under the spline
-  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, 300);
   grad.addColorStop(0, mc.grd0);
   grad.addColorStop(1, mc.grd1);
 
-  // Point colors per instrument
+  // Per-point colors
   const ptColors  = all.map(b => b.type==='LECAP' ? '#22d4f0' : '#f0b429');
-  const ptBorders = all.map(b => b.type==='LECAP' ? '#0a8090' : '#7a5a10');
+  const ptBorders = all.map(b => b.type==='LECAP' ? '#0a6878' : '#6a4a0a');
 
   const datasets = [
-    // ── Spline backdrop (no points, no labels) ──
+    // ── Spline fill backdrop ──
     {
       label: 'curva',
-      data: all.map(b => b[lcCurveMetric]),
+      data: all.map(b => ({ x: b.durMod, y: b[lcCurveMetric] })),
       borderColor: mc.line,
       backgroundColor: grad,
-      borderWidth: 2,
+      borderWidth: 2.5,
       pointRadius: 0,
       pointHoverRadius: 0,
-      tension: 0.35,
+      tension: 0.4,
       fill: true,
       order: 3,
       datalabels: { display: false },
     },
-    // ── Scatter points with TICKER labels ──
+    // ── Points + ticker labels ──
     {
       label: metricLabel,
-      data: all.map(b => b[lcCurveMetric]),
+      data: all.map(b => ({ x: b.durMod, y: b[lcCurveMetric] })),
       borderColor: ptBorders,
       backgroundColor: ptColors,
       borderWidth: 2,
       pointRadius: 7,
-      pointHoverRadius: 10,
+      pointHoverRadius: 11,
+      pointHoverBorderWidth: 3,
       pointStyle: all.map(b => b.type==='LECAP' ? 'circle' : 'rectRot'),
       showLine: false,
       fill: false,
@@ -2247,19 +2247,13 @@ function lcRenderCurve() {
         display: true,
         align: 'top',
         anchor: 'end',
-        offset: 4,
-        color: ctx => {
-          const idx = ctx.dataIndex;
-          return all[idx].type === 'LECAP' ? '#22d4f0' : '#f0b429';
-        },
-        font: {
-          family: "'JetBrains Mono', 'Courier New', monospace",
-          size: 10,
-          weight: '700',
-        },
-        formatter: (val, ctx) => all[ctx.dataIndex].ticker,
-        textStrokeColor: '#0a1020',
-        textStrokeWidth: 3,
+        offset: 5,
+        color: c => all[c.dataIndex].type === 'LECAP' ? '#22d4f0' : '#f0b429',
+        font: { family: "'JetBrains Mono','Courier New',monospace", size: 10, weight: '700' },
+        formatter: (val, c) => all[c.dataIndex].ticker,
+        textStrokeColor: '#060e1c',
+        textStrokeWidth: 4,
+        clip: false,
       },
     },
   ];
@@ -2267,26 +2261,26 @@ function lcRenderCurve() {
   if(lcCurveChart) { lcCurveChart.destroy(); lcCurveChart = null; }
 
   lcCurveChart = new Chart(ctx, {
-    type: 'line',
-    data: { labels: xLabels, datasets },
+    type: 'scatter',
+    data: { datasets },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 400 },
-      layout: { padding: { top: 28, right: 16, left: 4, bottom: 4 } },
-      interaction: { mode: 'index', intersect: false },
+      animation: { duration: 350 },
+      layout: { padding: { top: 30, right: 20, left: 8, bottom: 8 } },
+      interaction: { mode: 'nearest', intersect: false, axis: 'x' },
       plugins: {
         legend: { display: false },
-        datalabels: {},   // handled per-dataset above
+        datalabels: {},
         tooltip: {
-          backgroundColor: '#0a1828',
+          backgroundColor: '#081422',
           borderColor: '#2a4a7a',
           borderWidth: 1,
           titleColor: '#7aa3f0',
           bodyColor: '#d0ddf5',
-          padding: 10,
-          titleFont: { family: "'JetBrains Mono', monospace", size: 11, weight: '700' },
-          bodyFont: { family: "'JetBrains Mono', monospace", size: 11 },
+          padding: 12,
+          titleFont: { family: "'JetBrains Mono',monospace", size: 11, weight: '700' },
+          bodyFont: { family: "'JetBrains Mono',monospace", size: 11 },
           callbacks: {
             title: items => {
               const b = all[items[0].dataIndex];
@@ -2299,7 +2293,7 @@ function lcRenderCurve() {
                 ' ' + metricLabel + ': ' + b[lcCurveMetric].toFixed(2) + '%',
                 ' TIR: ' + b.tir.toFixed(2) + '%  TNA: ' + b.tna.toFixed(2) + '%  TEM: ' + b.tem.toFixed(2) + '%',
                 ' Precio: ' + lcFmtNum(b.price,3) + '  →  Pago: ' + lcFmtNum(b.pagoFinal,3),
-                ' Días: ' + b.days,
+                ' Duration Mod.: ' + b.durMod.toFixed(3) + ' años  ·  Días: ' + b.days,
               ];
             },
             filter: item => item.datasetIndex !== 0,
@@ -2308,27 +2302,38 @@ function lcRenderCurve() {
       },
       scales: {
         x: {
-          grid:  { color: 'rgba(42,74,122,.3)', tickLength: 0 },
+          type: 'linear',
+          grid:  { color: 'rgba(42,74,122,.25)', lineWidth: 1 },
           ticks: {
-            color: '#7a99c4',
-            font:  { family: "'JetBrains Mono', monospace", size: 10 },
-            maxRotation: 35, minRotation: 35,
+            color: '#5a7a9a',
+            font:  { family: "'JetBrains Mono',monospace", size: 10 },
+            callback: v => v.toFixed(2) + 'y',
+            maxTicksLimit: 12,
           },
-          border: { color: 'rgba(42,74,122,.6)' },
+          border: { color: 'rgba(42,74,122,.5)' },
+          title: {
+            display: true,
+            text: 'Duration Modificada (años)',
+            color: '#5a7a9a',
+            font: { family: "'JetBrains Mono',monospace", size: 9, weight: '600' },
+            padding: { top: 6 },
+          },
         },
         y: {
-          grid:  { color: 'rgba(42,74,122,.3)' },
+          grid:  { color: 'rgba(42,74,122,.25)', lineWidth: 1 },
           ticks: {
-            color: '#7a99c4',
-            font:  { family: "'JetBrains Mono', monospace", size: 11 },
+            color: '#5a7a9a',
+            font:  { family: "'JetBrains Mono',monospace", size: 11 },
             callback: v => v.toFixed(1) + '%',
+            maxTicksLimit: 8,
           },
-          border: { color: 'rgba(42,74,122,.6)' },
+          border: { color: 'rgba(42,74,122,.5)' },
           title: {
             display: true,
             text: metricLabel,
             color: '#7aa3f0',
-            font: { family: "'JetBrains Mono', monospace", size: 10, weight: '700' },
+            font: { family: "'JetBrains Mono',monospace", size: 10, weight: '700' },
+            padding: { bottom: 6 },
           },
         },
       },

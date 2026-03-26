@@ -498,6 +498,51 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 }
 @keyframes rShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+/* Bond strip */
+.r-bond-strip{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:8px;
+  padding:0 24px 16px;
+}
+@media(max-width:900px){.r-bond-strip{grid-template-columns:repeat(2,1fr)}}
+.r-bond-card{
+  background:linear-gradient(135deg, rgba(15,31,53,.9), rgba(10,24,40,.95));
+  border:1px solid rgba(42,74,122,.3);
+  border-radius:10px;padding:14px 16px;
+  position:relative;overflow:hidden;
+  transition:all .2s;
+}
+.r-bond-card:hover{
+  border-color:rgba(91,141,239,.35);
+  transform:translateY(-1px);
+  box-shadow:0 6px 20px rgba(0,0,0,.25);
+}
+.r-bond-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--blue2),rgba(91,141,239,.2));
+}
+.r-canje-card::before{
+  background:linear-gradient(90deg,#a07aef,rgba(160,122,239,.2));
+}
+.r-bond-ticker{
+  font-family:var(--mono);font-size:13px;font-weight:800;
+  color:var(--white);letter-spacing:.04em;
+  display:flex;align-items:center;gap:8px;margin-bottom:8px;
+}
+.r-bond-badge{
+  font-size:8px;font-weight:700;letter-spacing:.08em;
+  padding:2px 6px;border-radius:3px;border:1px solid;
+}
+.r-bond-badge.pesos{color:var(--amber);border-color:rgba(240,180,41,.3);background:rgba(240,180,41,.08)}
+.r-bond-badge.dolar{color:var(--green);border-color:rgba(34,214,138,.3);background:rgba(34,214,138,.08)}
+.r-bond-badge.cable{color:var(--cyan);border-color:rgba(34,212,240,.3);background:rgba(34,212,240,.08)}
+.r-bond-badge.canje{color:#a07aef;border-color:rgba(160,122,239,.3);background:rgba(160,122,239,.08)}
+.r-bond-price{
+  font-family:var(--mono);font-size:22px;font-weight:800;
+  color:var(--white);line-height:1;letter-spacing:-.02em;
+  margin-bottom:6px;transition:color .3s;
+}
+.r-bond-price.blank{color:rgba(30,48,80,.6);font-size:18px}
+
 /* Animate number in */
 @keyframes fadeNumIn{
   from{opacity:0;transform:translateY(4px)}
@@ -794,50 +839,44 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
     </div>
   </div>
 
-  <!-- DUAL GRID: TASAS + INDICES -->
+  <!-- BONOS SOBERANOS AL30 -->
+  <div class="r-section-hdr">
+    <div class="r-section-icon rates">📜</div>
+    <span class="r-section-title">Bonos Soberanos · AL30</span>
+    <div class="r-section-line"></div>
+    <span class="r-section-src" id="r-bond-src">data912.com</span>
+  </div>
+  <div class="r-bond-strip">
+    <div class="r-bond-card">
+      <div class="r-bond-ticker">AL30<span class="r-bond-badge pesos">ARS · T+1</span></div>
+      <div class="r-bond-price blank" id="r-al30-val">—</div>
+      <div class="r-fx-row"><span class="r-fx-chg neu" id="r-al30-chg">—</span><span class="r-fx-sub">Pesos · PPT</span></div>
+    </div>
+    <div class="r-bond-card">
+      <div class="r-bond-ticker">AL30D<span class="r-bond-badge dolar">USD · T+1</span></div>
+      <div class="r-bond-price blank" id="r-al30d-val">—</div>
+      <div class="r-fx-row"><span class="r-fx-chg neu" id="r-al30d-chg">—</span><span class="r-fx-sub">Dólar MEP</span></div>
+    </div>
+    <div class="r-bond-card">
+      <div class="r-bond-ticker">AL30C<span class="r-bond-badge cable">CABLE · T+1</span></div>
+      <div class="r-bond-price blank" id="r-al30c-val">—</div>
+      <div class="r-fx-row"><span class="r-fx-chg neu" id="r-al30c-chg">—</span><span class="r-fx-sub">Dólar Cable</span></div>
+    </div>
+    <div class="r-bond-card r-canje-card">
+      <div class="r-bond-ticker">CANJE<span class="r-bond-badge canje">D/C</span></div>
+      <div class="r-bond-price blank" id="r-canje-val">—</div>
+      <div class="r-fx-row"><span class="r-fx-chg neu" id="r-canje-chg">—</span><span class="r-fx-sub">(AL30D/AL30C − 1) × 100</span></div>
+    </div>
+  </div>
+
+  <!-- DUAL GRID: INDICES + COMMODITIES -->
   <div class="r-dual-grid">
 
-    <!-- COL 1: TASAS -->
-    <div class="r-panel-card">
-      <div class="r-panel-hdr">
-        <span class="r-panel-hdr-icon">🏦</span>
-        <span class="r-panel-hdr-text">Tasas de Referencia</span>
-      </div>
-      <div class="r-rate-row">
-        <div class="r-rate-left">
-          <span class="r-rate-name">BADLAR Privados</span>
-          <span class="r-rate-sub">Depósitos +1M, bancos privados</span>
-        </div>
-        <span class="r-rate-val blank" id="r-badlar">—</span>
-      </div>
-      <div class="r-rate-row">
-        <div class="r-rate-left">
-          <span class="r-rate-name">Plazo Fijo 30d</span>
-          <span class="r-rate-sub">TNA promedio sistema</span>
-        </div>
-        <span class="r-rate-val blank" id="r-pf">—</span>
-      </div>
-      <div class="r-rate-row">
-        <div class="r-rate-left">
-          <span class="r-rate-name">Caución 1d</span>
-          <span class="r-rate-sub">TNA colocadora BYMA</span>
-        </div>
-        <span class="r-rate-val blue blank" id="r-caucion">—</span>
-      </div>
-      <div class="r-rate-row">
-        <div class="r-rate-left">
-          <span class="r-rate-name">LECAP más corta</span>
-          <span class="r-rate-sub">TIR anualizada · mercado secundario</span>
-        </div>
-        <span class="r-rate-val green blank" id="r-lecap">—</span>
-      </div>
-    </div>
-
-    <!-- COL 2: INDICES -->
+    <!-- COL 1: INDICES -->
     <div class="r-panel-card">
       <div class="r-panel-hdr">
         <span class="r-panel-hdr-icon">📊</span>
-        <span class="r-panel-hdr-text">Índices & Activos</span>
+        <span class="r-panel-hdr-text">Índices</span>
       </div>
       <div class="r-merval-hero">
         <div class="r-merval-lbl2">S&amp;P MERVAL · BYMA · ARS</div>
@@ -852,13 +891,21 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
         <div class="r-idx-left2"><div class="r-idx-name2">NASDAQ 100</div><div class="r-idx-sub2">QQQ · NASDAQ · USD</div></div>
         <div class="r-idx-right2"><div class="r-idx-val2 blank" id="r-qqq-val">—</div><div class="r-idx-chg2 neu" id="r-qqq-chg">—</div></div>
       </div>
-      <div class="r-idx-row">
-        <div class="r-idx-left2"><div class="r-idx-name2">CEDEAR SPY</div><div class="r-idx-sub2">SPY · BYMA · ARS</div></div>
-        <div class="r-idx-right2"><div class="r-idx-val2 blank" id="r-cspy-val">—</div><div class="r-idx-chg2 neu" id="r-cspy-chg">—</div></div>
+    </div>
+
+    <!-- COL 2: COMMODITIES & CRYPTO -->
+    <div class="r-panel-card">
+      <div class="r-panel-hdr">
+        <span class="r-panel-hdr-icon">🛢️</span>
+        <span class="r-panel-hdr-text">Commodities & Crypto</span>
       </div>
       <div class="r-idx-row">
-        <div class="r-idx-left2"><div class="r-idx-name2">CEDEAR QQQ</div><div class="r-idx-sub2">QQQ · BYMA · ARS</div></div>
-        <div class="r-idx-right2"><div class="r-idx-val2 blank" id="r-cqqq-val">—</div><div class="r-idx-chg2 neu" id="r-cqqq-chg">—</div></div>
+        <div class="r-idx-left2"><div class="r-idx-name2">WTI Crude</div><div class="r-idx-sub2">CL=F · NYMEX · USD/bbl</div></div>
+        <div class="r-idx-right2"><div class="r-idx-val2 blank" id="r-wti-val">—</div><div class="r-idx-chg2 neu" id="r-wti-chg">—</div></div>
+      </div>
+      <div class="r-idx-row">
+        <div class="r-idx-left2"><div class="r-idx-name2">Brent Crude</div><div class="r-idx-sub2">BZ=F · ICE · USD/bbl</div></div>
+        <div class="r-idx-right2"><div class="r-idx-val2 blank" id="r-brent-val">—</div><div class="r-idx-chg2 neu" id="r-brent-chg">—</div></div>
       </div>
       <div class="r-idx-row">
         <div class="r-idx-left2"><div class="r-idx-name2">Oro</div><div class="r-idx-sub2">GLD · USD/oz</div></div>
@@ -874,7 +921,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 
   <!-- Footer -->
   <div class="r-footer">
-    <span id="r-footer-left">Fuentes: dolarapi.com · argentinadatos.com · data912.com</span>
+    <span id="r-footer-left">Fuentes: dolarapi.com · data912.com · Yahoo Finance</span>
     <span id="r-footer-right">Portfolio Investment · BYMA 2026</span>
   </div>
 
@@ -1080,7 +1127,6 @@ function rSetChg(id,pct,label){
 }
 
 let _dashTimer=null;
-let _dashSources={dolar:false,tasas:false,indices:false,cedears:false};
 
 async function dashFetch(){
   const dot=$$('r-dot'),lbl=$$('r-status-lbl');
@@ -1091,21 +1137,21 @@ async function dashFetch(){
   let ok=0;
 
   // ALL calls in parallel
-  const [rDolar,rBadlar,rPF,rCaucion,rCedears,rMerval,rSPY,rQQQ,rGLD,rBTC]=
+  const [rDolar,rBnaOficial,rBonds,rMerval,rSPY,rQQQ,rGLD,rBTC,rWTI,rBrent]=
     await Promise.allSettled([
       pfetch('https://dolarapi.com/v1/dolares'),
-      pfetch('https://api.argentinadatos.com/v1/finanzas/tasas/badlar'),
-      pfetch('https://api.argentinadatos.com/v1/finanzas/tasas/depositos30diasBancosPais'),
-      pfetch('https://api.argentinadatos.com/v1/finanzas/tasas/cauciones'),
-      pfetch('https://data912.com/live/cedears'),
+      pfetch('https://dolarapi.com/v1/dolares/oficial'),
+      pfetch('https://data912.com/live/arg_bonds'),
       pfetch('https://data912.com/live/merval'),
       pfetch('https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=2d'),
       pfetch('https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=2d'),
       pfetch('https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=2d'),
       pfetch('https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?interval=1d&range=2d'),
+      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=2d'),
+      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/BZ%3DF?interval=1d&range=2d'),
     ]);
 
-  // ── DÓLAR ──
+  // ── DÓLAR (bulk) ──
   if(rDolar.status==='fulfilled'){
     try{
       const by={};
@@ -1113,64 +1159,61 @@ async function dashFetch(){
       const v=d=>d?parseFloat(d.venta||d.compra||0):0;
       const vCCL=v(by['contadoconliqui']||by['cable']||by['contado con liquidación']);
       const vMEP=v(by['bolsa']||by['mep']);
-      const vOfi=v(by['oficial']||by['mayorista']);
-      const vBNA=v(by['nacion']||by['nación']);
+      const vMayo=v(by['mayorista']);
       const vBlu=v(by['blue']);
       if(vCCL>0){rSetVal('r-ccl','$'+df(vCCL));rSetChg('r-ccl-chg',0,'Cable');}
       if(vMEP>0){rSetVal('r-mep','$'+df(vMEP));rSetChg('r-mep-chg',0,'Bolsa');}
-      if(vOfi>0){rSetVal('r-bcra','$'+df(vOfi));rSetChg('r-bcra-chg',0,'BCRA');}
-      if(vBNA>0){rSetVal('r-bna','$'+df(vBNA));rSetChg('r-bna-chg',0,'BNA');}
+      if(vMayo>0){rSetVal('r-bcra','$'+df(vMayo));rSetChg('r-bcra-chg',0,'BCRA');}
       if(vBlu>0){rSetVal('r-blue','$'+df(vBlu));rSetChg('r-blue-chg',0,'Blue');}
-      if(vCCL>0&&vOfi>0){
-        const br=((vCCL/vOfi)-1)*100;
+      // Brecha CCL/Mayorista
+      if(vCCL>0&&vMayo>0){
+        const br=((vCCL/vMayo)-1)*100;
         rSetVal('r-brecha',br.toFixed(1)+'%');
         rSetChg('r-brecha-chg',br);
       }
       $$('r-fx-src').textContent='dolarapi.com · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-      _dashSources.dolar=true;ok++;
+      ok++;
     }catch(e){console.warn('dolar parse:',e);}
   }
 
-  // ── TASAS ──
-  const lastVal=r=>{
-    if(r.status!=='fulfilled')return null;
-    const arr=Array.isArray(r.value)?r.value:[];
-    const item=arr[arr.length-1];
-    return item?parseFloat(item.valor||item.tna||item.value||0):null;
-  };
-  const vB=lastVal(rBadlar),vP=lastVal(rPF);
-  if(vB>0){rSetVal('r-badlar',vB.toFixed(2)+'%');_dashSources.tasas=true;ok++;}
-  if(vP>0){rSetVal('r-pf',vP.toFixed(2)+'%');ok++;}
-
-  // Caución 1d
-  const vC=lastVal(rCaucion);
-  if(vC>0)rSetVal('r-caucion',vC.toFixed(2)+'%');
-
-  // LECAP corta
-  try{
-    if(window.lcData&&lcData.length>0){
-      const sh=[...lcData].sort((a,b)=>a.days-b.days)[0];
-      if(sh)rSetVal('r-lecap',sh.tir.toFixed(2)+'% · '+sh.ticker);
-    }
-  }catch(e){}
-
-  // ── CEDEARS (data912) ──
-  if(rCedears.status==='fulfilled'){
+  // ── BNA (same endpoint as descuento calculator: dolarapi.com/v1/dolares/oficial) ──
+  if(rBnaOficial.status==='fulfilled'){
     try{
-      const arr=Array.isArray(rCedears.value)?rCedears.value:(rCedears.value?.data||rCedears.value?.items||[]);
-      const byT={};arr.forEach(b=>{const t=(b.ticker||b.t||'').trim().toUpperCase();if(t)byT[t]=b;});
-      const sc=(tk,vi,ci)=>{
-        const b=byT[tk];if(!b)return;
-        const v=parseFloat(b.c||b.precio||b.last||0),p=parseFloat(b.pct_change||b.variacion_pct||b.var||0);
-        if(v>0){rSetVal(vi,'$'+dfK(v));rSetChg(ci,p);}
-      };
-      sc('SPY','r-cspy-val','r-cspy-chg');
-      sc('QQQ','r-cqqq-val','r-cqqq-chg');
-      _dashSources.cedears=true;ok++;
-    }catch(e){console.warn('cedears parse:',e);}
+      const d=rBnaOficial.value;
+      const vBNA=parseFloat(d.venta||d.compra||0);
+      if(vBNA>0){rSetVal('r-bna','$'+df(vBNA));rSetChg('r-bna-chg',0,'BNA');ok++;}
+    }catch(e){console.warn('bna parse:',e);}
   }
 
-  // ── MERVAL ──
+  // ── BONOS AL30 (data912) ──
+  if(rBonds.status==='fulfilled'){
+    try{
+      const arr=Array.isArray(rBonds.value)?rBonds.value:(rBonds.value?.data||rBonds.value?.items||[]);
+      const byT={};
+      arr.forEach(b=>{const t=(b.ticker||b.t||'').trim().toUpperCase();if(t)byT[t]=b;});
+      const getBondPrice=(tk)=>{
+        const b=byT[tk];if(!b)return null;
+        const v=parseFloat(b.c||b.precio||b.last||b.price||0);
+        const p=parseFloat(b.pct_change||b.variacion_pct||b.var||0);
+        return v>0?{price:v,pct:p}:null;
+      };
+      const al30=getBondPrice('AL30');
+      const al30d=getBondPrice('AL30D');
+      const al30c=getBondPrice('AL30C');
+      if(al30){rSetVal('r-al30-val','$'+df(al30.price));rSetChg('r-al30-chg',al30.pct);ok++;}
+      if(al30d){rSetVal('r-al30d-val','u$s'+df(al30d.price));rSetChg('r-al30d-chg',al30d.pct);}
+      if(al30c){rSetVal('r-al30c-val','u$s'+df(al30c.price));rSetChg('r-al30c-chg',al30c.pct);}
+      // Canje = (AL30D / AL30C - 1) * 100
+      if(al30d&&al30c&&al30c.price>0){
+        const canje=(al30d.price/al30c.price-1)*100;
+        rSetVal('r-canje-val',canje.toFixed(2)+'%');
+        rSetChg('r-canje-chg',canje);
+      }
+      $$('r-bond-src').textContent='data912.com · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    }catch(e){console.warn('bonds parse:',e);}
+  }
+
+  // ── MERVAL (data912) ──
   if(rMerval.status==='fulfilled'){
     try{
       const arr=Array.isArray(rMerval.value)?rMerval.value:[rMerval.value];
@@ -1181,13 +1224,13 @@ async function dashFetch(){
           rSetVal('r-merval-val',dfN(v));
           const e=$$('r-merval-chg');
           if(e){e.className='r-merval-chg2 '+(p>0?'up':p<0?'dn':'neu');e.textContent=(p>=0?'+':'')+p.toFixed(2)+'%';}
-          _dashSources.indices=true;ok++;
+          ok++;
         }
       }
     }catch(e){console.warn('merval parse:',e);}
   }
 
-  // ── YAHOO FINANCE ──
+  // ── YAHOO FINANCE (SPY, QQQ, GLD, BTC, WTI, Brent) ──
   const yparse=(r,sym)=>{
     if(r.status!=='fulfilled')return null;
     try{
@@ -1204,6 +1247,8 @@ async function dashFetch(){
   setSym(rQQQ,'QQQ','r-qqq-val','r-qqq-chg',v=>'u$s'+df(v));
   setSym(rGLD,'GLD','r-gold-val','r-gold-chg',v=>'u$s'+df(v));
   setSym(rBTC,'BTC-USD','r-btc-val','r-btc-chg',v=>'u$s'+dfK(v));
+  setSym(rWTI,'CL=F','r-wti-val','r-wti-chg',v=>'u$s'+df(v));
+  setSym(rBrent,'BZ=F','r-brent-val','r-brent-chg',v=>'u$s'+df(v));
 
   // ── STATUS ──
   const now=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
@@ -1215,9 +1260,9 @@ async function dashFetch(){
     lbl.className='r-status-label err';lbl.textContent='SIN DATOS';
   }
 
-  // Auto-refresh countdown
+  // Auto-refresh countdown 15s
   clearInterval(_dashTimer);
-  let cd=30;
+  let cd=15;
   $$('r-upd-text').textContent=now+' · próx. '+cd+'s';
   _dashTimer=setInterval(()=>{
     cd--;

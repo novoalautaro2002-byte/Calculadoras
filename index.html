@@ -489,7 +489,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .lc-table-panel{display:block}
 .lc-curves-panel{
   display:flex;flex-direction:column;
-  background:var(--navy);
+  background:var(--navy2);
   border-top:2px solid var(--border2);
 }
 
@@ -515,7 +515,18 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .lc-leg-dot.lecap{background:#22d4f0}
 .lc-leg-dot.boncap{background:#f0b429}
 
-.lc-chart-area{position:relative;padding:44px 24px 18px;background:var(--navy);height:340px}
+/* Chart centered at 55% width */
+.lc-chart-outer{
+  display:flex;justify-content:center;align-items:flex-start;
+  padding:24px 20px 16px;background:var(--navy);
+}
+.lc-chart-box{
+  width:55%;min-width:480px;max-width:860px;
+  background:#08121f;border:1px solid var(--border);border-radius:6px;
+  padding:20px 20px 14px;
+  position:relative;
+}
+.lc-chart-box canvas{display:block}
 
 .lc-curve-stats{
   display:grid;grid-template-columns:repeat(4,1fr);
@@ -932,9 +943,11 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
       <div style="margin-left:auto;font-size:9px;color:var(--gray2);font-family:var(--mono);letter-spacing:.06em">EJE X: DURATION MODIFICADA (años)</div>
     </div>
 
-    <!-- Chart -->
-    <div class="lc-chart-area">
-      <canvas id="lc-curve-chart"></canvas>
+    <!-- Chart — centered, half-width -->
+    <div class="lc-chart-outer">
+      <div class="lc-chart-box">
+        <canvas id="lc-curve-chart" height="340"></canvas>
+      </div>
     </div>
 
     <!-- Stats bar -->
@@ -2143,11 +2156,43 @@ let lcCurveMetric = 'tir';
 // Register datalabels plugin globally
 Chart.register(ChartDataLabels);
 
-// Duration Modificada (años) = (días/365) / (1 + TIR)
-// Para zero-coupon: DurMac = días/365; DurMod = DurMac / (1 + TIR)
-function lcModDuration(days, tir) {
-  const t = days / 365;
-  return t / (1 + tir / 100);
+// ── Duration Modificada correcta para zero-coupon con capitalización mensual ──
+// LECAP/BONCAP: precio = PF / (1+TEM)^n  donde n = meses al vencimiento
+// MacD (en meses) = n  →  ModD (meses) = n/(1+TEM)  →  ModD (años) = n/(1+TEM)/12
+// Simplificado: ModD = (días/365) / (1+TEM/100)  [base 365, TEM mensual]
+function lcModDuration(days, tem) {
+  const t = days / 365;                  // años al vencimiento
+  return t / (1 + tem / 100);           // dividido (1+TEM) por ser mensual
+}
+
+// ── Polynomial regression (grado 2) ──
+// Devuelve función f(x) = a*x^2 + b*x + c ajustada a los puntos
+function polyFit2(pts) {
+  const n = pts.length;
+  if(n < 3) return x => pts[0]?.y ?? 0;
+  let s0=0,s1=0,s2=0,s3=0,s4=0,t0=0,t1=0,t2=0;
+  for(const {x,y} of pts){
+    s0++; s1+=x; s2+=x*x; s3+=x*x*x; s4+=x*x*x*x;
+    t0+=y; t1+=x*y; t2+=x*x*y;
+  }
+  // Gauss elimination on the 3x3 normal equations
+  const A=[[s4,s3,s2,t2],[s3,s2,s1,t1],[s2,s1,s0,t0]];
+  for(let i=0;i<3;i++){
+    let mx=i;
+    for(let j=i+1;j<3;j++) if(Math.abs(A[j][i])>Math.abs(A[mx][i])) mx=j;
+    [A[i],A[mx]]=[A[mx],A[i]];
+    for(let j=i+1;j<3;j++){
+      const f=A[j][i]/A[i][i];
+      for(let k=i;k<=3;k++) A[j][k]-=f*A[i][k];
+    }
+  }
+  const c=[0,0,0];
+  for(let i=2;i>=0;i--){
+    c[i]=A[i][3];
+    for(let j=i+1;j<3;j++) c[i]-=A[i][j]*c[j];
+    c[i]/=A[i][i];
+  }
+  return x => c[0]*x*x + c[1]*x + c[2];
 }
 
 function lcSetCurveMetric(m) {
@@ -2155,103 +2200,107 @@ function lcSetCurveMetric(m) {
   ['tir','tna','tem'].forEach(k => {
     document.getElementById('lc-cm-'+k).className = 'lc-cmtab' + (k===m ? ' on-'+k : '');
   });
-  // Update stats labels
-  const lbl = {tir:'TIR',tna:'TNA',tem:'TEM'}[m];
-  document.getElementById('lc-st-min-k').textContent = lbl + ' mín.';
-  document.getElementById('lc-st-max-k').textContent = lbl + ' máx.';
+  document.getElementById('lc-st-min-k').textContent = {tir:'TIR',tna:'TNA',tem:'TEM'}[m] + ' mín.';
+  document.getElementById('lc-st-max-k').textContent = {tir:'TIR',tna:'TNA',tem:'TEM'}[m] + ' máx.';
   lcRenderCurve();
 }
 
 function lcRenderCurve() {
   if(!lcData.length) return;
 
-  const metricColors = {
-    tir: { line:'#22d68a', grd0:'rgba(34,214,138,.14)', grd1:'rgba(34,214,138,.0)' },
-    tna: { line:'#5b8def', grd0:'rgba(91,141,239,.14)', grd1:'rgba(91,141,239,.0)'  },
-    tem: { line:'#22d4f0', grd0:'rgba(34,212,240,.14)', grd1:'rgba(34,212,240,.0)'  },
-  };
-  const mc = metricColors[lcCurveMetric];
+  const metricLine = { tir:'#22d68a', tna:'#5b8def', tem:'#22d4f0' };
   const metricLabel = {tir:'TIR (TEA %)', tna:'TNA %', tem:'TEM %'}[lcCurveMetric];
+  const lineColor = metricLine[lcCurveMetric];
 
-  // Sort filtered instruments by duration modificada
-  const sorted = [...lcData]
+  // Data filtrada, ordenada por DurMod
+  const pts = [...lcData]
     .filter(b => lcFilter === 'all' || b.type.toLowerCase() === lcFilter)
-    .map(b => ({ ...b, durMod: lcModDuration(b.days, b.tir) }))
-    .sort((a,b) => a.durMod - b.durMod);
-  const all = sorted;
+    .map(b => ({ ...b, dm: lcModDuration(b.days, b.tem) }))
+    .sort((a,b) => a.dm - b.dm);
 
-  if(!all.length) return;
+  if(!pts.length) return;
 
-  // X labels = Duration Modificada rounded to 2 decimals
-  const xLabels = all.map(b => b.durMod.toFixed(2));
+  // Polynomial regression
+  const regPts = pts.map(b => ({ x: b.dm, y: b[lcCurveMetric] }));
+  const f = polyFit2(regPts);
+  const xMin = pts[0].dm;
+  const xMax = pts[pts.length-1].dm;
+  const steps = 120;
+  const curvePts = Array.from({length:steps+1}, (_,i) => {
+    const x = xMin + (xMax-xMin)*i/steps;
+    return { x, y: f(x) };
+  });
 
   // Stats
-  const vals = all.map(b => b[lcCurveMetric]);
+  const vals = pts.map(b => b[lcCurveMetric]);
   const mn = Math.min(...vals), mx = Math.max(...vals);
-  const bMin = all[vals.indexOf(mn)], bMax = all[vals.indexOf(mx)];
-  const slope = vals.length > 1 ? (vals[vals.length-1] - vals[0]).toFixed(2) : 0;
-  const slopeSign = +slope >= 0 ? '+' : '';
+  const bMin = pts[vals.indexOf(mn)], bMax = pts[vals.indexOf(mx)];
+  const slope = pts.length > 1 ? (vals[vals.length-1] - vals[0]).toFixed(2) : '0';
 
-  const lbl = {tir:'TIR',tna:'TNA',tem:'TEM'}[lcCurveMetric];
   document.getElementById('lc-st-min').textContent     = mn.toFixed(2) + '%';
-  document.getElementById('lc-st-min-sub').textContent = bMin.ticker + ' · Dur ' + bMin.durMod.toFixed(2) + 'y';
+  document.getElementById('lc-st-min-sub').textContent = bMin.ticker + ' · DM ' + bMin.dm.toFixed(3) + 'y';
   document.getElementById('lc-st-max').textContent     = mx.toFixed(2) + '%';
-  document.getElementById('lc-st-max-sub').textContent = bMax.ticker + ' · Dur ' + bMax.durMod.toFixed(2) + 'y';
-  document.getElementById('lc-st-slope').textContent   = slopeSign + slope + '%';
-  document.getElementById('lc-st-slope-sub').textContent = +slope > 0 ? 'curva empinada ▲' : +slope < 0 ? 'curva invertida ▼' : 'curva plana';
-  document.getElementById('lc-st-count').textContent   = all.length;
-  document.getElementById('lc-st-count-sub').textContent = all.filter(b=>b.type==='LECAP').length + ' LECAP · ' + all.filter(b=>b.type==='BONCAP').length + ' BONCAP';
+  document.getElementById('lc-st-max-sub').textContent = bMax.ticker + ' · DM ' + bMax.dm.toFixed(3) + 'y';
+  document.getElementById('lc-st-slope').textContent   = (+slope>=0?'+':'') + slope + '%';
+  document.getElementById('lc-st-slope-sub').textContent = +slope>0?'curva empinada ▲':+slope<0?'curva invertida ▼':'curva plana';
+  document.getElementById('lc-st-count').textContent   = pts.length;
+  document.getElementById('lc-st-count-sub').textContent = pts.filter(b=>b.type==='LECAP').length + ' LECAP · ' + pts.filter(b=>b.type==='BONCAP').length + ' BONCAP';
 
   const canvas = document.getElementById('lc-curve-chart');
   const ctx = canvas.getContext('2d');
 
-  // Gradient fill
-  const grad = ctx.createLinearGradient(0, 0, 0, 300);
-  grad.addColorStop(0, mc.grd0);
-  grad.addColorStop(1, mc.grd1);
+  // Y range with padding
+  const pad = (mx - mn) * 0.15 || 0.5;
+  const yMin = Math.max(0, mn - pad);
+  const yMax = mx + pad;
 
-  // Per-point colors
-  const ptColors  = all.map(b => b.type==='LECAP' ? '#22d4f0' : '#f0b429');
-  const ptBorders = all.map(b => b.type==='LECAP' ? '#0a6878' : '#6a4a0a');
+  // Point styling per type
+  const ptFill   = pts.map(b => b.type==='LECAP' ? '#22d4f0' : '#f0b429');
+  const ptBorder = pts.map(b => b.type==='LECAP' ? '#0a6878' : '#6a4a0a');
+  const ptShape  = pts.map(b => b.type==='LECAP' ? 'circle' : 'rectRot');
 
   const datasets = [
-    // ── Spline fill backdrop ──
+    // ── Regression curve ──
     {
-      label: 'curva',
-      data: all.map(b => ({ x: b.durMod, y: b[lcCurveMetric] })),
-      borderColor: mc.line,
-      backgroundColor: grad,
+      type: 'line',
+      label: 'fit',
+      data: curvePts,
+      borderColor: lineColor,
       borderWidth: 2.5,
+      backgroundColor: 'transparent',
       pointRadius: 0,
       pointHoverRadius: 0,
-      tension: 0.4,
-      fill: true,
-      order: 3,
+      tension: 0,
+      fill: false,
+      order: 2,
       datalabels: { display: false },
     },
-    // ── Points + ticker labels ──
+    // ── Scatter points + ticker labels ──
     {
+      type: 'scatter',
       label: metricLabel,
-      data: all.map(b => ({ x: b.durMod, y: b[lcCurveMetric] })),
-      borderColor: ptBorders,
-      backgroundColor: ptColors,
+      data: pts.map(b => ({ x: b.dm, y: b[lcCurveMetric] })),
+      backgroundColor: ptFill,
+      borderColor: ptBorder,
       borderWidth: 2,
-      pointRadius: 7,
-      pointHoverRadius: 11,
-      pointHoverBorderWidth: 3,
-      pointStyle: all.map(b => b.type==='LECAP' ? 'circle' : 'rectRot'),
-      showLine: false,
-      fill: false,
+      pointRadius: pts.map(b => b.type==='LECAP' ? 7 : 8),
+      pointHoverRadius: 10,
+      pointStyle: ptShape,
       order: 1,
       datalabels: {
         display: true,
-        align: 'top',
+        align: c => {
+          // Push label right for first two points to avoid left overflow
+          const b = pts[c.dataIndex];
+          if(b.dm < xMin + (xMax-xMin)*0.12) return 'right';
+          return 'top';
+        },
         anchor: 'end',
         offset: 5,
-        color: c => all[c.dataIndex].type === 'LECAP' ? '#22d4f0' : '#f0b429',
-        font: { family: "'JetBrains Mono','Courier New',monospace", size: 10, weight: '700' },
-        formatter: (val, c) => all[c.dataIndex].ticker,
-        textStrokeColor: '#060e1c',
+        color: c => pts[c.dataIndex].type==='LECAP' ? '#22d4f0' : '#f0b429',
+        font: { family:"'JetBrains Mono','Courier New',monospace", size:10, weight:'700' },
+        formatter: (v, c) => pts[c.dataIndex].ticker,
+        textStrokeColor: '#06101e',
         textStrokeWidth: 4,
         clip: false,
       },
@@ -2266,80 +2315,84 @@ function lcRenderCurve() {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      animation: { duration: 350 },
-      layout: { padding: { top: 30, right: 20, left: 8, bottom: 8 } },
-      interaction: { mode: 'nearest', intersect: false, axis: 'x' },
+      animation: { duration: 380 },
+      layout: { padding: { top: 28, right: 40, left: 8, bottom: 8 } },
+      interaction: { mode: 'nearest', intersect: true },
       plugins: {
         legend: { display: false },
         datalabels: {},
         tooltip: {
-          backgroundColor: '#081422',
-          borderColor: '#2a4a7a',
+          filter: item => item.datasetIndex === 1,
+          backgroundColor: '#06101e',
+          borderColor: '#1e3a62',
           borderWidth: 1,
           titleColor: '#7aa3f0',
-          bodyColor: '#d0ddf5',
+          bodyColor: '#c8d8f0',
           padding: 12,
-          titleFont: { family: "'JetBrains Mono',monospace", size: 11, weight: '700' },
-          bodyFont: { family: "'JetBrains Mono',monospace", size: 11 },
+          titleFont: { family:"'JetBrains Mono',monospace", size:11, weight:'700' },
+          bodyFont: { family:"'JetBrains Mono',monospace", size:11 },
           callbacks: {
             title: items => {
-              const b = all[items[0].dataIndex];
-              return b.ticker + ' · ' + b.type + ' · ' + lcFmtDate(b.maturity);
+              const b = pts[items[0].dataIndex];
+              return b.ticker + '  ·  ' + b.type + '  ·  ' + lcFmtDate(b.maturity);
             },
             label: item => {
-              if(item.datasetIndex === 0) return null;
-              const b = all[item.dataIndex];
+              const b = pts[item.dataIndex];
               return [
-                ' ' + metricLabel + ': ' + b[lcCurveMetric].toFixed(2) + '%',
-                ' TIR: ' + b.tir.toFixed(2) + '%  TNA: ' + b.tna.toFixed(2) + '%  TEM: ' + b.tem.toFixed(2) + '%',
-                ' Precio: ' + lcFmtNum(b.price,3) + '  →  Pago: ' + lcFmtNum(b.pagoFinal,3),
-                ' Duration Mod.: ' + b.durMod.toFixed(3) + ' años  ·  Días: ' + b.days,
+                '  ' + metricLabel + ':  ' + b[lcCurveMetric].toFixed(2) + '%',
+                '  TIR ' + b.tir.toFixed(2) + '%   TNA ' + b.tna.toFixed(2) + '%   TEM ' + b.tem.toFixed(2) + '%',
+                '  Precio: ' + lcFmtNum(b.price,3) + '   Pago final: ' + lcFmtNum(b.pagoFinal,3),
+                '  DM: ' + b.dm.toFixed(4) + ' años   (' + b.days + ' días)',
               ];
             },
-            filter: item => item.datasetIndex !== 0,
           },
         },
       },
       scales: {
         x: {
           type: 'linear',
-          grid:  { color: 'rgba(42,74,122,.25)', lineWidth: 1 },
+          min: Math.max(0, xMin - (xMax-xMin)*0.06),
+          max: xMax + (xMax-xMin)*0.06,
+          grid: { color:'rgba(30,58,98,.6)', lineWidth:1 },
           ticks: {
-            color: '#5a7a9a',
-            font:  { family: "'JetBrains Mono',monospace", size: 10 },
-            callback: v => v.toFixed(2) + 'y',
-            maxTicksLimit: 12,
+            color:'#4a6a8a',
+            font:{ family:"'JetBrains Mono',monospace", size:10 },
+            callback: v => v.toFixed(2),
+            maxTicksLimit: 10,
           },
-          border: { color: 'rgba(42,74,122,.5)' },
+          border: { color:'rgba(30,58,98,.9)' },
           title: {
             display: true,
-            text: 'Duration Modificada (años)',
-            color: '#5a7a9a',
-            font: { family: "'JetBrains Mono',monospace", size: 9, weight: '600' },
-            padding: { top: 6 },
+            text: 'DurM [365/365]',
+            color:'#4a6a8a',
+            font:{ family:"'JetBrains Mono',monospace", size:9, weight:'600' },
+            padding:{ top:6 },
           },
         },
         y: {
-          grid:  { color: 'rgba(42,74,122,.25)', lineWidth: 1 },
+          min: yMin,
+          max: yMax,
+          grid: { color:'rgba(30,58,98,.6)', lineWidth:1 },
           ticks: {
-            color: '#5a7a9a',
-            font:  { family: "'JetBrains Mono',monospace", size: 11 },
-            callback: v => v.toFixed(1) + '%',
+            color:'#4a6a8a',
+            font:{ family:"'JetBrains Mono',monospace", size:10 },
+            callback: v => v.toFixed(2) + '%',
             maxTicksLimit: 8,
           },
-          border: { color: 'rgba(42,74,122,.5)' },
+          border: { color:'rgba(30,58,98,.9)' },
           title: {
             display: true,
             text: metricLabel,
-            color: '#7aa3f0',
-            font: { family: "'JetBrains Mono',monospace", size: 10, weight: '700' },
-            padding: { bottom: 6 },
+            color: lineColor,
+            font:{ family:"'JetBrains Mono',monospace", size:10, weight:'700' },
+            padding:{ bottom:6 },
           },
         },
       },
     },
   });
 }
+
 
 // Auto-load LECAP data on page start
 lcFetch();

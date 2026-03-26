@@ -539,130 +539,89 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .lc-cstat-sub{font-size:10px;color:var(--gray);margin-top:1px;font-family:var(--mono)}
 
 /* ══════════════════════════════════
-   DASHBOARD — diseño limpio
+   RESUMEN — Monitor de Mercado
 ══════════════════════════════════ */
-.dash-page{background:#060c18;min-height:calc(100vh - 98px);padding:0 0 48px}
-.dash-topbar{
-  background:#0a1222;border-bottom:1px solid #0f1e34;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:7px 24px;font-family:var(--mono);font-size:10px;
-}
-.dash-topbar-left{display:flex;align-items:center;gap:12px}
-.dash-topbar-title{font-size:11px;font-weight:700;color:#5b8def;letter-spacing:.1em;text-transform:uppercase}
-.dash-pill{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid;letter-spacing:.07em}
-.dash-pill.live{color:#22d68a;border-color:#16a86a;background:rgba(34,214,138,.08)}
-.dash-pill.loading{color:#f0b429;border-color:#7a5a10;background:rgba(120,80,10,.15);animation:pillblink 1s step-end infinite}
-.dash-pill.err{color:#ff4d6a;border-color:#cc3a55;background:rgba(255,77,106,.08)}
-.dash-upd{color:#2a4060;font-size:10px}
-.dash-refresh-btn{
-  background:#0a1222;border:1px solid #1a3050;color:#5b8def;
-  font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 12px;
-  cursor:pointer;height:24px;border-radius:4px;letter-spacing:.06em;transition:all .12s;
-}
-.dash-refresh-btn:hover{border-color:#5b8def;color:#fff}
-.d-sec{
-  display:flex;align-items:center;gap:10px;
-  padding:9px 24px 8px;border-bottom:1px solid #0a1828;
-  background:#070e1c;margin-top:1px;
-}
-.d-sec-icon{font-size:13px}
-.d-sec-label{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#2a4870;font-family:var(--mono)}
-.d-sec-hint{font-size:9px;color:#1a2e44;font-family:var(--mono);margin-left:auto;letter-spacing:.06em}
-/* TC STRIP */
-.tc-strip{display:grid;grid-template-columns:repeat(6,1fr);background:#050b16;border-bottom:2px solid #08121e}
-.tc-cell{
-  padding:16px 20px;border-right:1px solid #0a1828;
-  display:flex;flex-direction:column;gap:5px;
-  transition:background .12s;cursor:default;position:relative;overflow:hidden;
-}
-.tc-cell:last-child{border-right:none}
-.tc-cell:hover{background:#0a1420}
-.tc-cell::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:0 0 2px 2px;opacity:.7}
-.tc-cell.blue::after{background:linear-gradient(90deg,#3a6fd8,transparent)}
-.tc-cell.green::after{background:linear-gradient(90deg,#22d68a,transparent)}
-.tc-cell.amber::after{background:linear-gradient(90deg,#f0b429,transparent)}
-.tc-cell.red::after{background:linear-gradient(90deg,#ff4d6a,transparent)}
-.tc-cell.cyan::after{background:linear-gradient(90deg,#22d4f0,transparent)}
-.tc-cell.purple::after{background:linear-gradient(90deg,#a06fef,transparent)}
-.tc-lbl{font-size:9px;font-weight:700;color:#2a4060;letter-spacing:.16em;text-transform:uppercase;font-family:var(--mono)}
-.tc-val{font-size:23px;font-weight:800;font-family:var(--mono);color:#d8e8ff;line-height:1.1;letter-spacing:-.02em}
-.tc-val.wait{color:#0f1e30;font-size:16px}
-.tc-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.tc-badge{font-size:10px;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:3px}
-.tc-badge.up{color:#22d68a;background:rgba(34,214,138,.1);border:1px solid rgba(34,214,138,.2)}
-.tc-badge.dn{color:#ff4d6a;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.2)}
-.tc-badge.flat{color:#2a4060;background:rgba(42,64,96,.1);border:1px solid rgba(42,64,96,.2)}
-.tc-sub{font-size:9px;color:#1a2e44;font-family:var(--mono)}
-/* MAIN GRID */
-.dash-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;border-bottom:1px solid #08121e}
-.dash-col{border-right:1px solid #0a1828;display:flex;flex-direction:column}
-.dash-col:last-child{border-right:none}
-.dash-col-hdr{
-  background:#070e1c;border-bottom:1px solid #0a1828;
-  padding:7px 18px;font-size:9px;font-weight:700;
-  color:#2a4870;letter-spacing:.18em;text-transform:uppercase;font-family:var(--mono);
-  display:flex;align-items:center;gap:8px;
-}
-.dash-col-hdr-icon{font-size:12px}
-/* ROFEX */
-.rofex-inner{overflow-x:auto}
-.rofex-tbl{width:100%;border-collapse:collapse;font-family:var(--mono)}
-.rofex-tbl th{
-  font-size:9px;font-weight:700;color:#1e3050;letter-spacing:.12em;text-transform:uppercase;
-  padding:6px 14px;text-align:right;border-bottom:1px solid #08121e;white-space:nowrap;background:#060c18;
-}
-.rofex-tbl th:first-child{text-align:left}
-.rofex-tbl td{font-size:12px;padding:7px 14px;text-align:right;border-bottom:1px solid #08121e;color:#5a7a9a;white-space:nowrap}
-.rofex-tbl tr:hover td{background:rgba(58,111,216,.04)}
-.rofex-tbl td:first-child{text-align:left;color:#4a7ab0;font-weight:700;font-size:11px}
-.rofex-px{color:#c8d8f0;font-weight:700}
-.rofex-up{color:#22d68a;font-weight:600}.rofex-dn{color:#ff4d6a;font-weight:600}.rofex-flat{color:#2a4060}
-/* TASAS */
-.tasa-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 18px;border-bottom:1px solid #08121e;
-  font-family:var(--mono);transition:background .1s;
-}
-.tasa-row:last-child{border-bottom:none}
-.tasa-row:hover{background:rgba(58,111,216,.04)}
-.tasa-k{font-size:11px;color:#4a6a8a;line-height:1.3}
-.tasa-k small{display:block;font-size:9px;color:#1a2e44;letter-spacing:.04em;margin-top:2px}
-.tasa-v{font-size:16px;font-weight:800;font-family:var(--mono);color:#f0b429}
-.tasa-v.blue{color:#5b8def}.tasa-v.green{color:#22d68a}.tasa-v.wait{color:#0f1e30}
-/* ITEM ROWS */
-.item-row{
-  display:flex;justify-content:space-between;align-items:center;
-  padding:10px 18px;border-bottom:1px solid #08121e;
-  font-family:var(--mono);transition:background .1s;
-}
-.item-row:last-child{border-bottom:none}
-.item-row:hover{background:rgba(58,111,216,.04)}
-.item-icon{font-size:16px;margin-right:10px;flex-shrink:0;opacity:.85}
-.item-info{flex:1;min-width:0}
-.item-name{font-size:11px;font-weight:700;color:#8aaacb;letter-spacing:.04em}
-.item-sub{font-size:9px;color:#1a2e44;margin-top:1px;letter-spacing:.04em}
-.item-right{text-align:right;flex-shrink:0}
-.item-val{font-size:15px;font-weight:800;color:#d8e8ff}
-.item-val.wait{color:#0f1e30}
-.item-pct{font-size:11px;font-weight:700;margin-top:2px}
-.item-pct.up{color:#22d68a}.item-pct.dn{color:#ff4d6a}.item-pct.flat{color:#2a4060}
-/* CANJE */
-.canje-block{padding:12px 18px;border-bottom:1px solid #08121e;font-family:var(--mono)}
-.canje-block:last-child{border-bottom:none}
-.canje-block:hover{background:rgba(58,111,216,.03)}
-.canje-title{font-size:10px;font-weight:700;color:#2a4870;letter-spacing:.1em;margin-bottom:8px;text-transform:uppercase}
-.canje-line{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
-.canje-k{font-size:10px;color:#2a4060}
-.canje-v{font-size:13px;font-weight:700;color:#8aaacb}
-.canje-v.hi{color:#22d68a}
-.canje-sep{border-top:1px solid #08121e;margin:6px 0}
-.canje-formula{font-size:9px;color:#101e2e;margin-top:5px;letter-spacing:.04em}
-/* MERVAL CARD */
-.merval-card{background:linear-gradient(135deg,#060c18,#0a1428);padding:18px 18px 14px;border-bottom:1px solid #0a1828}
-.merval-label{font-size:9px;font-weight:700;color:#1e3050;letter-spacing:.18em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
-.merval-val{font-size:30px;font-weight:900;font-family:var(--mono);color:#fff;letter-spacing:-.03em;line-height:1}
-.merval-pct{font-size:13px;font-weight:700;font-family:var(--mono);margin-top:4px}
-.merval-pct.up{color:#22d68a}.merval-pct.dn{color:#ff4d6a}.merval-pct.flat{color:#2a4060}
+.r-page { background:#07101f; min-height:calc(100vh - 98px); }
+
+/* topbar */
+.r-bar { background:#0a1525; border-bottom:1px solid #0f2040; display:flex; align-items:center; justify-content:space-between; padding:6px 20px; font-family:var(--mono); font-size:10px; }
+.r-bar-left { display:flex; align-items:center; gap:10px; }
+.r-bar-title { font-size:11px; font-weight:700; color:#4a7ab0; letter-spacing:.1em; text-transform:uppercase; }
+.r-pill { font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px; border:1px solid; letter-spacing:.06em; }
+.r-pill.live { color:#22d68a; border-color:#16a86a; background:rgba(34,214,138,.08); }
+.r-pill.loading { color:#f0b429; border-color:#6a4a08; background:rgba(120,80,10,.12); animation:pillblink 1s step-end infinite; }
+.r-pill.err { color:#ff5566; border-color:#aa2233; background:rgba(255,80,100,.08); }
+.r-upd { color:#1e3050; font-size:10px; }
+.r-btn { background:#0a1525; border:1px solid #1a3050; color:#4a7ab0; font-family:var(--mono); font-size:10px; font-weight:700; padding:2px 12px; cursor:pointer; height:24px; border-radius:4px; letter-spacing:.05em; transition:all .12s; }
+.r-btn:hover { border-color:#4a7ab0; color:#d0e4ff; }
+
+/* section label */
+.r-sec { display:flex; align-items:center; gap:8px; padding:7px 20px 6px; border-bottom:1px solid #0a1828; background:#060d1a; margin-top:1px; }
+.r-sec-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+.r-sec-lbl { font-size:9px; font-weight:800; letter-spacing:.22em; text-transform:uppercase; color:#1e3555; font-family:var(--mono); }
+.r-sec-src { margin-left:auto; font-size:9px; color:#0f1e30; font-family:var(--mono); }
+
+/* TC strip */
+.r-tc { display:grid; grid-template-columns:repeat(6,1fr); background:#060d1a; border-bottom:2px solid #0a1525; }
+.r-tc-cell { padding:14px 18px; border-right:1px solid #0a1828; display:flex; flex-direction:column; gap:4px; position:relative; overflow:hidden; transition:background .1s; }
+.r-tc-cell:last-child { border-right:none; }
+.r-tc-cell:hover { background:#0a1420; }
+.r-tc-cell::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; }
+.r-tc-cell.c-blue::before  { background:linear-gradient(90deg,#3a6fd8,transparent); }
+.r-tc-cell.c-cyan::before  { background:linear-gradient(90deg,#22d4f0,transparent); }
+.r-tc-cell.c-amber::before { background:linear-gradient(90deg,#f0b429,transparent); }
+.r-tc-cell.c-orange::before{ background:linear-gradient(90deg,#e8841a,transparent); }
+.r-tc-cell.c-green::before { background:linear-gradient(90deg,#22d68a,transparent); }
+.r-tc-cell.c-red::before   { background:linear-gradient(90deg,#ff5566,transparent); }
+.r-tc-lbl { font-size:9px; font-weight:700; color:#1e3050; letter-spacing:.15em; text-transform:uppercase; font-family:var(--mono); }
+.r-tc-val { font-size:22px; font-weight:800; font-family:var(--mono); color:#c8deff; line-height:1; letter-spacing:-.02em; }
+.r-tc-val.blank { color:#0d1e34; font-size:16px; }
+.r-tc-row { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.r-chg { font-size:10px; font-weight:700; font-family:var(--mono); padding:1px 6px; border-radius:3px; }
+.r-chg.up  { color:#22d68a; background:rgba(34,214,138,.1); border:1px solid rgba(34,214,138,.2); }
+.r-chg.dn  { color:#ff5566; background:rgba(255,85,102,.1); border:1px solid rgba(255,85,102,.2); }
+.r-chg.neu { color:#2a4060; background:rgba(42,64,96,.1);   border:1px solid rgba(42,64,96,.2); }
+.r-tc-sub { font-size:9px; color:#1a2e44; font-family:var(--mono); }
+
+/* 2-col grid */
+.r-grid { display:grid; grid-template-columns:1fr 1fr; }
+.r-col { border-right:1px solid #0a1828; display:flex; flex-direction:column; }
+.r-col:last-child { border-right:none; }
+.r-col-hdr { background:#060d1a; border-bottom:1px solid #0a1828; padding:6px 18px; font-size:9px; font-weight:800; color:#1e3555; letter-spacing:.2em; text-transform:uppercase; font-family:var(--mono); display:flex; align-items:center; gap:8px; }
+
+/* tasa rows */
+.r-tasa { display:flex; justify-content:space-between; align-items:center; padding:10px 18px; border-bottom:1px solid #080f1e; font-family:var(--mono); transition:background .1s; }
+.r-tasa:last-child { border-bottom:none; }
+.r-tasa:hover { background:rgba(58,111,216,.04); }
+.r-tasa-k { font-size:11px; color:#3a5a7a; line-height:1.3; }
+.r-tasa-k small { display:block; font-size:9px; color:#162030; margin-top:1px; letter-spacing:.04em; }
+.r-tasa-v { font-size:17px; font-weight:800; font-family:var(--mono); color:#f0b429; }
+.r-tasa-v.blue  { color:#5b8def; }
+.r-tasa-v.green { color:#22d68a; }
+.r-tasa-v.blank { color:#0d1e34; }
+
+/* index rows */
+.r-merval { background:linear-gradient(135deg,#060d1a,#0a1630); padding:16px 18px; border-bottom:1px solid #0a1828; }
+.r-merval-lbl { font-size:9px; font-weight:700; color:#1a2e44; letter-spacing:.2em; text-transform:uppercase; font-family:var(--mono); margin-bottom:6px; }
+.r-merval-val { font-size:32px; font-weight:900; font-family:var(--mono); color:#fff; letter-spacing:-.03em; line-height:1; }
+.r-merval-chg { font-size:13px; font-weight:700; font-family:var(--mono); margin-top:4px; }
+.r-merval-chg.up { color:#22d68a; }
+.r-merval-chg.dn { color:#ff5566; }
+.r-merval-chg.neu { color:#2a4060; }
+
+.r-idx { display:flex; justify-content:space-between; align-items:center; padding:10px 18px; border-bottom:1px solid #080f1e; font-family:var(--mono); transition:background .1s; }
+.r-idx:last-child { border-bottom:none; }
+.r-idx:hover { background:rgba(58,111,216,.04); }
+.r-idx-left { display:flex; flex-direction:column; gap:2px; }
+.r-idx-name { font-size:12px; font-weight:700; color:#7a9abf; letter-spacing:.04em; }
+.r-idx-sub  { font-size:9px; color:#1a2e44; letter-spacing:.04em; }
+.r-idx-right { text-align:right; }
+.r-idx-val { font-size:16px; font-weight:800; color:#c8deff; }
+.r-idx-val.blank { color:#0d1e34; }
+.r-idx-chg { font-size:11px; font-weight:700; margin-top:2px; }
+.r-idx-chg.up  { color:#22d68a; }
+.r-idx-chg.dn  { color:#ff5566; }
+.r-idx-chg.neu { color:#2a4060; }
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -734,239 +693,116 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 <!--  PAGE: RESUMEN / DASHBOARD                            -->
 <!-- ══════════════════════════════════════════════════════ -->
 <div class="page active" id="page-resumen">
-<div class="dash-page">
+<div class="r-page">
 
-  <div class="dash-topbar">
-    <div class="dash-topbar-left">
-      <span class="dash-topbar-title">◉ MONITOR DE MERCADO</span>
-      <span class="dash-pill loading" id="dash-pill">CARGANDO...</span>
-      <span class="dash-upd" id="dash-upd">—</span>
+  <!-- top bar -->
+  <div class="r-bar">
+    <div class="r-bar-left">
+      <span class="r-bar-title">◉ MONITOR DE MERCADO</span>
+      <span class="r-pill loading" id="r-pill">CARGANDO...</span>
+      <span class="r-upd" id="r-upd">—</span>
     </div>
-    <button class="dash-refresh-btn" onclick="dashFetch()">↻ ACTUALIZAR</button>
+    <button class="r-btn" onclick="dashFetch()">↻ ACTUALIZAR</button>
   </div>
 
-  <!-- TIPOS DE CAMBIO -->
-  <div class="d-sec">
-    <span class="d-sec-icon">💱</span>
-    <span class="d-sec-label">Tipos de Cambio</span>
-    <span class="d-sec-hint" id="d-tc-time">—</span>
+  <!-- tipos de cambio -->
+  <div class="r-sec">
+    <div class="r-sec-dot" style="background:#f0b429"></div>
+    <span class="r-sec-lbl">Tipos de Cambio</span>
+    <span class="r-sec-src" id="r-tc-src">dolarapi.com</span>
   </div>
-  <div class="tc-strip">
-    <div class="tc-cell blue">
-      <div class="tc-lbl">CCL · Cable</div>
-      <div class="tc-val wait" id="tc-ccl">—</div>
-      <div class="tc-row">
-        <span class="tc-badge flat" id="tc-ccl-d">—</span>
-        <span class="tc-sub">AL30 C/D</span>
-      </div>
+  <div class="r-tc">
+    <div class="r-tc-cell c-blue">
+      <div class="r-tc-lbl">CCL · Cable</div>
+      <div class="r-tc-val blank" id="r-ccl">—</div>
+      <div class="r-tc-row"><span class="r-chg neu" id="r-ccl-chg">—</span><span class="r-tc-sub">Contado con liquidación</span></div>
     </div>
-    <div class="tc-cell cyan">
-      <div class="tc-lbl">MEP · Bolsa</div>
-      <div class="tc-val wait" id="tc-mep">—</div>
-      <div class="tc-row">
-        <span class="tc-badge flat" id="tc-mep-d">—</span>
-        <span class="tc-sub">AL30 48hs</span>
-      </div>
+    <div class="r-tc-cell c-cyan">
+      <div class="r-tc-lbl">MEP · Bolsa</div>
+      <div class="r-tc-val blank" id="r-mep">—</div>
+      <div class="r-tc-row"><span class="r-chg neu" id="r-mep-chg">—</span><span class="r-tc-sub">Dólar Bolsa 48hs</span></div>
     </div>
-    <div class="tc-cell amber">
-      <div class="tc-lbl">BCRA A3500</div>
-      <div class="tc-val wait" id="tc-bcra">—</div>
-      <div class="tc-row">
-        <span class="tc-badge flat" id="tc-bcra-d">—</span>
-        <span class="tc-sub">Oficial mayorista</span>
-      </div>
+    <div class="r-tc-cell c-amber">
+      <div class="r-tc-lbl">BCRA A3500</div>
+      <div class="r-tc-val blank" id="r-bcra">—</div>
+      <div class="r-tc-row"><span class="r-chg neu" id="r-bcra-chg">—</span><span class="r-tc-sub">Oficial mayorista</span></div>
     </div>
-    <div class="tc-cell amber" style="--c:#e8941a">
-      <div class="tc-lbl">BNA</div>
-      <div class="tc-val wait" id="tc-bna">—</div>
-      <div class="tc-row">
-        <span class="tc-badge flat" id="tc-bna-d">—</span>
-        <span class="tc-sub">Banco Nación venta</span>
-      </div>
+    <div class="r-tc-cell c-orange">
+      <div class="r-tc-lbl">BNA</div>
+      <div class="r-tc-val blank" id="r-bna">—</div>
+      <div class="r-tc-row"><span class="r-chg neu" id="r-bna-chg">—</span><span class="r-tc-sub">Banco Nación venta</span></div>
     </div>
-    <div class="tc-cell green">
-      <div class="tc-lbl">Blue</div>
-      <div class="tc-val wait" id="tc-blue">—</div>
-      <div class="tc-row">
-        <span class="tc-badge flat" id="tc-blue-d">—</span>
-        <span class="tc-sub">Informal</span>
-      </div>
+    <div class="r-tc-cell c-green">
+      <div class="r-tc-lbl">Blue</div>
+      <div class="r-tc-val blank" id="r-blue">—</div>
+      <div class="r-tc-row"><span class="r-chg neu" id="r-blue-chg">—</span><span class="r-tc-sub">Informal</span></div>
     </div>
-    <div class="tc-cell red">
-      <div class="tc-lbl">Brecha CCL / BCRA</div>
-      <div class="tc-val wait" id="tc-brecha">—</div>
-      <div class="tc-row">
-        <span class="tc-badge flat" id="tc-brecha-d">—</span>
-        <span class="tc-sub">spread cambiario</span>
-      </div>
+    <div class="r-tc-cell c-red">
+      <div class="r-tc-lbl">Brecha CCL / BCRA</div>
+      <div class="r-tc-val blank" id="r-brecha">—</div>
+      <div class="r-tc-row"><span class="r-chg neu" id="r-brecha-chg">—</span><span class="r-tc-sub">spread cambiario</span></div>
     </div>
   </div>
 
-  <!-- MAIN 3-COL GRID -->
-  <div class="dash-grid">
+  <!-- 2-col grid -->
+  <div class="r-grid">
 
-    <!-- COL 1: ROFEX + TASAS -->
-    <div class="dash-col">
-      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">📈</span> ROFEX — Futuros Dólar</div>
-      <div class="rofex-inner">
-        <table class="rofex-tbl">
-          <thead>
-            <tr>
-              <th>CONTRATO</th>
-              <th>PRECIO</th>
-              <th>VAR.</th>
-              <th>VAR.%</th>
-            </tr>
-          </thead>
-          <tbody id="rofex-tbody">
-            <tr><td colspan="4" style="text-align:center;padding:16px;color:#1a2e44">Cargando...</td></tr>
-          </tbody>
-        </table>
+    <!-- col 1: tasas -->
+    <div class="r-col">
+      <div class="r-col-hdr">🏦 Tasas de Referencia AR</div>
+      <div class="r-tasa">
+        <span class="r-tasa-k">BADLAR Privados<small>Depósitos +1M, bancos privados</small></span>
+        <span class="r-tasa-v blank" id="r-badlar">—</span>
       </div>
-      <div class="dash-col-hdr" style="margin-top:1px"><span class="dash-col-hdr-icon">🏦</span> Tasas de Referencia AR</div>
-      <div class="tasa-row">
-        <span class="tasa-k">Política Monetaria<small>TAMAR / Pase BCRA</small></span>
-        <span class="tasa-v wait" id="tasa-pm">—</span>
+      <div class="r-tasa">
+        <span class="r-tasa-k">Plazo Fijo 30d<small>TNA promedio sistema</small></span>
+        <span class="r-tasa-v blank" id="r-pf">—</span>
       </div>
-      <div class="tasa-row">
-        <span class="tasa-k">BADLAR Privados<small>TNA bancos privados</small></span>
-        <span class="tasa-v wait" id="tasa-badlar">—</span>
+      <div class="r-tasa">
+        <span class="r-tasa-k">Caja de Ahorro<small>TNA promedio bancos</small></span>
+        <span class="r-tasa-v blue blank" id="r-ca">—</span>
       </div>
-      <div class="tasa-row">
-        <span class="tasa-k">Plazo Fijo 30d<small>TNA promedio</small></span>
-        <span class="tasa-v wait" id="tasa-pf">—</span>
-      </div>
-      <div class="tasa-row">
-        <span class="tasa-k">Caja de Ahorro<small>TNA promedio</small></span>
-        <span class="tasa-v blue wait" id="tasa-ca">—</span>
-      </div>
-      <div class="tasa-row">
-        <span class="tasa-k">LECAP corta<small>TIR estimada</small></span>
-        <span class="tasa-v green wait" id="tasa-lecap">—</span>
+      <div class="r-tasa">
+        <span class="r-tasa-k">LECAP más corta<small>TIR anualizada · mercado secundario</small></span>
+        <span class="r-tasa-v green blank" id="r-lecap">—</span>
       </div>
     </div>
 
-    <!-- COL 2: ÍNDICES -->
-    <div class="dash-col">
-      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">🇦🇷</span> Índices Argentina</div>
-      <div class="merval-card">
-        <div class="merval-label">S&amp;P MERVAL · BYMA</div>
-        <div class="merval-val" id="merval-val">—</div>
-        <div class="merval-pct flat" id="merval-pct">—</div>
+    <!-- col 2: índices -->
+    <div class="r-col">
+      <div class="r-col-hdr">📊 Índices & Activos</div>
+      <div class="r-merval">
+        <div class="r-merval-lbl">S&amp;P MERVAL · BYMA · ARS</div>
+        <div class="r-merval-val" id="r-merval-val">—</div>
+        <div class="r-merval-chg neu" id="r-merval-chg">—</div>
       </div>
-      <div class="item-row">
-        <span class="item-icon">📄</span>
-        <div class="item-info">
-          <div class="item-name">AL30 · Bono ARS</div>
-          <div class="item-sub">Ley Argentina · BYMA</div>
-        </div>
-        <div class="item-right">
-          <div class="item-val wait" id="al30-val">—</div>
-          <div class="item-pct flat" id="al30-pct">—</div>
-        </div>
+      <div class="r-idx">
+        <div class="r-idx-left"><div class="r-idx-name">S&amp;P 500</div><div class="r-idx-sub">SPY · NYSE · USD</div></div>
+        <div class="r-idx-right"><div class="r-idx-val blank" id="r-spy-val">—</div><div class="r-idx-chg neu" id="r-spy-chg">—</div></div>
       </div>
-      <div class="item-row">
-        <span class="item-icon">💵</span>
-        <div class="item-info">
-          <div class="item-name">AL30D · Bono USD</div>
-          <div class="item-sub">Dólar MEP · BYMA</div>
-        </div>
-        <div class="item-right">
-          <div class="item-val wait" id="al30d-val">—</div>
-          <div class="item-pct flat" id="al30d-pct">—</div>
-        </div>
+      <div class="r-idx">
+        <div class="r-idx-left"><div class="r-idx-name">NASDAQ 100</div><div class="r-idx-sub">QQQ · NASDAQ · USD</div></div>
+        <div class="r-idx-right"><div class="r-idx-val blank" id="r-qqq-val">—</div><div class="r-idx-chg neu" id="r-qqq-chg">—</div></div>
       </div>
-      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">🌐</span> Mercados Globales</div>
-      <div class="item-row">
-        <span class="item-icon">📊</span>
-        <div class="item-info">
-          <div class="item-name">S&amp;P 500</div>
-          <div class="item-sub">SPY · NYSE</div>
-        </div>
-        <div class="item-right">
-          <div class="item-val wait" id="spy-val">—</div>
-          <div class="item-pct flat" id="spy-pct">—</div>
-        </div>
+      <div class="r-idx">
+        <div class="r-idx-left"><div class="r-idx-name">CEDEAR SPY</div><div class="r-idx-sub">SPY · BYMA · ARS</div></div>
+        <div class="r-idx-right"><div class="r-idx-val blank" id="r-cspy-val">—</div><div class="r-idx-chg neu" id="r-cspy-chg">—</div></div>
       </div>
-      <div class="item-row">
-        <span class="item-icon">💻</span>
-        <div class="item-info">
-          <div class="item-name">NASDAQ 100</div>
-          <div class="item-sub">QQQ · NASDAQ</div>
-        </div>
-        <div class="item-right">
-          <div class="item-val wait" id="qqq-val">—</div>
-          <div class="item-pct flat" id="qqq-pct">—</div>
-        </div>
+      <div class="r-idx">
+        <div class="r-idx-left"><div class="r-idx-name">CEDEAR QQQ</div><div class="r-idx-sub">QQQ · BYMA · ARS</div></div>
+        <div class="r-idx-right"><div class="r-idx-val blank" id="r-cqqq-val">—</div><div class="r-idx-chg neu" id="r-cqqq-chg">—</div></div>
       </div>
-      <div class="item-row">
-        <span class="item-icon">📊</span>
-        <div class="item-info">
-          <div class="item-name">CEDEAR SPY</div>
-          <div class="item-sub">SPY ARS · BYMA</div>
-        </div>
-        <div class="item-right">
-          <div class="item-val wait" id="cspy-val">—</div>
-          <div class="item-pct flat" id="cspy-pct">—</div>
-        </div>
+      <div class="r-idx">
+        <div class="r-idx-left"><div class="r-idx-name">Oro</div><div class="r-idx-sub">GLD · USD/oz</div></div>
+        <div class="r-idx-right"><div class="r-idx-val blank" id="r-gold-val">—</div><div class="r-idx-chg neu" id="r-gold-chg">—</div></div>
       </div>
-      <div class="item-row">
-        <span class="item-icon">💻</span>
-        <div class="item-info">
-          <div class="item-name">CEDEAR QQQ</div>
-          <div class="item-sub">QQQ ARS · BYMA</div>
-        </div>
-        <div class="item-right">
-          <div class="item-val wait" id="cqqq-val">—</div>
-          <div class="item-pct flat" id="cqqq-pct">—</div>
-        </div>
+      <div class="r-idx">
+        <div class="r-idx-left"><div class="r-idx-name">Bitcoin</div><div class="r-idx-sub">BTC/USD</div></div>
+        <div class="r-idx-right"><div class="r-idx-val blank" id="r-btc-val">—</div><div class="r-idx-chg neu" id="r-btc-chg">—</div></div>
       </div>
     </div>
 
-    <!-- COL 3: CANJE AL30 -->
-    <div class="dash-col">
-      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">🔄</span> Canje AL30 · Cable ↔ MEP</div>
-
-      <div class="canje-block">
-        <div class="canje-title">Cable → MEP (vendés USD, recibís ARS)</div>
-        <div class="canje-line"><span class="canje-k">AL30 precio ARS</span><span class="canje-v" id="cj-al30a">—</span></div>
-        <div class="canje-line"><span class="canje-k">AL30D precio USD</span><span class="canje-v" id="cj-al30u">—</span></div>
-        <div class="canje-line"><span class="canje-k">CCL implícito</span><span class="canje-v hi" id="cj-ccl">—</span></div>
-        <div class="canje-sep"></div>
-        <div class="canje-line"><span class="canje-k">Enviás USD 1.000 cable</span><span class="canje-v">u$s 1.000</span></div>
-        <div class="canje-line"><span class="canje-k">→ Comprás VN</span><span class="canje-v" id="cj-vn1">—</span></div>
-        <div class="canje-line"><span class="canje-k">→ Recibís ARS</span><span class="canje-v hi" id="cj-ars1">—</span></div>
-        <div class="canje-formula">VN = (USD×100)/AL30D · ARS = VN×AL30/100</div>
-      </div>
-
-      <div class="canje-block">
-        <div class="canje-title">MEP → Cable (enviás ARS, recibís USD)</div>
-        <div class="canje-line"><span class="canje-k">Enviás ARS</span><span class="canje-v">$1.000.000</span></div>
-        <div class="canje-line"><span class="canje-k">→ Comprás VN</span><span class="canje-v" id="cj-vn2">—</span></div>
-        <div class="canje-line"><span class="canje-k">→ Recibís USD cable</span><span class="canje-v hi" id="cj-usd2">—</span></div>
-        <div class="canje-line"><span class="canje-k">TC efectivo</span><span class="canje-v hi" id="cj-tc2">—</span></div>
-        <div class="canje-formula">VN = (ARS×100)/AL30 · USD = VN×AL30D/100</div>
-      </div>
-
-      <div class="dash-col-hdr" style="margin-top:1px"><span class="dash-col-hdr-icon">🥇</span> Commodities & Crypto</div>
-      <div class="item-row">
-        <span class="item-icon">🥇</span>
-        <div class="item-info"><div class="item-name">Oro</div><div class="item-sub">XAU/USD · spot</div></div>
-        <div class="item-right"><div class="item-val wait" id="gold-val">—</div><div class="item-pct flat" id="gold-pct">—</div></div>
-      </div>
-      <div class="item-row">
-        <span class="item-icon">🛢️</span>
-        <div class="item-info"><div class="item-name">WTI Petróleo</div><div class="item-sub">CL=F · USD/bbl</div></div>
-        <div class="item-right"><div class="item-val wait" id="oil-val">—</div><div class="item-pct flat" id="oil-pct">—</div></div>
-      </div>
-      <div class="item-row">
-        <span class="item-icon">₿</span>
-        <div class="item-info"><div class="item-name">Bitcoin</div><div class="item-sub">BTC/USD</div></div>
-        <div class="item-right"><div class="item-val wait" id="btc-val">—</div><div class="item-pct flat" id="btc-pct">—</div></div>
-      </div>
-    </div>
-
-  </div><!-- /dash-grid -->
+  </div><!-- /r-grid -->
 
 </div>
 </div><!-- /page-resumen -->
@@ -1704,8 +1540,7 @@ async function dFetchTC(){
   btn.textContent='↻ ...';sta.textContent='BUSCANDO...';sta.style.color='var(--amber)';
   try{
     const url=dMoneda==='bna'?'https://dolarapi.com/v1/dolares/oficial':'https://dolarapi.com/v1/dolares/mayorista';
-    const ctrl2 = new AbortController(); const t2 = setTimeout(()=>ctrl2.abort(),5000);
-    const r=await fetch(url,{signal:ctrl2.signal}).finally(()=>clearTimeout(t2));
+    const r=await fetch(url);
     const data=await r.json();
     const tc=data.venta||data.compra;
     if(tc){$$('d-tc').value=parseFloat(tc).toFixed(2);sta.textContent=`✓ ${fmtN(tc)}`;sta.style.color='var(--green)';dCalc();}
@@ -2256,34 +2091,20 @@ let lcCountdownTimer = null;
 
 // ── Fetch helpers ──
 async function lcFetchUrl(url) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), 8000);
-  try {
-    const r = await fetch(url, { signal: ctrl.signal });
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    return r.json();
-  } finally { clearTimeout(t); }
+  const r = await fetch(url);
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
 }
 
 async function lcFetchWithProxy(path) {
-  // Try direct first (works when data912 has CORS headers)
-  try {
-    const data = await lcFetchUrl('https://data912.com' + path);
-    return data;
-  } catch(e) { /* try proxy */ }
-
-  // Fallback 1: allorigins.win
+  // Try direct first
+  try { return await lcFetchUrl('https://data912.com' + path); } catch(e) {}
+  // Fallback: allorigins
   try {
     const res = await lcFetchUrl('https://api.allorigins.win/get?url=' + encodeURIComponent('https://data912.com' + path));
     return JSON.parse(res.contents);
-  } catch(e) { /* try next */ }
-
-  // Fallback 2: corsproxy.io
-  try {
-    return await lcFetchUrl('https://corsproxy.io/?' + encodeURIComponent('https://data912.com' + path));
-  } catch(e) { /* all failed */ }
-
-  throw new Error('CORS / red');
+  } catch(e) {}
+  throw new Error('unreachable');
 }
 
 // ── Recalculate pagoFinal for LECAP: capitaliza TEM mensualmente ──
@@ -2776,244 +2597,183 @@ lcFetch();
 
 
 // ════════════════════════════════════════════════════════
-//  DASHBOARD MODULE — solo APIs públicas con CORS
-//  dolarapi.com  ·  argentinadatos.com
+//  DASHBOARD — fuentes: dolarapi.com · api.argentinadatos.com
 // ════════════════════════════════════════════════════════
 
-const df  = n => (n??'—') === '—' ? '—' : Number(n).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const dfN = n => (n??'—') === '—' ? '—' : Math.round(Number(n)).toLocaleString('es-AR');
+
+// ════════════════════════════════════════════════════════
+//  RESUMEN — DASHBOARD JS
+//  APIs: dolarapi.com · api.argentinadatos.com · data912 via lcFetchWithProxy · Yahoo Finance
+
+// ═══════════════════════════════════════════════════════
+//  RESUMEN — Dashboard
+//  Mismo patrón que LECAP: fetch directo → allorigins
+// ═══════════════════════════════════════════════════════
+
+// formatters
+const df  = n => Number(n).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const dfK = n => { const v=Number(n); return v>=1e6?(v/1e6).toFixed(2)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':df(v); };
+const dfN = n => Math.round(Number(n)).toLocaleString('es-AR');
 
-// Simple fetch with timeout
-async function dGet(url, ms=8000) {
-  const ctrl = new AbortController();
-  const t = setTimeout(() => ctrl.abort(), ms);
+// pfetch: mismo patrón que lcFetchWithProxy
+// 1. fetch directo
+// 2. fallback allorigins.win
+async function pfetch(url) {
   try {
-    const r = await fetch(url, { signal: ctrl.signal });
-    if (!r.ok) throw new Error(r.status);
-    return r.json();
-  } finally {
-    clearTimeout(t);
-  }
+    const r = await fetch(url);
+    if (r.ok) return r.json();
+  } catch(e) {}
+  const r2 = await fetch('https://api.allorigins.win/get?url=' + encodeURIComponent(url));
+  if (!r2.ok) throw new Error('allorigins HTTP ' + r2.status);
+  const d = await r2.json();
+  return JSON.parse(d.contents);
 }
 
-// Set a text value on an element
-function dv(id, txt, cls) {
-  const el = document.getElementById(id);
-  if (el) { el.textContent = txt; if (cls) el.className = cls; }
+// DOM helpers
+function rv(id, txt)   { const e=document.getElementById(id); if(e) e.textContent=txt; }
+function rval(id, txt) { const e=document.getElementById(id); if(!e) return; e.textContent=txt; e.classList.remove('blank'); }
+function rchg(id, pct, label) {
+  const e=document.getElementById(id); if(!e) return;
+  const cls = pct>0.05?'up':pct<-0.05?'dn':'neu';
+  e.className='r-chg '+cls;
+  e.textContent = label!=null ? label : (pct>=0?'+':'')+pct.toFixed(2)+'%';
+}
+function ridx(id, pct) {
+  const e=document.getElementById(id); if(!e) return;
+  e.className='r-idx-chg '+(pct>0.05?'up':pct<-0.05?'dn':'neu');
+  e.textContent=(pct>=0?'+':'')+pct.toFixed(2)+'%';
 }
 
-// Set change badge
-function dbadge(id, pct, txt) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const cls = pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat';
-  el.className = 'tc-chg-badge ' + cls;
-  el.textContent = txt || ((pct >= 0 ? '+' : '') + pct.toFixed(2) + '%');
-}
-
-// Set index change
-function didx(id, pct) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.className = 'idx-chg ' + (pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat');
-  el.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
-}
-
-let _dashTimer = null;
+let _rTimer = null;
 
 async function dashFetch() {
-  const pill = document.getElementById('dash-pill');
-  const upd  = document.getElementById('dash-upd');
-  if (pill) { pill.className = 'dash-pill loading'; pill.textContent = 'ACTUALIZANDO...'; }
+  const pill = document.getElementById('r-pill');
+  if (pill) { pill.className='r-pill loading'; pill.textContent='ACTUALIZANDO...'; }
+  rv('r-upd', 'cargando...');
+
+  // Todas las llamadas en paralelo — mismo patrón que LECAP
+  const [rDolar, rBadlar, rPF, rCedears, rMerval, rSPY, rQQQ, rGLD, rBTC] =
+    await Promise.allSettled([
+      pfetch('https://dolarapi.com/v1/dolares'),
+      pfetch('https://api.argentinadatos.com/v1/finanzas/tasas/badlar'),
+      pfetch('https://api.argentinadatos.com/v1/finanzas/tasas/depositos30diasBancosPais'),
+      pfetch('https://data912.com/live/cedears'),
+      pfetch('https://data912.com/live/merval'),
+      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=2d'),
+      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=2d'),
+      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=2d'),
+      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?interval=1d&range=2d'),
+    ]);
 
   let ok = 0;
 
-  // ── 1. DÓLAR — dolarapi.com (CORS habilitado) ──────────────────
-  try {
-    const data = await dGet('https://dolarapi.com/v1/dolares');
-    const byKey = {};
-    data.forEach(d => { byKey[(d.casa||'').toLowerCase()] = d; });
-
-    const venta = d => d ? parseFloat(d.venta || d.compra || 0) : 0;
-    const compra= d => d ? parseFloat(d.compra || d.venta || 0) : 0;
-
-    const vCCL  = venta(byKey['contadoconliqui'] || byKey['cable']);
-    const vMEP  = venta(byKey['bolsa']           || byKey['mep']);
-    const vOfic = venta(byKey['oficial']);
-    const vBNA  = venta(byKey['nacion']           || byKey['nación']);
-
-    if (vCCL  > 0) { dv('tc-ccl',  '$' + df(vCCL),  'tc-card-val'); dbadge('tc-ccl-chg',  0, 'Cable'); }
-    if (vMEP  > 0) { dv('tc-mep',  '$' + df(vMEP),  'tc-card-val'); dbadge('tc-mep-chg',  0, 'Bolsa'); }
-    if (vOfic > 0) { dv('tc-bcra', '$' + df(vOfic), 'tc-card-val'); dbadge('tc-bcra-chg', 0, 'Mayorista'); }
-    if (vBNA  > 0) { dv('tc-bna',  '$' + df(vBNA),  'tc-card-val'); dbadge('tc-bna-chg',  0, 'Venta'); }
-
-    // Brecha
-    if (vCCL > 0 && vOfic > 0) {
-      const br = ((vCCL / vOfic) - 1) * 100;
-      dv('tc-brecha', br.toFixed(1) + '%', 'tc-card-val');
-      dbadge('tc-brecha-chg', br);
+  // ── DÓLAR ────────────────────────────────────────────────────
+  if (rDolar.status === 'fulfilled') {
+    const by = {};
+    rDolar.value.forEach(d => { by[(d.casa||'').toLowerCase()] = d; });
+    const v = d => d ? parseFloat(d.venta||d.compra||0) : 0;
+    const vCCL = v(by['contadoconliqui']||by['cable']);
+    const vMEP = v(by['bolsa']||by['mep']);
+    const vOfi = v(by['oficial']);
+    const vBNA = v(by['nacion']||by['nación']);
+    const vBlu = v(by['blue']);
+    if(vCCL>0){rval('r-ccl','$'+df(vCCL));rchg('r-ccl-chg',0,'C/D');}
+    if(vMEP>0){rval('r-mep','$'+df(vMEP));rchg('r-mep-chg',0,'Bolsa');}
+    if(vOfi>0){rval('r-bcra','$'+df(vOfi));rchg('r-bcra-chg',0,'BCRA');}
+    if(vBNA>0){rval('r-bna','$'+df(vBNA));rchg('r-bna-chg',0,'BNA');}
+    if(vBlu>0){rval('r-blue','$'+df(vBlu));rchg('r-blue-chg',0,'Blue');}
+    if(vCCL>0&&vOfi>0){
+      const br=((vCCL/vOfi)-1)*100;
+      rval('r-brecha',br.toFixed(1)+'%');
+      rchg('r-brecha-chg',br);
     }
-
-    // CANJE AL30 con CCL y MEP de dolarapi
-    if (vCCL > 0 && vMEP > 0) {
-      // CCL → MEP: enviás 1000 USD cable, recibís ARS al MEP
-      // Canje real: comprás AL30D (USD) con cable, vendés AL30 (ARS) en MEP
-      const recibisARS = 1000 * vMEP;   // aprox con tipo de cambio
-      const pagasARS   = 1000000;
-      const recibisUSD = pagasARS / vCCL;
-
-      dv('cj-ccl',      '$' + df(vCCL));
-      dv('cj-send-usd', 'u$s 1.000 cable');
-      dv('cj-recv-ars', '$' + dfK(recibisARS));
-      dv('cj-buy-vn',   '—');
-      dv('cj-send-ars', '$1.000.000');
-      dv('cj-recv-usd', 'u$s' + df(recibisUSD));
-      dv('cj-tc-eff',   '$' + df(vCCL));
-    }
-
+    rv('r-tc-src','dolarapi.com · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'}));
     ok++;
-  } catch(e) { console.warn('dolarapi:', e.message); }
+  } else { console.warn('dolar:', rDolar.reason); }
 
-  // ── 2. ROFEX — argentinadatos.com ─────────────────────────────
+  // ── TASAS ────────────────────────────────────────────────────
+  const lastVal = r => {
+    if (r.status!=='fulfilled') return null;
+    const arr = Array.isArray(r.value) ? r.value : [];
+    const item = arr[arr.length-1];
+    return item ? parseFloat(item.valor||item.tna||item.value||0) : null;
+  };
+  const vB=lastVal(rBadlar), vP=lastVal(rPF);
+  if(vB>0){rval('r-badlar',vB.toFixed(2)+'%');ok++;}
+  else { console.warn('badlar:', rBadlar.reason); }
+  if(vP>0) rval('r-pf',vP.toFixed(2)+'%');
+  else { console.warn('pf:', rPF.reason); }
+
+  // LECAP corta desde lcData ya cargado
   try {
-    const data = await dGet('https://argentinadatos.com/api/v1/finanzas/futuros-dolar');
-    const arr  = Array.isArray(data) ? data : [];
-    const tbody = document.getElementById('rofex-tbody');
-    if (arr.length && tbody) {
-      tbody.innerHTML = arr.slice(0, 7).map(r => {
-        const v   = parseFloat(r.precio || r.ultimo || 0);
-        const chg = parseFloat(r.variacion || r.change || 0);
-        const pct = parseFloat(r.porcentaje || r.variacion_pct || 0);
-        const cls = pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat';
-        const s   = pct >= 0 ? '+' : '';
-        const sc  = chg >= 0 ? '+' : '';
-        return `<tr>
-          <td>${r.contrato||r.mes||'—'}</td>
-          <td class="rofex-price">${v ? '$'+df(v) : '—'}</td>
-          <td class="rofex-chg ${cls}">${chg ? sc+df(chg) : '—'}</td>
-          <td class="rofex-chg ${cls}">${pct ? s+pct.toFixed(2)+'%' : '—'}</td>
-          <td style="color:var(--amber)">${v ? '$'+df(v) : '—'}</td>
-        </tr>`;
-      }).join('');
-      ok++;
+    if(window.lcData&&lcData.length>0){
+      const sh=[...lcData].sort((a,b)=>a.days-b.days)[0];
+      if(sh){const e=document.getElementById('r-lecap');if(e){e.textContent=sh.tir.toFixed(2)+'% · '+sh.ticker;e.classList.remove('blank');}}
     }
-  } catch(e) { console.warn('rofex:', e.message); }
+  } catch(e){}
 
-  // ── 3. TASAS — argentinadatos.com ─────────────────────────────
-  try {
-    const [badlar, pf] = await Promise.allSettled([
-      dGet('https://argentinadatos.com/api/v1/finanzas/tasas/badlar'),
-      dGet('https://argentinadatos.com/api/v1/finanzas/tasas/depositos30diasBancosPais'),
-    ]);
-
-    if (badlar.status === 'fulfilled') {
-      const arr  = Array.isArray(badlar.value) ? badlar.value : [];
-      const last = arr[arr.length - 1];
-      if (last) { const v=parseFloat(last.valor||0); if(v) dv('tasa-badlar', v.toFixed(2)+'%', 'tasa-v'); }
-    }
-    if (pf.status === 'fulfilled') {
-      const arr  = Array.isArray(pf.value) ? pf.value : [];
-      const last = arr[arr.length - 1];
-      if (last) { const v=parseFloat(last.valor||0); if(v) dv('tasa-pf', v.toFixed(2)+'%', 'tasa-v'); }
-    }
+  // ── CEDEARS (data912) ────────────────────────────────────────
+  if (rCedears.status === 'fulfilled') {
+    const arr = Array.isArray(rCedears.value) ? rCedears.value : (rCedears.value?.data||rCedears.value?.items||[]);
+    const byT = {};
+    arr.forEach(b=>{ const t=(b.ticker||b.t||'').trim().toUpperCase(); if(t) byT[t]=b; });
+    const sc = (tk,vi,ci) => {
+      const b=byT[tk]; if(!b) return;
+      const v=parseFloat(b.c||b.precio||b.last||0), p=parseFloat(b.pct_change||b.variacion_pct||b.var||0);
+      if(v>0){
+        const e=document.getElementById(vi); if(e){e.textContent='$'+dfK(v);e.classList.remove('blank');}
+        const c=document.getElementById(ci); if(c){c.className='r-idx-chg '+(p>0.05?'up':p<-0.05?'dn':'neu');c.textContent=(p>=0?'+':'')+p.toFixed(2)+'%';}
+      }
+    };
+    sc('SPY','r-cspy-val','r-cspy-chg');
+    sc('QQQ','r-cqqq-val','r-cqqq-chg');
     ok++;
-  } catch(e) { console.warn('tasas:', e.message); }
+  } else { console.warn('cedears:', rCedears.reason); }
 
-  // LECAP corta desde lcData
-  try {
-    if (window.lcData && lcData.length > 0) {
-      const sh = [...lcData].sort((a,b) => a.days - b.days)[0];
-      if (sh) dv('tasa-lecap', sh.tir.toFixed(2)+'% · '+sh.ticker, 'tasa-v green');
-    }
-  } catch(e) {}
-
-  // ── 4. MERVAL, CEDEARS, ÍNDICES — data912 (intentamos directo) ──
-  try {
-    const [bonds, cedears] = await Promise.allSettled([
-      dGet('https://data912.com/live/arg_bonds'),
-      dGet('https://data912.com/live/cedears'),
-    ]);
-
-    // AL30 / AL30D → CCL real
-    if (bonds.status === 'fulfilled') {
-      const arr = Array.isArray(bonds.value) ? bonds.value : (bonds.value?.data||[]);
-      const byT = Object.fromEntries(arr.map(b=>[(b.ticker||b.t||'').toUpperCase().trim(),b]));
-      const al30  = byT['AL30'];
-      const al30d = byT['AL30D'];
-      const px = b => b ? parseFloat(b.c||b.precio||b.last||0) : 0;
-      const pARS = px(al30), pUSD = px(al30d);
-      if (pARS > 0 && pUSD > 0) {
-        const cclBonos = pARS / pUSD;
-        // Override CCL con precio real de bonos si tenemos datos
-        dv('tc-ccl', '$' + df(cclBonos), 'tc-card-val');
-        dv('cj-al30-ars', '$' + df(pARS));
-        dv('cj-al30-usd', 'u$s' + df(pUSD));
-        dv('cj-ccl', '$' + df(cclBonos));
-        const vn1 = (1000*100)/pUSD;
-        dv('cj-recv-ars', '$' + dfK(vn1*pARS/100));
-        dv('cj-buy-vn', vn1.toFixed(0)+' VN');
-        const vn2 = (1e6*100)/pARS;
-        dv('cj-recv-usd', 'u$s' + df(vn2*pUSD/100));
-        dv('cj-tc-eff', '$' + df(cclBonos));
+  // ── MERVAL (data912) ─────────────────────────────────────────
+  if (rMerval.status === 'fulfilled') {
+    const arr = Array.isArray(rMerval.value) ? rMerval.value : [rMerval.value];
+    const it = arr[0];
+    if(it){
+      const v=parseFloat(it.c||it.valor||it.last||0), p=parseFloat(it.pct_change||it.variacion_pct||0);
+      if(v>0){
+        rval('r-merval-val',dfN(v));
+        const e=document.getElementById('r-merval-chg');
+        if(e){e.className='r-merval-chg '+(p>0?'up':p<0?'dn':'neu');e.textContent=(p>=0?'+':'')+p.toFixed(2)+'%';}
         ok++;
       }
     }
+  } else { console.warn('merval:', rMerval.reason); }
 
-    // CEDEARs → SPY, QQQ en ARS
-    if (cedears.status === 'fulfilled') {
-      const arr = Array.isArray(cedears.value) ? cedears.value : (cedears.value?.data||[]);
-      const byT = Object.fromEntries(arr.map(b=>[(b.ticker||b.t||'').toUpperCase().trim(),b]));
-      const set = (t, vi, ci, fmt) => {
-        const b=byT[t]; if(!b) return;
-        const v=parseFloat(b.c||b.precio||b.last||0), p=parseFloat(b.pct_change||b.var||0);
-        if(v>0){ dv(vi, fmt(v), 'idx-val'); didx(ci,p); }
-      };
-      set('SPY','cspy-val','cspy-chg',v=>'$'+dfK(v));
-      set('QQQ','cqqq-val','cqqq-chg',v=>'$'+dfK(v));
-      // También en los cards de índices USD (aprox via CCL)
-      const cclV = parseFloat((document.getElementById('tc-ccl')?.textContent||'0').replace(/[$.,]/g,'').replace(',','.'));
-    }
-  } catch(e) { console.warn('data912:', e.message); }
+  // ── YAHOO FINANCE ─────────────────────────────────────────────
+  const yparse = (r, sym) => {
+    if(r.status!=='fulfilled'){console.warn('yahoo '+sym+':', r.reason);return null;}
+    const meta=r.value?.chart?.result?.[0]?.meta; if(!meta) return null;
+    const price=meta.regularMarketPrice, prev=meta.chartPreviousClose||meta.previousClose;
+    return {price, pct: prev>0?((price-prev)/prev)*100:0};
+  };
+  const setSym = (r, sym, vid, cid, fmt) => {
+    const d=yparse(r,sym); if(!d) return;
+    const e=document.getElementById(vid); if(e){e.textContent=fmt(d.price);e.classList.remove('blank');}
+    ridx(cid,d.pct); ok++;
+  };
+  setSym(rSPY,'SPY','r-spy-val','r-spy-chg',  v=>'u$s'+df(v));
+  setSym(rQQQ,'QQQ','r-qqq-val','r-qqq-chg',  v=>'u$s'+df(v));
+  setSym(rGLD,'GLD','r-gold-val','r-gold-chg', v=>'u$s'+df(v));
+  setSym(rBTC,'BTC-USD','r-btc-val','r-btc-chg',v=>'u$s'+dfK(v));
 
-  // Merval
-  try {
-    const data = await dGet('https://data912.com/live/merval');
-    const arr = Array.isArray(data) ? data : [data];
-    const m   = arr[0];
-    if (m) {
-      const v=parseFloat(m.c||m.valor||m.last||0), p=parseFloat(m.pct_change||m.variacion_pct||0);
-      if(v>0){ dv('merval-val', dfN(v), 'idx-val'); didx('merval-chg',p); }
-    }
-  } catch(e) {}
+  // ── STATUS ───────────────────────────────────────────────────
+  const now=new Date().toLocaleTimeString('es-AR');
+  if(pill){pill.className=ok>0?'r-pill live':'r-pill err';pill.textContent=ok>0?'LIVE ●':'⚠ SIN DATOS';}
+  rv('r-upd', now+' · próx. 15s');
 
-  // SPY/QQQ USD via Yahoo Finance (no CORS issues en la mayoría de browsers)
-  try {
-    const [rSPY, rQQQ] = await Promise.allSettled([
-      dGet('https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=2d', 5000),
-      dGet('https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=2d', 5000),
-    ]);
-    const parseYahoo = r => {
-      const meta = r?.chart?.result?.[0]?.meta;
-      if (!meta) return null;
-      return { v: meta.regularMarketPrice, p: ((meta.regularMarketPrice - meta.chartPreviousClose) / meta.chartPreviousClose) * 100 };
-    };
-    if (rSPY.status==='fulfilled') { const d=parseYahoo(rSPY.value); if(d){ dv('spy-val','u$s'+df(d.v),'idx-val'); didx('spy-chg',d.p); } }
-    if (rQQQ.status==='fulfilled') { const d=parseYahoo(rQQQ.value); if(d){ dv('qqq-val','u$s'+df(d.v),'idx-val'); didx('qqq-chg',d.p); } }
-  } catch(e) {}
-
-  // ── STATUS ──────────────────────────────────────────────────────
-  const now = new Date().toLocaleTimeString('es-AR');
-  if (pill) { pill.className = ok >= 2 ? 'dash-pill live' : 'dash-pill err'; pill.textContent = ok >= 2 ? 'LIVE ●' : '⚠ PARCIAL'; }
-  if (upd)  upd.textContent = now + ' · próx. 15s';
-
-  clearInterval(_dashTimer);
-  let cd = 15;
-  _dashTimer = setInterval(() => {
+  clearInterval(_rTimer);
+  let cd=15;
+  _rTimer=setInterval(()=>{
     cd--;
-    if (upd) upd.textContent = now + ' · próx. ' + cd + 's';
-    if (cd <= 0) { clearInterval(_dashTimer); dashFetch(); }
-  }, 1000);
+    rv('r-upd', now+' · próx. '+cd+'s');
+    if(cd<=0){clearInterval(_rTimer);dashFetch();}
+  },1000);
 }
 
 dashFetch();

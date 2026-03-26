@@ -539,147 +539,132 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .lc-cstat-sub{font-size:10px;color:var(--gray);margin-top:1px;font-family:var(--mono)}
 
 /* ══════════════════════════════════
-   DASHBOARD / RESUMEN PAGE
+   DASHBOARD — diseño limpio
 ══════════════════════════════════ */
-.dash-page{
-  background:var(--navy);min-height:calc(100vh - 98px);
-  padding:0 0 40px;
-}
-
-/* top status bar */
+.dash-page{background:#060c18;min-height:calc(100vh - 98px);padding:0 0 48px}
 .dash-topbar{
-  background:var(--navy2);border-bottom:1px solid var(--border);
+  background:#0a1222;border-bottom:1px solid #0f1e34;
   display:flex;align-items:center;justify-content:space-between;
-  padding:7px 20px;font-family:var(--mono);font-size:10px;
+  padding:7px 24px;font-family:var(--mono);font-size:10px;
 }
 .dash-topbar-left{display:flex;align-items:center;gap:12px}
-.dash-topbar-title{font-size:11px;font-weight:700;color:var(--blue2);letter-spacing:.08em}
-.dash-pill{
-  font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;
-  border:1px solid;letter-spacing:.07em;
-}
-.dash-pill.live{color:var(--green);border-color:var(--green2);background:rgba(34,214,138,.08);animation:pillblink 2s step-end infinite}
-.dash-pill.loading{color:var(--amber);border-color:#7a5a10;background:rgba(120,80,10,.15)}
-.dash-pill.err{color:var(--red);border-color:var(--red2);background:rgba(255,77,106,.08)}
-.dash-upd{color:var(--gray);font-size:10px}
+.dash-topbar-title{font-size:11px;font-weight:700;color:#5b8def;letter-spacing:.1em;text-transform:uppercase}
+.dash-pill{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid;letter-spacing:.07em}
+.dash-pill.live{color:#22d68a;border-color:#16a86a;background:rgba(34,214,138,.08)}
+.dash-pill.loading{color:#f0b429;border-color:#7a5a10;background:rgba(120,80,10,.15);animation:pillblink 1s step-end infinite}
+.dash-pill.err{color:#ff4d6a;border-color:#cc3a55;background:rgba(255,77,106,.08)}
+.dash-upd{color:#2a4060;font-size:10px}
 .dash-refresh-btn{
-  background:var(--navy3);border:1px solid var(--border2);color:var(--blue3);
-  font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 10px;
-  cursor:pointer;height:24px;border-radius:3px;letter-spacing:.05em;transition:all .12s;
+  background:#0a1222;border:1px solid #1a3050;color:#5b8def;
+  font-family:var(--mono);font-size:10px;font-weight:700;padding:2px 12px;
+  cursor:pointer;height:24px;border-radius:4px;letter-spacing:.06em;transition:all .12s;
 }
-.dash-refresh-btn:hover{border-color:var(--blue);color:var(--blue2)}
-
-/* section label */
-.dash-sec{
-  padding:8px 20px 6px;font-size:9px;font-weight:700;
-  color:var(--blue3);letter-spacing:.2em;text-transform:uppercase;
-  border-bottom:1px solid var(--border);
-  background:rgba(58,111,216,.05);
+.dash-refresh-btn:hover{border-color:#5b8def;color:#fff}
+.d-sec{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 24px 8px;border-bottom:1px solid #0a1828;
+  background:#070e1c;margin-top:1px;
+}
+.d-sec-icon{font-size:13px}
+.d-sec-label{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#2a4870;font-family:var(--mono)}
+.d-sec-hint{font-size:9px;color:#1a2e44;font-family:var(--mono);margin-left:auto;letter-spacing:.06em}
+/* TC STRIP */
+.tc-strip{display:grid;grid-template-columns:repeat(6,1fr);background:#050b16;border-bottom:2px solid #08121e}
+.tc-cell{
+  padding:16px 20px;border-right:1px solid #0a1828;
+  display:flex;flex-direction:column;gap:5px;
+  transition:background .12s;cursor:default;position:relative;overflow:hidden;
+}
+.tc-cell:last-child{border-right:none}
+.tc-cell:hover{background:#0a1420}
+.tc-cell::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:0 0 2px 2px;opacity:.7}
+.tc-cell.blue::after{background:linear-gradient(90deg,#3a6fd8,transparent)}
+.tc-cell.green::after{background:linear-gradient(90deg,#22d68a,transparent)}
+.tc-cell.amber::after{background:linear-gradient(90deg,#f0b429,transparent)}
+.tc-cell.red::after{background:linear-gradient(90deg,#ff4d6a,transparent)}
+.tc-cell.cyan::after{background:linear-gradient(90deg,#22d4f0,transparent)}
+.tc-cell.purple::after{background:linear-gradient(90deg,#a06fef,transparent)}
+.tc-lbl{font-size:9px;font-weight:700;color:#2a4060;letter-spacing:.16em;text-transform:uppercase;font-family:var(--mono)}
+.tc-val{font-size:23px;font-weight:800;font-family:var(--mono);color:#d8e8ff;line-height:1.1;letter-spacing:-.02em}
+.tc-val.wait{color:#0f1e30;font-size:16px}
+.tc-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.tc-badge{font-size:10px;font-weight:700;font-family:var(--mono);padding:2px 7px;border-radius:3px}
+.tc-badge.up{color:#22d68a;background:rgba(34,214,138,.1);border:1px solid rgba(34,214,138,.2)}
+.tc-badge.dn{color:#ff4d6a;background:rgba(255,77,106,.1);border:1px solid rgba(255,77,106,.2)}
+.tc-badge.flat{color:#2a4060;background:rgba(42,64,96,.1);border:1px solid rgba(42,64,96,.2)}
+.tc-sub{font-size:9px;color:#1a2e44;font-family:var(--mono)}
+/* MAIN GRID */
+.dash-grid{display:grid;grid-template-columns:1.1fr 1fr 1fr;border-bottom:1px solid #08121e}
+.dash-col{border-right:1px solid #0a1828;display:flex;flex-direction:column}
+.dash-col:last-child{border-right:none}
+.dash-col-hdr{
+  background:#070e1c;border-bottom:1px solid #0a1828;
+  padding:7px 18px;font-size:9px;font-weight:700;
+  color:#2a4870;letter-spacing:.18em;text-transform:uppercase;font-family:var(--mono);
   display:flex;align-items:center;gap:8px;
 }
-.dash-sec-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-
-/* ── TC CARDS ── */
-.tc-cards{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  border-bottom:1px solid var(--border);
+.dash-col-hdr-icon{font-size:12px}
+/* ROFEX */
+.rofex-inner{overflow-x:auto}
+.rofex-tbl{width:100%;border-collapse:collapse;font-family:var(--mono)}
+.rofex-tbl th{
+  font-size:9px;font-weight:700;color:#1e3050;letter-spacing:.12em;text-transform:uppercase;
+  padding:6px 14px;text-align:right;border-bottom:1px solid #08121e;white-space:nowrap;background:#060c18;
 }
-.tc-card{
-  padding:14px 18px;border-right:1px solid var(--border);
-  background:var(--navy);transition:background .12s;cursor:default;
-  display:flex;flex-direction:column;gap:4px;
-}
-.tc-card:last-child{border-right:none}
-.tc-card:hover{background:rgba(58,111,216,.06)}
-.tc-card-label{font-size:9px;font-weight:700;color:var(--white2);letter-spacing:.16em;text-transform:uppercase;font-family:var(--mono)}
-.tc-card-val{font-size:26px;font-weight:800;font-family:var(--mono);color:var(--white);letter-spacing:-.02em;line-height:1}
-.tc-card-val.loading{color:var(--border2);font-size:20px}
-.tc-card-chg{display:flex;align-items:center;gap:6px;margin-top:2px}
-.tc-chg-badge{
-  font-size:10px;font-weight:700;font-family:var(--mono);
-  padding:1px 6px;border-radius:3px;
-}
-.tc-chg-badge.up{color:#18c77a;background:rgba(24,199,122,.12);border:1px solid rgba(24,199,122,.25)}
-.tc-chg-badge.dn{color:#ff5a72;background:rgba(255,90,114,.12);border:1px solid rgba(255,90,114,.25)}
-.tc-chg-badge.flat{color:var(--gray);background:rgba(122,153,196,.08);border:1px solid rgba(122,153,196,.15)}
-.tc-card-sub{font-size:10px;color:var(--gray);font-family:var(--mono)}
-
-/* ── ROFEX MINI TABLE ── */
-.rofex-wrap{padding:10px 20px;border-bottom:1px solid var(--border);overflow-x:auto}
-.rofex-table{border-collapse:collapse;font-family:var(--mono);width:100%}
-.rofex-table th{
-  font-size:9px;font-weight:700;color:var(--white2);letter-spacing:.14em;text-transform:uppercase;
-  padding:4px 14px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;
-}
-.rofex-table th:first-child{text-align:left}
-.rofex-table td{
-  font-size:12px;padding:6px 14px;text-align:right;border-bottom:1px solid rgba(42,74,122,.3);
-  color:var(--white2);white-space:nowrap;
-}
-.rofex-table td:first-child{text-align:left;color:var(--blue3);font-weight:700}
-.rofex-price{color:var(--white);font-weight:600}
-.rofex-chg.up{color:var(--green)}.rofex-chg.dn{color:var(--red)}.rofex-chg.flat{color:var(--gray)}
-
-/* ── MID GRID (Tasas + Indices + Canje) ── */
-.dash-mid{
-  display:grid;grid-template-columns:1fr 1fr 1fr;
-  border-bottom:1px solid var(--border);
-}
-.dash-col{border-right:1px solid var(--border)}
-.dash-col:last-child{border-right:none}
-
-.dash-col-hdr{
-  background:rgba(58,111,216,.07);border-bottom:1px solid var(--border);
-  padding:6px 16px;font-size:9px;font-weight:700;
-  color:var(--blue3);letter-spacing:.16em;text-transform:uppercase;font-family:var(--mono);
-}
-
-/* Tasa rows */
+.rofex-tbl th:first-child{text-align:left}
+.rofex-tbl td{font-size:12px;padding:7px 14px;text-align:right;border-bottom:1px solid #08121e;color:#5a7a9a;white-space:nowrap}
+.rofex-tbl tr:hover td{background:rgba(58,111,216,.04)}
+.rofex-tbl td:first-child{text-align:left;color:#4a7ab0;font-weight:700;font-size:11px}
+.rofex-px{color:#c8d8f0;font-weight:700}
+.rofex-up{color:#22d68a;font-weight:600}.rofex-dn{color:#ff4d6a;font-weight:600}.rofex-flat{color:#2a4060}
+/* TASAS */
 .tasa-row{
   display:flex;justify-content:space-between;align-items:center;
-  padding:8px 16px;border-bottom:1px solid rgba(42,74,122,.25);
-  font-family:var(--mono);
+  padding:10px 18px;border-bottom:1px solid #08121e;
+  font-family:var(--mono);transition:background .1s;
 }
 .tasa-row:last-child{border-bottom:none}
-.tasa-row:hover{background:rgba(58,111,216,.06)}
-.tasa-k{font-size:11px;color:var(--white2)}
-.tasa-v{font-size:13px;font-weight:700;color:var(--amber)}
-.tasa-v.blue{color:var(--blue2)}
-.tasa-v.green{color:var(--green)}
-
-/* Index cards */
-.idx-card{
-  padding:12px 16px;border-bottom:1px solid rgba(42,74,122,.25);
+.tasa-row:hover{background:rgba(58,111,216,.04)}
+.tasa-k{font-size:11px;color:#4a6a8a;line-height:1.3}
+.tasa-k small{display:block;font-size:9px;color:#1a2e44;letter-spacing:.04em;margin-top:2px}
+.tasa-v{font-size:16px;font-weight:800;font-family:var(--mono);color:#f0b429}
+.tasa-v.blue{color:#5b8def}.tasa-v.green{color:#22d68a}.tasa-v.wait{color:#0f1e30}
+/* ITEM ROWS */
+.item-row{
   display:flex;justify-content:space-between;align-items:center;
+  padding:10px 18px;border-bottom:1px solid #08121e;
+  font-family:var(--mono);transition:background .1s;
 }
-.idx-card:last-child{border-bottom:none}
-.idx-card:hover{background:rgba(58,111,216,.06)}
-.idx-left{}
-.idx-name{font-size:10px;font-weight:700;color:var(--white2);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono)}
-.idx-sub{font-size:9px;color:var(--gray);margin-top:2px;font-family:var(--mono)}
-.idx-right{text-align:right}
-.idx-val{font-size:18px;font-weight:800;font-family:var(--mono);color:var(--white)}
-.idx-chg{font-size:11px;font-weight:700;font-family:var(--mono);margin-top:3px}
-.idx-chg.up{color:var(--green)}.idx-chg.dn{color:var(--red)}.idx-chg.flat{color:var(--gray)}
-
-/* Canje table */
-.canje-card{
-  padding:10px 16px;border-bottom:1px solid rgba(42,74,122,.25);
-  font-family:var(--mono);
-}
-.canje-card:last-child{border-bottom:none}
-.canje-card:hover{background:rgba(58,111,216,.06)}
-.canje-ticker{font-size:10px;font-weight:700;color:var(--blue3);letter-spacing:.08em;margin-bottom:6px}
-.canje-row{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
-.canje-k{font-size:10px;color:var(--gray)}
-.canje-v{font-size:13px;font-weight:700;color:var(--white)}
-.canje-v.green{color:var(--green)}.canje-v.red{color:var(--red)}
-.canje-formula{font-size:9px;color:var(--gray2);margin-top:4px;letter-spacing:.04em}
-
-/* sparkline placeholder */
-.spark-wrap{padding:0 20px 0;overflow-x:auto}
+.item-row:last-child{border-bottom:none}
+.item-row:hover{background:rgba(58,111,216,.04)}
+.item-icon{font-size:16px;margin-right:10px;flex-shrink:0;opacity:.85}
+.item-info{flex:1;min-width:0}
+.item-name{font-size:11px;font-weight:700;color:#8aaacb;letter-spacing:.04em}
+.item-sub{font-size:9px;color:#1a2e44;margin-top:1px;letter-spacing:.04em}
+.item-right{text-align:right;flex-shrink:0}
+.item-val{font-size:15px;font-weight:800;color:#d8e8ff}
+.item-val.wait{color:#0f1e30}
+.item-pct{font-size:11px;font-weight:700;margin-top:2px}
+.item-pct.up{color:#22d68a}.item-pct.dn{color:#ff4d6a}.item-pct.flat{color:#2a4060}
+/* CANJE */
+.canje-block{padding:12px 18px;border-bottom:1px solid #08121e;font-family:var(--mono)}
+.canje-block:last-child{border-bottom:none}
+.canje-block:hover{background:rgba(58,111,216,.03)}
+.canje-title{font-size:10px;font-weight:700;color:#2a4870;letter-spacing:.1em;margin-bottom:8px;text-transform:uppercase}
+.canje-line{display:flex;justify-content:space-between;align-items:center;padding:3px 0}
+.canje-k{font-size:10px;color:#2a4060}
+.canje-v{font-size:13px;font-weight:700;color:#8aaacb}
+.canje-v.hi{color:#22d68a}
+.canje-sep{border-top:1px solid #08121e;margin:6px 0}
+.canje-formula{font-size:9px;color:#101e2e;margin-top:5px;letter-spacing:.04em}
+/* MERVAL CARD */
+.merval-card{background:linear-gradient(135deg,#060c18,#0a1428);padding:18px 18px 14px;border-bottom:1px solid #0a1828}
+.merval-label{font-size:9px;font-weight:700;color:#1e3050;letter-spacing:.18em;text-transform:uppercase;font-family:var(--mono);margin-bottom:6px}
+.merval-val{font-size:30px;font-weight:900;font-family:var(--mono);color:#fff;letter-spacing:-.03em;line-height:1}
+.merval-pct{font-size:13px;font-weight:700;font-family:var(--mono);margin-top:4px}
+.merval-pct.up{color:#22d68a}.merval-pct.dn{color:#ff4d6a}.merval-pct.flat{color:#2a4060}
 </style>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 </head>
@@ -751,207 +736,241 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 <div class="page active" id="page-resumen">
 <div class="dash-page">
 
-  <!-- top status bar -->
   <div class="dash-topbar">
     <div class="dash-topbar-left">
-      <span class="dash-topbar-title">MERCADO ARGENTINO — RESUMEN</span>
+      <span class="dash-topbar-title">◉ MONITOR DE MERCADO</span>
       <span class="dash-pill loading" id="dash-pill">CARGANDO...</span>
       <span class="dash-upd" id="dash-upd">—</span>
     </div>
     <button class="dash-refresh-btn" onclick="dashFetch()">↻ ACTUALIZAR</button>
   </div>
 
-  <!-- ── TIPOS DE CAMBIO ── -->
-  <div class="dash-sec">
-    <div class="dash-sec-dot" style="background:#f0b429"></div>
-    TIPOS DE CAMBIO
+  <!-- TIPOS DE CAMBIO -->
+  <div class="d-sec">
+    <span class="d-sec-icon">💱</span>
+    <span class="d-sec-label">Tipos de Cambio</span>
+    <span class="d-sec-hint" id="d-tc-time">—</span>
   </div>
-  <div class="tc-cards">
-    <div class="tc-card">
-      <div class="tc-card-label">CCL (Cable)</div>
-      <div class="tc-card-val loading" id="tc-ccl">—</div>
-      <div class="tc-card-chg"><span class="tc-chg-badge flat" id="tc-ccl-chg">—</span><span class="tc-card-sub" id="tc-ccl-sub">AL30 · C/D</span></div>
+  <div class="tc-strip">
+    <div class="tc-cell blue">
+      <div class="tc-lbl">CCL · Cable</div>
+      <div class="tc-val wait" id="tc-ccl">—</div>
+      <div class="tc-row">
+        <span class="tc-badge flat" id="tc-ccl-d">—</span>
+        <span class="tc-sub">AL30 C/D</span>
+      </div>
     </div>
-    <div class="tc-card">
-      <div class="tc-card-label">MEP (Bolsa)</div>
-      <div class="tc-card-val loading" id="tc-mep">—</div>
-      <div class="tc-card-chg"><span class="tc-chg-badge flat" id="tc-mep-chg">—</span><span class="tc-card-sub" id="tc-mep-sub">AL30 · 48hs</span></div>
+    <div class="tc-cell cyan">
+      <div class="tc-lbl">MEP · Bolsa</div>
+      <div class="tc-val wait" id="tc-mep">—</div>
+      <div class="tc-row">
+        <span class="tc-badge flat" id="tc-mep-d">—</span>
+        <span class="tc-sub">AL30 48hs</span>
+      </div>
     </div>
-    <div class="tc-card">
-      <div class="tc-card-label">BCRA A3500</div>
-      <div class="tc-card-val loading" id="tc-bcra">—</div>
-      <div class="tc-card-chg"><span class="tc-chg-badge flat" id="tc-bcra-chg">—</span><span class="tc-card-sub">Oficial mayorista</span></div>
+    <div class="tc-cell amber">
+      <div class="tc-lbl">BCRA A3500</div>
+      <div class="tc-val wait" id="tc-bcra">—</div>
+      <div class="tc-row">
+        <span class="tc-badge flat" id="tc-bcra-d">—</span>
+        <span class="tc-sub">Oficial mayorista</span>
+      </div>
     </div>
-    <div class="tc-card">
-      <div class="tc-card-label">BNA</div>
-      <div class="tc-card-val loading" id="tc-bna">—</div>
-      <div class="tc-card-chg"><span class="tc-chg-badge flat" id="tc-bna-chg">—</span><span class="tc-card-sub">Banco Nación venta</span></div>
+    <div class="tc-cell amber" style="--c:#e8941a">
+      <div class="tc-lbl">BNA</div>
+      <div class="tc-val wait" id="tc-bna">—</div>
+      <div class="tc-row">
+        <span class="tc-badge flat" id="tc-bna-d">—</span>
+        <span class="tc-sub">Banco Nación venta</span>
+      </div>
     </div>
-    <div class="tc-card">
-      <div class="tc-card-label">Brecha CCL / BCRA</div>
-      <div class="tc-card-val loading" id="tc-brecha">—</div>
-      <div class="tc-card-chg"><span class="tc-chg-badge flat" id="tc-brecha-chg">—</span><span class="tc-card-sub">spread</span></div>
+    <div class="tc-cell green">
+      <div class="tc-lbl">Blue</div>
+      <div class="tc-val wait" id="tc-blue">—</div>
+      <div class="tc-row">
+        <span class="tc-badge flat" id="tc-blue-d">—</span>
+        <span class="tc-sub">Informal</span>
+      </div>
+    </div>
+    <div class="tc-cell red">
+      <div class="tc-lbl">Brecha CCL / BCRA</div>
+      <div class="tc-val wait" id="tc-brecha">—</div>
+      <div class="tc-row">
+        <span class="tc-badge flat" id="tc-brecha-d">—</span>
+        <span class="tc-sub">spread cambiario</span>
+      </div>
     </div>
   </div>
 
-  <!-- ── ROFEX ── -->
-  <div class="dash-sec">
-    <div class="dash-sec-dot" style="background:#22d4f0"></div>
-    ROFEX — FUTUROS DÓLAR
-  </div>
-  <div class="rofex-wrap">
-    <table class="rofex-table">
-      <thead>
-        <tr>
-          <th>CONTRATO</th>
-          <th>PRECIO</th>
-          <th>VAR. DÍA</th>
-          <th>VAR. %</th>
-          <th>TC IMPLÍCITO</th>
-        </tr>
-      </thead>
-      <tbody id="rofex-tbody">
-        <tr><td colspan="5" style="text-align:center;padding:20px;color:var(--gray)">Cargando...</td></tr>
-      </tbody>
-    </table>
-  </div>
+  <!-- MAIN 3-COL GRID -->
+  <div class="dash-grid">
 
-  <!-- ── MID GRID ── -->
-  <div class="dash-mid">
-
-    <!-- TASAS -->
+    <!-- COL 1: ROFEX + TASAS -->
     <div class="dash-col">
-      <div class="dash-col-hdr">TASAS DE REFERENCIA · AR</div>
+      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">📈</span> ROFEX — Futuros Dólar</div>
+      <div class="rofex-inner">
+        <table class="rofex-tbl">
+          <thead>
+            <tr>
+              <th>CONTRATO</th>
+              <th>PRECIO</th>
+              <th>VAR.</th>
+              <th>VAR.%</th>
+            </tr>
+          </thead>
+          <tbody id="rofex-tbody">
+            <tr><td colspan="4" style="text-align:center;padding:16px;color:#1a2e44">Cargando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="dash-col-hdr" style="margin-top:1px"><span class="dash-col-hdr-icon">🏦</span> Tasas de Referencia AR</div>
       <div class="tasa-row">
-        <span class="tasa-k">Política Monetaria (TAMAR)</span>
-        <span class="tasa-v" id="tasa-pm">—</span>
+        <span class="tasa-k">Política Monetaria<small>TAMAR / Pase BCRA</small></span>
+        <span class="tasa-v wait" id="tasa-pm">—</span>
       </div>
       <div class="tasa-row">
-        <span class="tasa-k">BADLAR Bancos Privados</span>
-        <span class="tasa-v" id="tasa-badlar">—</span>
+        <span class="tasa-k">BADLAR Privados<small>TNA bancos privados</small></span>
+        <span class="tasa-v wait" id="tasa-badlar">—</span>
       </div>
       <div class="tasa-row">
-        <span class="tasa-k">Plazo Fijo 30d (TNA)</span>
-        <span class="tasa-v" id="tasa-pf">—</span>
+        <span class="tasa-k">Plazo Fijo 30d<small>TNA promedio</small></span>
+        <span class="tasa-v wait" id="tasa-pf">—</span>
       </div>
       <div class="tasa-row">
-        <span class="tasa-k">Caja Ahorro (TNA)</span>
-        <span class="tasa-v blue" id="tasa-ca">—</span>
+        <span class="tasa-k">Caja de Ahorro<small>TNA promedio</small></span>
+        <span class="tasa-v blue wait" id="tasa-ca">—</span>
       </div>
       <div class="tasa-row">
-        <span class="tasa-k">LECAP corta (TIR ~)</span>
-        <span class="tasa-v green" id="tasa-lecap">—</span>
+        <span class="tasa-k">LECAP corta<small>TIR estimada</small></span>
+        <span class="tasa-v green wait" id="tasa-lecap">—</span>
       </div>
     </div>
 
-    <!-- ÍNDICES -->
+    <!-- COL 2: ÍNDICES -->
     <div class="dash-col">
-      <div class="dash-col-hdr">ÍNDICES</div>
-      <div class="idx-card">
-        <div class="idx-left">
-          <div class="idx-name">MERVAL</div>
-          <div class="idx-sub" id="merval-sub">S&amp;P MERVAL · BYMA</div>
+      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">🇦🇷</span> Índices Argentina</div>
+      <div class="merval-card">
+        <div class="merval-label">S&amp;P MERVAL · BYMA</div>
+        <div class="merval-val" id="merval-val">—</div>
+        <div class="merval-pct flat" id="merval-pct">—</div>
+      </div>
+      <div class="item-row">
+        <span class="item-icon">📄</span>
+        <div class="item-info">
+          <div class="item-name">AL30 · Bono ARS</div>
+          <div class="item-sub">Ley Argentina · BYMA</div>
         </div>
-        <div class="idx-right">
-          <div class="idx-val" id="merval-val">—</div>
-          <div class="idx-chg flat" id="merval-chg">—</div>
+        <div class="item-right">
+          <div class="item-val wait" id="al30-val">—</div>
+          <div class="item-pct flat" id="al30-pct">—</div>
         </div>
       </div>
-      <div class="idx-card">
-        <div class="idx-left">
-          <div class="idx-name">S&amp;P 500</div>
-          <div class="idx-sub">SPY · NYSE</div>
+      <div class="item-row">
+        <span class="item-icon">💵</span>
+        <div class="item-info">
+          <div class="item-name">AL30D · Bono USD</div>
+          <div class="item-sub">Dólar MEP · BYMA</div>
         </div>
-        <div class="idx-right">
-          <div class="idx-val" id="spy-val">—</div>
-          <div class="idx-chg flat" id="spy-chg">—</div>
-        </div>
-      </div>
-      <div class="idx-card">
-        <div class="idx-left">
-          <div class="idx-name">NASDAQ 100</div>
-          <div class="idx-sub">QQQ · NASDAQ</div>
-        </div>
-        <div class="idx-right">
-          <div class="idx-val" id="qqq-val">—</div>
-          <div class="idx-chg flat" id="qqq-chg">—</div>
+        <div class="item-right">
+          <div class="item-val wait" id="al30d-val">—</div>
+          <div class="item-pct flat" id="al30d-pct">—</div>
         </div>
       </div>
-      <div class="idx-card">
-        <div class="idx-left">
-          <div class="idx-name">CEDEAR SPY</div>
-          <div class="idx-sub" id="cspy-sub">SPY ARS · BYMA</div>
+      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">🌐</span> Mercados Globales</div>
+      <div class="item-row">
+        <span class="item-icon">📊</span>
+        <div class="item-info">
+          <div class="item-name">S&amp;P 500</div>
+          <div class="item-sub">SPY · NYSE</div>
         </div>
-        <div class="idx-right">
-          <div class="idx-val" id="cspy-val">—</div>
-          <div class="idx-chg flat" id="cspy-chg">—</div>
+        <div class="item-right">
+          <div class="item-val wait" id="spy-val">—</div>
+          <div class="item-pct flat" id="spy-pct">—</div>
         </div>
       </div>
-      <div class="idx-card">
-        <div class="idx-left">
-          <div class="idx-name">CEDEAR QQQ</div>
-          <div class="idx-sub" id="cqqq-sub">QQQ ARS · BYMA</div>
+      <div class="item-row">
+        <span class="item-icon">💻</span>
+        <div class="item-info">
+          <div class="item-name">NASDAQ 100</div>
+          <div class="item-sub">QQQ · NASDAQ</div>
         </div>
-        <div class="idx-right">
-          <div class="idx-val" id="cqqq-val">—</div>
-          <div class="idx-chg flat" id="cqqq-chg">—</div>
+        <div class="item-right">
+          <div class="item-val wait" id="qqq-val">—</div>
+          <div class="item-pct flat" id="qqq-pct">—</div>
+        </div>
+      </div>
+      <div class="item-row">
+        <span class="item-icon">📊</span>
+        <div class="item-info">
+          <div class="item-name">CEDEAR SPY</div>
+          <div class="item-sub">SPY ARS · BYMA</div>
+        </div>
+        <div class="item-right">
+          <div class="item-val wait" id="cspy-val">—</div>
+          <div class="item-pct flat" id="cspy-pct">—</div>
+        </div>
+      </div>
+      <div class="item-row">
+        <span class="item-icon">💻</span>
+        <div class="item-info">
+          <div class="item-name">CEDEAR QQQ</div>
+          <div class="item-sub">QQQ ARS · BYMA</div>
+        </div>
+        <div class="item-right">
+          <div class="item-val wait" id="cqqq-val">—</div>
+          <div class="item-pct flat" id="cqqq-pct">—</div>
         </div>
       </div>
     </div>
 
-    <!-- CANJE AL30 -->
+    <!-- COL 3: CANJE AL30 -->
     <div class="dash-col">
-      <div class="dash-col-hdr">CANJE AL30 — CABLE ↔ MEP</div>
-      <div class="canje-card">
-        <div class="canje-ticker">AL30 · CABLE → MEP</div>
-        <div class="canje-row">
-          <span class="canje-k">Precio ARS (AL30)</span>
-          <span class="canje-v" id="cj-al30-ars">—</span>
-        </div>
-        <div class="canje-row">
-          <span class="canje-k">Precio USD (AL30D)</span>
-          <span class="canje-v" id="cj-al30-usd">—</span>
-        </div>
-        <div class="canje-row">
-          <span class="canje-k">CCL implícito</span>
-          <span class="canje-v green" id="cj-ccl">—</span>
-        </div>
-        <div class="canje-row" style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(42,74,122,.3)">
-          <span class="canje-k">Enviás USD 1.000 cable</span>
-          <span class="canje-v" id="cj-send-usd">—</span>
-        </div>
-        <div class="canje-row">
-          <span class="canje-k">Recibís ARS</span>
-          <span class="canje-v green" id="cj-recv-ars">—</span>
-        </div>
-        <div class="canje-formula">VN = (USD × 100) / AL30D · ARS = VN × AL30 / 100</div>
+      <div class="dash-col-hdr"><span class="dash-col-hdr-icon">🔄</span> Canje AL30 · Cable ↔ MEP</div>
+
+      <div class="canje-block">
+        <div class="canje-title">Cable → MEP (vendés USD, recibís ARS)</div>
+        <div class="canje-line"><span class="canje-k">AL30 precio ARS</span><span class="canje-v" id="cj-al30a">—</span></div>
+        <div class="canje-line"><span class="canje-k">AL30D precio USD</span><span class="canje-v" id="cj-al30u">—</span></div>
+        <div class="canje-line"><span class="canje-k">CCL implícito</span><span class="canje-v hi" id="cj-ccl">—</span></div>
+        <div class="canje-sep"></div>
+        <div class="canje-line"><span class="canje-k">Enviás USD 1.000 cable</span><span class="canje-v">u$s 1.000</span></div>
+        <div class="canje-line"><span class="canje-k">→ Comprás VN</span><span class="canje-v" id="cj-vn1">—</span></div>
+        <div class="canje-line"><span class="canje-k">→ Recibís ARS</span><span class="canje-v hi" id="cj-ars1">—</span></div>
+        <div class="canje-formula">VN = (USD×100)/AL30D · ARS = VN×AL30/100</div>
       </div>
-      <div class="canje-card">
-        <div class="canje-ticker">AL30 · MEP → CABLE</div>
-        <div class="canje-row">
-          <span class="canje-k">Enviás ARS</span>
-          <span class="canje-v" id="cj-send-ars">—</span>
-        </div>
-        <div class="canje-row">
-          <span class="canje-k">Comprás VN</span>
-          <span class="canje-v" id="cj-buy-vn">—</span>
-        </div>
-        <div class="canje-row">
-          <span class="canje-k">Recibís USD cable</span>
-          <span class="canje-v green" id="cj-recv-usd">—</span>
-        </div>
-        <div class="canje-row" style="margin-top:4px;padding-top:4px;border-top:1px solid rgba(42,74,122,.3)">
-          <span class="canje-k">Tipo de cambio efectivo</span>
-          <span class="canje-v green" id="cj-tc-eff">—</span>
-        </div>
-        <div class="canje-formula">VN = (ARS × 100) / AL30 · USD = VN × AL30D / 100</div>
+
+      <div class="canje-block">
+        <div class="canje-title">MEP → Cable (enviás ARS, recibís USD)</div>
+        <div class="canje-line"><span class="canje-k">Enviás ARS</span><span class="canje-v">$1.000.000</span></div>
+        <div class="canje-line"><span class="canje-k">→ Comprás VN</span><span class="canje-v" id="cj-vn2">—</span></div>
+        <div class="canje-line"><span class="canje-k">→ Recibís USD cable</span><span class="canje-v hi" id="cj-usd2">—</span></div>
+        <div class="canje-line"><span class="canje-k">TC efectivo</span><span class="canje-v hi" id="cj-tc2">—</span></div>
+        <div class="canje-formula">VN = (ARS×100)/AL30 · USD = VN×AL30D/100</div>
+      </div>
+
+      <div class="dash-col-hdr" style="margin-top:1px"><span class="dash-col-hdr-icon">🥇</span> Commodities & Crypto</div>
+      <div class="item-row">
+        <span class="item-icon">🥇</span>
+        <div class="item-info"><div class="item-name">Oro</div><div class="item-sub">XAU/USD · spot</div></div>
+        <div class="item-right"><div class="item-val wait" id="gold-val">—</div><div class="item-pct flat" id="gold-pct">—</div></div>
+      </div>
+      <div class="item-row">
+        <span class="item-icon">🛢️</span>
+        <div class="item-info"><div class="item-name">WTI Petróleo</div><div class="item-sub">CL=F · USD/bbl</div></div>
+        <div class="item-right"><div class="item-val wait" id="oil-val">—</div><div class="item-pct flat" id="oil-pct">—</div></div>
+      </div>
+      <div class="item-row">
+        <span class="item-icon">₿</span>
+        <div class="item-info"><div class="item-name">Bitcoin</div><div class="item-sub">BTC/USD</div></div>
+        <div class="item-right"><div class="item-val wait" id="btc-val">—</div><div class="item-pct flat" id="btc-pct">—</div></div>
       </div>
     </div>
 
-  </div><!-- /dash-mid -->
+  </div><!-- /dash-grid -->
 
 </div>
 </div><!-- /page-resumen -->
+
 
 <!-- ══════════════════════════════════════════════════════ -->
 <!--  PAGE: CAUCIONES                                      -->
@@ -1685,7 +1704,8 @@ async function dFetchTC(){
   btn.textContent='↻ ...';sta.textContent='BUSCANDO...';sta.style.color='var(--amber)';
   try{
     const url=dMoneda==='bna'?'https://dolarapi.com/v1/dolares/oficial':'https://dolarapi.com/v1/dolares/mayorista';
-    const r=await fetch(url,{signal:AbortSignal.timeout(5000)});
+    const ctrl2 = new AbortController(); const t2 = setTimeout(()=>ctrl2.abort(),5000);
+    const r=await fetch(url,{signal:ctrl2.signal}).finally(()=>clearTimeout(t2));
     const data=await r.json();
     const tc=data.venta||data.compra;
     if(tc){$$('d-tc').value=parseFloat(tc).toFixed(2);sta.textContent=`✓ ${fmtN(tc)}`;sta.style.color='var(--green)';dCalc();}
@@ -2236,9 +2256,13 @@ let lcCountdownTimer = null;
 
 // ── Fetch helpers ──
 async function lcFetchUrl(url) {
-  const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
-  if(!r.ok) throw new Error('HTTP ' + r.status);
-  return r.json();
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), 8000);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    return r.json();
+  } finally { clearTimeout(t); }
 }
 
 async function lcFetchWithProxy(path) {
@@ -2750,282 +2774,248 @@ function lcRenderCurve() {
 // Auto-load LECAP data on page start
 lcFetch();
 
+
 // ════════════════════════════════════════════════════════
-//  DASHBOARD / RESUMEN MODULE
+//  DASHBOARD MODULE — solo APIs públicas con CORS
+//  dolarapi.com  ·  argentinadatos.com
 // ════════════════════════════════════════════════════════
 
-const dashFmt  = n => n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
-const dashFmtK = n => n >= 1e6 ? (n/1e6).toFixed(2)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'K' : dashFmt(n);
+const df  = n => (n??'—') === '—' ? '—' : Number(n).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const dfN = n => (n??'—') === '—' ? '—' : Math.round(Number(n)).toLocaleString('es-AR');
+const dfK = n => { const v=Number(n); return v>=1e6?(v/1e6).toFixed(2)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':df(v); };
 
-// ── CORS proxy helper ──
-async function dashProxy(url) {
-  try { const r=await fetch(url,{signal:AbortSignal.timeout(7000)}); if(r.ok)return r.json(); } catch(e){}
-  try { const r=await fetch('https://api.allorigins.win/get?url='+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
-        if(r.ok){const d=await r.json();return JSON.parse(d.contents);} } catch(e){}
-  try { const r=await fetch('https://corsproxy.io/?'+encodeURIComponent(url),{signal:AbortSignal.timeout(8000)});
-        if(r.ok)return r.json(); } catch(e){}
-  throw new Error('unreachable');
+// Simple fetch with timeout
+async function dGet(url, ms=8000) {
+  const ctrl = new AbortController();
+  const t = setTimeout(() => ctrl.abort(), ms);
+  try {
+    const r = await fetch(url, { signal: ctrl.signal });
+    if (!r.ok) throw new Error(r.status);
+    return r.json();
+  } finally {
+    clearTimeout(t);
+  }
 }
 
-// ── Change badge helper ──
-function dashChgBadge(elId, val, prev) {
-  if(!prev || !val) return;
-  const pct = ((val - prev) / prev) * 100;
-  const sign = pct >= 0 ? '+' : '';
-  const cls  = pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat';
-  const el = document.getElementById(elId);
-  if(el){ el.className='tc-chg-badge '+cls; el.textContent=sign+pct.toFixed(2)+'%'; }
+// Set a text value on an element
+function dv(id, txt, cls) {
+  const el = document.getElementById(id);
+  if (el) { el.textContent = txt; if (cls) el.className = cls; }
 }
-function dashIdxChg(elId, pct) {
-  const el = document.getElementById(elId);
-  if(!el) return;
-  const sign = pct >= 0 ? '+' : '';
+
+// Set change badge
+function dbadge(id, pct, txt) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const cls = pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat';
+  el.className = 'tc-chg-badge ' + cls;
+  el.textContent = txt || ((pct >= 0 ? '+' : '') + pct.toFixed(2) + '%');
+}
+
+// Set index change
+function didx(id, pct) {
+  const el = document.getElementById(id);
+  if (!el) return;
   el.className = 'idx-chg ' + (pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat');
-  el.textContent = sign + pct.toFixed(2) + '%';
+  el.textContent = (pct >= 0 ? '+' : '') + pct.toFixed(2) + '%';
 }
 
-let dashTimer = null;
-let dashCd = 15;
-let dashCdTimer = null;
-
-// Previous close values for change calc
-let dashPrev = {};
+let _dashTimer = null;
 
 async function dashFetch() {
   const pill = document.getElementById('dash-pill');
   const upd  = document.getElementById('dash-upd');
-  pill.className = 'dash-pill loading';
-  pill.textContent = 'CARGANDO...';
+  if (pill) { pill.className = 'dash-pill loading'; pill.textContent = 'ACTUALIZANDO...'; }
 
-  let errors = 0;
+  let ok = 0;
 
-  // ── 1. Bonds: AL30 (ARS) + AL30D (USD) via data912 ──
+  // ── 1. DÓLAR — dolarapi.com (CORS habilitado) ──────────────────
   try {
-    const raw = await dashProxy('https://data912.com/live/arg_bonds');
-    const arr = Array.isArray(raw) ? raw : (raw.data || raw.items || []);
-    const byTicker = {};
-    arr.forEach(b => { const t=(b.ticker||b.t||'').trim(); if(t) byTicker[t]=b; });
+    const data = await dGet('https://dolarapi.com/v1/dolares');
+    const byKey = {};
+    data.forEach(d => { byKey[(d.casa||'').toLowerCase()] = d; });
 
-    const al30  = byTicker['AL30']  || byTicker['al30'];
-    const al30d = byTicker['AL30D'] || byTicker['al30d'];
+    const venta = d => d ? parseFloat(d.venta || d.compra || 0) : 0;
+    const compra= d => d ? parseFloat(d.compra || d.venta || 0) : 0;
 
-    const pARS = al30  ? parseFloat(al30.c  || al30.precio  || al30.last  || 0) : 0;
-    const pUSD = al30d ? parseFloat(al30d.c || al30d.precio || al30d.last || 0) : 0;
+    const vCCL  = venta(byKey['contadoconliqui'] || byKey['cable']);
+    const vMEP  = venta(byKey['bolsa']           || byKey['mep']);
+    const vOfic = venta(byKey['oficial']);
+    const vBNA  = venta(byKey['nacion']           || byKey['nación']);
 
-    if(pARS > 0 && pUSD > 0) {
-      const ccl = pARS / pUSD;
-      document.getElementById('tc-ccl').textContent = '$' + dashFmt(ccl);
-      document.getElementById('tc-ccl').className = 'tc-card-val';
-      document.getElementById('tc-mep').textContent = '$' + dashFmt(ccl * 0.998); // MEP ~0.2% below CCL
-      document.getElementById('tc-mep').className = 'tc-card-val';
-      dashChgBadge('tc-ccl-chg', ccl, dashPrev.ccl);
-      dashChgBadge('tc-mep-chg', ccl*0.998, dashPrev.mep);
-      dashPrev.ccl = ccl;
+    if (vCCL  > 0) { dv('tc-ccl',  '$' + df(vCCL),  'tc-card-val'); dbadge('tc-ccl-chg',  0, 'Cable'); }
+    if (vMEP  > 0) { dv('tc-mep',  '$' + df(vMEP),  'tc-card-val'); dbadge('tc-mep-chg',  0, 'Bolsa'); }
+    if (vOfic > 0) { dv('tc-bcra', '$' + df(vOfic), 'tc-card-val'); dbadge('tc-bcra-chg', 0, 'Mayorista'); }
+    if (vBNA  > 0) { dv('tc-bna',  '$' + df(vBNA),  'tc-card-val'); dbadge('tc-bna-chg',  0, 'Venta'); }
 
-      // Canje section
-      document.getElementById('cj-al30-ars').textContent = '$' + dashFmt(pARS);
-      document.getElementById('cj-al30-usd').textContent = 'u$s' + dashFmt(pUSD);
-      document.getElementById('cj-ccl').textContent = '$' + dashFmt(ccl);
-      // Cable→MEP: envio 1000 USD cable
-      const vn1 = (1000 * 100) / pUSD;
-      const ars1 = vn1 * pARS / 100;
-      document.getElementById('cj-send-usd').textContent = 'u$s 1.000';
-      document.getElementById('cj-recv-ars').textContent = '$' + dashFmt(ars1);
-      document.getElementById('cj-buy-vn').textContent   = vn1.toFixed(0) + ' VN';
-      // MEP→Cable: envio 1.000.000 ARS
-      const vn2 = (1000000 * 100) / pARS;
-      const usd2 = vn2 * pUSD / 100;
-      document.getElementById('cj-send-ars').textContent  = '$' + dashFmtK(1000000);
-      document.getElementById('cj-recv-usd').textContent  = 'u$s' + dashFmt(usd2);
-      document.getElementById('cj-tc-eff').textContent    = '$' + dashFmt(ccl);
+    // Brecha
+    if (vCCL > 0 && vOfic > 0) {
+      const br = ((vCCL / vOfic) - 1) * 100;
+      dv('tc-brecha', br.toFixed(1) + '%', 'tc-card-val');
+      dbadge('tc-brecha-chg', br);
     }
-  } catch(e) { errors++; }
 
-  // ── 2. Tipos de cambio oficiales: ArgentinaDatos ──
+    // CANJE AL30 con CCL y MEP de dolarapi
+    if (vCCL > 0 && vMEP > 0) {
+      // CCL → MEP: enviás 1000 USD cable, recibís ARS al MEP
+      // Canje real: comprás AL30D (USD) con cable, vendés AL30 (ARS) en MEP
+      const recibisARS = 1000 * vMEP;   // aprox con tipo de cambio
+      const pagasARS   = 1000000;
+      const recibisUSD = pagasARS / vCCL;
+
+      dv('cj-ccl',      '$' + df(vCCL));
+      dv('cj-send-usd', 'u$s 1.000 cable');
+      dv('cj-recv-ars', '$' + dfK(recibisARS));
+      dv('cj-buy-vn',   '—');
+      dv('cj-send-ars', '$1.000.000');
+      dv('cj-recv-usd', 'u$s' + df(recibisUSD));
+      dv('cj-tc-eff',   '$' + df(vCCL));
+    }
+
+    ok++;
+  } catch(e) { console.warn('dolarapi:', e.message); }
+
+  // ── 2. ROFEX — argentinadatos.com ─────────────────────────────
   try {
-    const raw = await dashProxy('https://dolarapi.com/v1/dolares');
-    const arr = Array.isArray(raw) ? raw : [];
-    const find = (casa) => arr.find(d => (d.casa||'').toLowerCase() === casa);
-    const oficial = find('oficial');
-    const bna     = find('nacion') || find('oficial');
-    if(oficial) {
-      const v = parseFloat(oficial.venta||oficial.compra||0);
-      if(v>0){
-        document.getElementById('tc-bcra').textContent = '$' + dashFmt(v);
-        document.getElementById('tc-bcra').className = 'tc-card-val';
-        dashChgBadge('tc-bcra-chg', v, dashPrev.bcra);
-        dashPrev.bcra = v;
-        // Brecha
-        const cclEl = document.getElementById('tc-ccl');
-        const cclVal = dashPrev.ccl || 0;
-        if(cclVal > 0 && v > 0) {
-          const brecha = ((cclVal / v) - 1) * 100;
-          document.getElementById('tc-brecha').textContent = brecha.toFixed(1) + '%';
-          document.getElementById('tc-brecha').className = 'tc-card-val';
-          const bEl = document.getElementById('tc-brecha-chg');
-          bEl.className = 'tc-chg-badge ' + (brecha > 5 ? 'up' : brecha < 0 ? 'dn' : 'flat');
-          bEl.textContent = 'CCL / Oficial';
-        }
+    const data = await dGet('https://argentinadatos.com/api/v1/finanzas/futuros-dolar');
+    const arr  = Array.isArray(data) ? data : [];
+    const tbody = document.getElementById('rofex-tbody');
+    if (arr.length && tbody) {
+      tbody.innerHTML = arr.slice(0, 7).map(r => {
+        const v   = parseFloat(r.precio || r.ultimo || 0);
+        const chg = parseFloat(r.variacion || r.change || 0);
+        const pct = parseFloat(r.porcentaje || r.variacion_pct || 0);
+        const cls = pct > 0.05 ? 'up' : pct < -0.05 ? 'dn' : 'flat';
+        const s   = pct >= 0 ? '+' : '';
+        const sc  = chg >= 0 ? '+' : '';
+        return `<tr>
+          <td>${r.contrato||r.mes||'—'}</td>
+          <td class="rofex-price">${v ? '$'+df(v) : '—'}</td>
+          <td class="rofex-chg ${cls}">${chg ? sc+df(chg) : '—'}</td>
+          <td class="rofex-chg ${cls}">${pct ? s+pct.toFixed(2)+'%' : '—'}</td>
+          <td style="color:var(--amber)">${v ? '$'+df(v) : '—'}</td>
+        </tr>`;
+      }).join('');
+      ok++;
+    }
+  } catch(e) { console.warn('rofex:', e.message); }
+
+  // ── 3. TASAS — argentinadatos.com ─────────────────────────────
+  try {
+    const [badlar, pf] = await Promise.allSettled([
+      dGet('https://argentinadatos.com/api/v1/finanzas/tasas/badlar'),
+      dGet('https://argentinadatos.com/api/v1/finanzas/tasas/depositos30diasBancosPais'),
+    ]);
+
+    if (badlar.status === 'fulfilled') {
+      const arr  = Array.isArray(badlar.value) ? badlar.value : [];
+      const last = arr[arr.length - 1];
+      if (last) { const v=parseFloat(last.valor||0); if(v) dv('tasa-badlar', v.toFixed(2)+'%', 'tasa-v'); }
+    }
+    if (pf.status === 'fulfilled') {
+      const arr  = Array.isArray(pf.value) ? pf.value : [];
+      const last = arr[arr.length - 1];
+      if (last) { const v=parseFloat(last.valor||0); if(v) dv('tasa-pf', v.toFixed(2)+'%', 'tasa-v'); }
+    }
+    ok++;
+  } catch(e) { console.warn('tasas:', e.message); }
+
+  // LECAP corta desde lcData
+  try {
+    if (window.lcData && lcData.length > 0) {
+      const sh = [...lcData].sort((a,b) => a.days - b.days)[0];
+      if (sh) dv('tasa-lecap', sh.tir.toFixed(2)+'% · '+sh.ticker, 'tasa-v green');
+    }
+  } catch(e) {}
+
+  // ── 4. MERVAL, CEDEARS, ÍNDICES — data912 (intentamos directo) ──
+  try {
+    const [bonds, cedears] = await Promise.allSettled([
+      dGet('https://data912.com/live/arg_bonds'),
+      dGet('https://data912.com/live/cedears'),
+    ]);
+
+    // AL30 / AL30D → CCL real
+    if (bonds.status === 'fulfilled') {
+      const arr = Array.isArray(bonds.value) ? bonds.value : (bonds.value?.data||[]);
+      const byT = Object.fromEntries(arr.map(b=>[(b.ticker||b.t||'').toUpperCase().trim(),b]));
+      const al30  = byT['AL30'];
+      const al30d = byT['AL30D'];
+      const px = b => b ? parseFloat(b.c||b.precio||b.last||0) : 0;
+      const pARS = px(al30), pUSD = px(al30d);
+      if (pARS > 0 && pUSD > 0) {
+        const cclBonos = pARS / pUSD;
+        // Override CCL con precio real de bonos si tenemos datos
+        dv('tc-ccl', '$' + df(cclBonos), 'tc-card-val');
+        dv('cj-al30-ars', '$' + df(pARS));
+        dv('cj-al30-usd', 'u$s' + df(pUSD));
+        dv('cj-ccl', '$' + df(cclBonos));
+        const vn1 = (1000*100)/pUSD;
+        dv('cj-recv-ars', '$' + dfK(vn1*pARS/100));
+        dv('cj-buy-vn', vn1.toFixed(0)+' VN');
+        const vn2 = (1e6*100)/pARS;
+        dv('cj-recv-usd', 'u$s' + df(vn2*pUSD/100));
+        dv('cj-tc-eff', '$' + df(cclBonos));
+        ok++;
       }
     }
-    if(bna) {
-      const v = parseFloat(bna.venta||bna.compra||0);
-      if(v>0){
-        document.getElementById('tc-bna').textContent = '$' + dashFmt(v);
-        document.getElementById('tc-bna').className = 'tc-card-val';
-        dashChgBadge('tc-bna-chg', v, dashPrev.bna);
-        dashPrev.bna = v;
-      }
+
+    // CEDEARs → SPY, QQQ en ARS
+    if (cedears.status === 'fulfilled') {
+      const arr = Array.isArray(cedears.value) ? cedears.value : (cedears.value?.data||[]);
+      const byT = Object.fromEntries(arr.map(b=>[(b.ticker||b.t||'').toUpperCase().trim(),b]));
+      const set = (t, vi, ci, fmt) => {
+        const b=byT[t]; if(!b) return;
+        const v=parseFloat(b.c||b.precio||b.last||0), p=parseFloat(b.pct_change||b.var||0);
+        if(v>0){ dv(vi, fmt(v), 'idx-val'); didx(ci,p); }
+      };
+      set('SPY','cspy-val','cspy-chg',v=>'$'+dfK(v));
+      set('QQQ','cqqq-val','cqqq-chg',v=>'$'+dfK(v));
+      // También en los cards de índices USD (aprox via CCL)
+      const cclV = parseFloat((document.getElementById('tc-ccl')?.textContent||'0').replace(/[$.,]/g,'').replace(',','.'));
     }
-  } catch(e) { errors++; }
+  } catch(e) { console.warn('data912:', e.message); }
 
-  // ── 3. ROFEX futuros ──
+  // Merval
   try {
-    const raw = await dashProxy('https://data912.com/live/rofex');
-    const arr = Array.isArray(raw) ? raw : (raw.data||raw.items||[]);
-    if(arr.length > 0) {
-      const relevant = arr.filter(r => {
-        const t = (r.ticker||r.t||'');
-        return t.startsWith('DLR') || t.includes('USD') || t.includes('DOL');
-      }).slice(0, 6);
-
-      if(relevant.length === 0) arr.slice(0,6).forEach(r => relevant.push(r));
-
-      const tbody = document.getElementById('rofex-tbody');
-      if(relevant.length > 0) {
-        tbody.innerHTML = relevant.map(r => {
-          const tk  = r.ticker||r.t||'—';
-          const px  = parseFloat(r.c||r.precio||r.px||0);
-          const chg = parseFloat(r.pct_change||r.var_pct||r.variacion||0);
-          const diff= parseFloat(r.change||r.diff||0);
-          const cls = chg>0?'up':chg<0?'dn':'flat';
-          const sign= chg>=0?'+':'';
-          return `<tr>
-            <td>${tk}</td>
-            <td class="rofex-price">${px>0?'$'+dashFmt(px):'—'}</td>
-            <td class="rofex-chg ${cls}">${diff?sign+dashFmt(diff):'—'}</td>
-            <td class="rofex-chg ${cls}">${chg?sign+chg.toFixed(2)+'%':'—'}</td>
-            <td style="color:var(--amber)">${px>0?'$'+dashFmt(px):'—'}</td>
-          </tr>`;
-        }).join('');
-      }
+    const data = await dGet('https://data912.com/live/merval');
+    const arr = Array.isArray(data) ? data : [data];
+    const m   = arr[0];
+    if (m) {
+      const v=parseFloat(m.c||m.valor||m.last||0), p=parseFloat(m.pct_change||m.variacion_pct||0);
+      if(v>0){ dv('merval-val', dfN(v), 'idx-val'); didx('merval-chg',p); }
     }
-  } catch(e) {
-    // ROFEX fallback: try ArgentinaDatos futures
-    try {
-      const raw2 = await dashProxy('https://argentinadatos.com/api/v1/finanzas/futuros-dolar');
-      const arr2 = Array.isArray(raw2) ? raw2 : [];
-      const tbody = document.getElementById('rofex-tbody');
-      if(arr2.length > 0) {
-        tbody.innerHTML = arr2.slice(0,6).map(r => {
-          const chg = parseFloat(r.variacion||r.var||0);
-          const cls = chg>0?'up':chg<0?'dn':'flat';
-          const sign= chg>=0?'+':'';
-          return `<tr>
-            <td>${r.contrato||r.mes||'—'}</td>
-            <td class="rofex-price">${r.precio?'$'+dashFmt(r.precio):'—'}</td>
-            <td class="rofex-chg ${cls}">${r.variacion?sign+dashFmt(r.variacion):'—'}</td>
-            <td class="rofex-chg ${cls}">${chg?sign+chg.toFixed(2)+'%':'—'}</td>
-            <td style="color:var(--amber)">${r.precio?'$'+dashFmt(r.precio):'—'}</td>
-          </tr>`;
-        }).join('');
-      }
-    } catch(e2) { errors++; }
-  }
+  } catch(e) {}
 
-  // ── 4. Tasas de referencia ──
+  // SPY/QQQ USD via Yahoo Finance (no CORS issues en la mayoría de browsers)
   try {
-    const raw = await dashProxy('https://argentinadatos.com/api/v1/finanzas/tasas');
-    const obj = Array.isArray(raw) ? {} : raw;
-    const arr = Array.isArray(raw) ? raw : (raw.data||[]);
-
-    const get = (key) => {
-      const found = arr.find(r => (r.nombre||r.descripcion||r.tasa||'').toLowerCase().includes(key));
-      return found ? parseFloat(found.valor||found.tna||found.value||0) : null;
+    const [rSPY, rQQQ] = await Promise.allSettled([
+      dGet('https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=2d', 5000),
+      dGet('https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=2d', 5000),
+    ]);
+    const parseYahoo = r => {
+      const meta = r?.chart?.result?.[0]?.meta;
+      if (!meta) return null;
+      return { v: meta.regularMarketPrice, p: ((meta.regularMarketPrice - meta.chartPreviousClose) / meta.chartPreviousClose) * 100 };
     };
+    if (rSPY.status==='fulfilled') { const d=parseYahoo(rSPY.value); if(d){ dv('spy-val','u$s'+df(d.v),'idx-val'); didx('spy-chg',d.p); } }
+    if (rQQQ.status==='fulfilled') { const d=parseYahoo(rQQQ.value); if(d){ dv('qqq-val','u$s'+df(d.v),'idx-val'); didx('qqq-chg',d.p); } }
+  } catch(e) {}
 
-    const badlar = get('badlar') || get('bpf');
-    const pf     = get('plazo fijo') || get('deposito');
-    const pm     = get('política monetaria') || get('tamar') || get('pase');
-    const ca     = get('caja de ahorro') || get('ahorro');
+  // ── STATUS ──────────────────────────────────────────────────────
+  const now = new Date().toLocaleTimeString('es-AR');
+  if (pill) { pill.className = ok >= 2 ? 'dash-pill live' : 'dash-pill err'; pill.textContent = ok >= 2 ? 'LIVE ●' : '⚠ PARCIAL'; }
+  if (upd)  upd.textContent = now + ' · próx. 15s';
 
-    if(badlar) document.getElementById('tasa-badlar').textContent = badlar.toFixed(2)+'%';
-    if(pf)     document.getElementById('tasa-pf').textContent     = pf.toFixed(2)+'%';
-    if(pm)     document.getElementById('tasa-pm').textContent     = pm.toFixed(2)+'%';
-    if(ca)     document.getElementById('tasa-ca').textContent     = ca.toFixed(2)+'%';
-  } catch(e) { errors++; }
-
-  // LECAP corta rate from existing lcData
-  if(window.lcData && lcData.length > 0) {
-    const shortest = [...lcData].sort((a,b)=>a.days-b.days)[0];
-    if(shortest) document.getElementById('tasa-lecap').textContent = shortest.tir.toFixed(2)+'% TIR · '+shortest.ticker;
-  }
-
-  // ── 5. CEDEARs: Merval, SPY, QQQ ──
-  try {
-    const raw = await dashProxy('https://data912.com/live/cedears');
-    const arr = Array.isArray(raw) ? raw : (raw.data||raw.items||[]);
-    const byT = {};
-    arr.forEach(b => { const t=(b.ticker||b.t||'').trim().toUpperCase(); if(t) byT[t]=b; });
-
-    const renderIdx = (ticker, valId, chgId, subId) => {
-      const b = byT[ticker];
-      if(!b) return;
-      const v = parseFloat(b.c||b.precio||b.last||0);
-      const pct = parseFloat(b.pct_change||b.variacion_pct||b.var_pct||0);
-      if(v>0) {
-        document.getElementById(valId).textContent = '$'+dashFmtK(v);
-        dashIdxChg(chgId, pct);
-        if(subId) document.getElementById(subId).textContent = ticker+' ARS · BYMA · $'+dashFmt(v);
-      }
-    };
-    renderIdx('SPY',  'cspy-val','cspy-chg','cspy-sub');
-    renderIdx('QQQ',  'cqqq-val','cqqq-chg','cqqq-sub');
-    renderIdx('SPY',  'spy-val', 'spy-chg', null);
-    renderIdx('QQQ',  'qqq-val', 'qqq-chg', null);
-  } catch(e) { errors++; }
-
-  // ── 6. Merval ──
-  try {
-    const raw = await dashProxy('https://data912.com/live/merval');
-    const val = Array.isArray(raw) ? raw[0] : raw;
-    const v   = parseFloat(val?.c||val?.valor||val?.value||val?.last||0);
-    const pct = parseFloat(val?.pct_change||val?.variacion_pct||0);
-    if(v>0){
-      document.getElementById('merval-val').textContent = dashFmtK(v);
-      dashIdxChg('merval-chg', pct);
-    }
-  } catch(e) {
-    // fallback: try indices endpoint
-    try {
-      const raw2 = await dashProxy('https://data912.com/live/arg_indices');
-      const arr2 = Array.isArray(raw2) ? raw2 : (raw2.data||[]);
-      const m = arr2.find(r=>(r.ticker||r.t||'').toUpperCase().includes('MERVAL'));
-      if(m){
-        const v2 = parseFloat(m.c||m.valor||0);
-        const p2 = parseFloat(m.pct_change||m.variacion_pct||0);
-        if(v2>0){ document.getElementById('merval-val').textContent = dashFmtK(v2); dashIdxChg('merval-chg',p2); }
-      }
-    } catch(e2) { errors++; }
-  }
-
-  // Status
-  pill.className = errors < 3 ? 'dash-pill live' : 'dash-pill err';
-  pill.textContent = errors < 3 ? 'LIVE ●' : '⚠ PARCIAL';
-  upd.textContent = '✓ ' + new Date().toLocaleTimeString('es-AR') + ' · próx. 15s';
-
-  // Countdown
-  clearInterval(dashCdTimer);
-  dashCd = 15;
-  dashCdTimer = setInterval(() => {
-    dashCd--;
-    const u = document.getElementById('dash-upd');
-    if(u) u.textContent = '✓ ' + new Date(Date.now() - (15-dashCd)*1000).toLocaleTimeString('es-AR') + ' · próx. ' + dashCd + 's';
-    if(dashCd <= 0){ clearInterval(dashCdTimer); dashFetch(); }
+  clearInterval(_dashTimer);
+  let cd = 15;
+  _dashTimer = setInterval(() => {
+    cd--;
+    if (upd) upd.textContent = now + ' · próx. ' + cd + 's';
+    if (cd <= 0) { clearInterval(_dashTimer); dashFetch(); }
   }, 1000);
 }
 
-// Auto-start dashboard fetch
 dashFetch();
 
 </script>

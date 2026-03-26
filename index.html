@@ -484,7 +484,51 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .lc-sum-v{font-weight:600;color:var(--white)}
 .lc-sum-row.profit .lc-sum-k{color:var(--green);font-weight:700;font-size:13px}
 .lc-sum-row.profit .lc-sum-v{color:var(--green);font-weight:700;font-size:13px}
+
+/* ─── CURVES PANEL — always visible below table ─── */
+.lc-table-panel{display:block}
+.lc-curves-panel{
+  display:flex;flex-direction:column;
+  background:var(--navy);
+  border-top:2px solid var(--border2);
+}
+
+.lc-curve-controls{
+  background:var(--navy2);border-bottom:1px solid var(--border);
+  padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.lc-curve-metric-tabs{display:flex;gap:4px}
+.lc-cmtab{
+  background:var(--navy3);border:1px solid var(--border);color:var(--gray);
+  font-family:var(--mono);font-size:10px;font-weight:700;padding:3px 12px;
+  cursor:pointer;letter-spacing:.06em;border-radius:3px;height:26px;
+  display:flex;align-items:center;transition:all .12s;
+}
+.lc-cmtab:hover{color:var(--white);border-color:var(--blue2)}
+.lc-cmtab.on-tir{background:rgba(34,214,138,.15);color:var(--green);border-color:var(--green2)}
+.lc-cmtab.on-tna{background:rgba(91,141,239,.15);color:var(--blue2);border-color:var(--blue2)}
+.lc-cmtab.on-tem{background:rgba(34,212,240,.15);color:var(--cyan);border-color:var(--cyan)}
+
+.lc-curve-legend{display:flex;align-items:center;gap:14px;margin-left:auto}
+.lc-leg-item{display:flex;align-items:center;gap:6px;font-size:10px;font-family:var(--mono);color:var(--white2)}
+.lc-leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.lc-leg-dot.lecap{background:#22d4f0}
+.lc-leg-dot.boncap{background:#f0b429}
+
+.lc-chart-area{position:relative;padding:40px 24px 18px;background:var(--navy)}
+
+.lc-curve-stats{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  border-top:1px solid var(--border);background:var(--navy2);flex-shrink:0;
+}
+.lc-cstat{padding:10px 18px;border-right:1px solid var(--border)}
+.lc-cstat:last-child{border-right:none}
+.lc-cstat-k{font-size:9px;font-weight:700;color:var(--white2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:3px}
+.lc-cstat-v{font-size:15px;font-weight:700;font-family:var(--mono);color:var(--white)}
+.lc-cstat-sub{font-size:10px;color:var(--gray);margin-top:1px;font-family:var(--mono)}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 </head>
 <body>
 
@@ -833,7 +877,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
       <div class="lc-title">LECAP / BONCAP — Letras Capitalizables</div>
       <div class="lc-sub">Mercado Argentino · ARS · Datos en tiempo real</div>
     </div>
-    <div class="lc-filters">
+    <div class="lc-filters" id="lc-filter-bar">
       <button class="lc-ftab on" id="lc-f-all" onclick="lcSetFilter('all')">TODOS</button>
       <button class="lc-ftab" id="lc-f-lecap" onclick="lcSetFilter('lecap')">LECAP</button>
       <button class="lc-ftab" id="lc-f-boncap" onclick="lcSetFilter('boncap')">BONCAP</button>
@@ -844,36 +888,88 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
     <button class="lc-refresh-btn" id="lc-refresh-btn" onclick="lcFetch()">↻ ACTUALIZAR</button>
   </div>
 
-  <!-- TABLE -->
-  <div class="lc-table-wrap">
-    <table class="lc-table" id="lc-table">
-      <thead>
-        <tr>
-          <th onclick="lcSort('ticker')" data-col="ticker">TICKER <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('price')" data-col="price">PRECIO <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('pagoFinal')" data-col="pagoFinal">PAGO FINAL <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('days')" data-col="days">DÍAS <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('maturity')" data-col="maturity">VENCIMIENTO <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('tna')" data-col="tna">TNA <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('tem')" data-col="tem">TEM <span class="sort-arrow"></span></th>
-          <th onclick="lcSort('tir')" data-col="tir">TIR <span class="sort-arrow"></span></th>
-        </tr>
-      </thead>
-      <tbody id="lc-tbody">
-        <!-- Skeleton rows -->
-        <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:60%"></div></td></tr>
-        <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:75%"></div></td></tr>
-        <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:50%"></div></td></tr>
-        <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:80%"></div></td></tr>
-        <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:65%"></div></td></tr>
-      </tbody>
-    </table>
+  <!-- TABLE PANEL -->
+  <div class="lc-table-panel" id="lc-table-panel">
+    <div class="lc-table-wrap">
+      <table class="lc-table" id="lc-table">
+        <thead>
+          <tr>
+            <th onclick="lcSort('ticker')" data-col="ticker">TICKER <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('price')" data-col="price">PRECIO <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('pagoFinal')" data-col="pagoFinal">PAGO FINAL <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('days')" data-col="days">DÍAS <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('maturity')" data-col="maturity">VENCIMIENTO <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('tna')" data-col="tna">TNA <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('tem')" data-col="tem">TEM <span class="sort-arrow"></span></th>
+            <th onclick="lcSort('tir')" data-col="tir">TIR <span class="sort-arrow"></span></th>
+          </tr>
+        </thead>
+        <tbody id="lc-tbody">
+          <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:60%"></div></td></tr>
+          <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:75%"></div></td></tr>
+          <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:50%"></div></td></tr>
+          <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:80%"></div></td></tr>
+          <tr class="lc-skel"><td colspan="8"><div class="lc-skel-bar" style="width:65%"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- CURVES PANEL — always visible below table -->
+  <div class="lc-curves-panel" id="lc-curves-panel">
+    <!-- Metric selector + legend -->
+    <div class="lc-curve-controls">
+      <span style="font-size:10px;font-weight:700;color:var(--white2);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono)">Métrica:</span>
+      <div class="lc-curve-metric-tabs">
+        <button class="lc-cmtab on-tir" id="lc-cm-tir" onclick="lcSetCurveMetric('tir')">TIR (TEA)</button>
+        <button class="lc-cmtab" id="lc-cm-tna" onclick="lcSetCurveMetric('tna')">TNA</button>
+        <button class="lc-cmtab" id="lc-cm-tem" onclick="lcSetCurveMetric('tem')">TEM</button>
+      </div>
+      <span style="font-size:10px;font-weight:700;color:var(--white2);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono);margin-left:8px">Eje X:</span>
+      <div class="lc-curve-metric-tabs">
+        <button class="lc-cmtab on-tir" id="lc-cx-date" onclick="lcSetXAxis('date')">FECHA</button>
+        <button class="lc-cmtab" id="lc-cx-days" onclick="lcSetXAxis('days')">DÍAS</button>
+      </div>
+      <div class="lc-curve-legend">
+        <div class="lc-leg-item"><div class="lc-leg-dot lecap"></div> LECAP</div>
+        <div class="lc-leg-item"><div class="lc-leg-dot boncap"></div> BONCAP</div>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="lc-chart-area">
+      <canvas id="lc-curve-chart"></canvas>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="lc-curve-stats">
+      <div class="lc-cstat">
+        <div class="lc-cstat-k">TIR mín.</div>
+        <div class="lc-cstat-v" id="lc-st-min">—</div>
+        <div class="lc-cstat-sub" id="lc-st-min-sub">—</div>
+      </div>
+      <div class="lc-cstat">
+        <div class="lc-cstat-k">TIR máx.</div>
+        <div class="lc-cstat-v" id="lc-st-max">—</div>
+        <div class="lc-cstat-sub" id="lc-st-max-sub">—</div>
+      </div>
+      <div class="lc-cstat">
+        <div class="lc-cstat-k">Pendiente curva</div>
+        <div class="lc-cstat-v" id="lc-st-slope">—</div>
+        <div class="lc-cstat-sub" id="lc-st-slope-sub">corto vs largo plazo</div>
+      </div>
+      <div class="lc-cstat">
+        <div class="lc-cstat-k">Instrumentos</div>
+        <div class="lc-cstat-v" id="lc-st-count">—</div>
+        <div class="lc-cstat-sub" id="lc-st-count-sub">—</div>
+      </div>
+    </div>
   </div>
 
   <!-- STATUS BAR -->
   <div class="lc-statusbar">
     <span id="lc-last-update" style="color:var(--gray)">—</span>
-    <span style="color:var(--blue3)">data912.com · BYMA · ARS · T+1</span>
+    <span style="color:var(--blue3)">data912.com · /live/arg_notes + /live/arg_bonds · T+1</span>
   </div>
 
 </div>
@@ -1681,22 +1777,13 @@ function dPDF(){
 // ════════════════════════════════════════
 
 // ── Fallback static data (from BYMA, used if API unreachable) ──
-const LC_STATIC = [
-  {ticker:'S17A6',type:'LECAP',price:108.59,pagoFinal:110.125,maturity:'2026-04-17'},
-  {ticker:'S30A6',type:'LECAP',price:124.65,pagoFinal:127.486,maturity:'2026-04-30'},
-  {ticker:'S15Y6',type:'LECAP',price:101.64,pagoFinal:105.178,maturity:'2026-05-15'},
-  {ticker:'S29Y6',type:'LECAP',price:126.39,pagoFinal:132.044,maturity:'2026-05-29'},
-  {ticker:'T30J6',type:'BONCAP',price:135.50,pagoFinal:144.896,maturity:'2026-06-30'},
-  {ticker:'S31L6',type:'LECAP',price:107.70,pagoFinal:117.677,maturity:'2026-07-31'},
-  {ticker:'S31G6',type:'LECAP',price:113.60,pagoFinal:127.064,maturity:'2026-08-31'},
-  {ticker:'S30S6',type:'LECAP',price:102.27,pagoFinal:117.536,maturity:'2026-09-30'},
-  {ticker:'S30O6',type:'LECAP',price:114.96,pagoFinal:135.278,maturity:'2026-10-30'},
-  {ticker:'S30N6',type:'LECAP',price:107.98,pagoFinal:129.888,maturity:'2026-11-30'},
-  {ticker:'T15E7',type:'BONCAP',price:129.35,pagoFinal:161.104,maturity:'2027-01-15'},
-  {ticker:'T30A7',type:'BONCAP',price:117.40,pagoFinal:157.341,maturity:'2027-04-30'},
-  {ticker:'T31Y7',type:'BONCAP',price:110.60,pagoFinal:151.563,maturity:'2027-05-31'},
-  {ticker:'T30J7',type:'BONCAP',price:112.00,pagoFinal:156.037,maturity:'2027-06-30'},
-];
+// ── Fallback prices (used only when API is down) ──
+const LC_STATIC_PRICES = {
+  S17A6:108.59, S30A6:124.65, S15Y6:101.64, S29Y6:126.39,
+  T30J6:135.50, S31L6:107.70, S31G6:113.60, S30S6:102.27,
+  S30O6:114.96, S30N6:107.98, T15E7:129.35, T30A7:117.40,
+  T31Y7:110.60, T30J7:112.00,
+};
 
 // ── State ──
 let lcData = [];
@@ -1704,7 +1791,6 @@ let lcFilter = 'all';
 let lcSortCol = 'days';
 let lcSortDir = 'asc';
 let lcCurrentBond = null;
-let lcRefreshTimer = null;
 
 // ── Yield math ──
 function lcSettleDate() {
@@ -1740,28 +1826,94 @@ function lcFmtDate(d) {
 }
 function lcFmtMoney(n) { return '$' + n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
-// ── Normalize API response → internal format ──
-function lcNormalize(raw) {
-  // Try multiple known data912 shapes
-  const arr = Array.isArray(raw) ? raw : (raw.data || raw.bonos || raw.letras || raw.items || []);
-  return arr.map(b => {
-    const ticker = b.ticker || b.simbolo || b.symbol || b.id || '';
-    const type = (b.tipo||b.type||b.instrumento||'').toUpperCase().includes('BONCAP') ? 'BONCAP' :
-                 (ticker.startsWith('T') ? 'BONCAP' : 'LECAP');
-    const price = parseFloat(b.precio || b.price || b.ultimo || b.last || b.c || 0);
-    const pagoFinal = parseFloat(b.pago_final || b.pagoFinal || b.valor_residual || b.vr || b.amortizacion || 0);
-    const maturity = b.vencimiento || b.maturity || b.fecha_vencimiento || b.expiry || '';
-    if(!ticker || !price || !pagoFinal || !maturity) return null;
-    return {ticker, type, price, pagoFinal, maturity};
-  }).filter(Boolean);
+// ── Config: static pago final + vencimiento (data912 doesn't return these) ──
+const LC_CONFIG = {
+  S17A6:  {pagoFinal:110.125, maturity:'2026-04-17', type:'LECAP'},
+  S30A6:  {pagoFinal:127.486, maturity:'2026-04-30', type:'LECAP'},
+  S15Y6:  {pagoFinal:105.178, maturity:'2026-05-15', type:'LECAP'},
+  S29Y6:  {pagoFinal:132.044, maturity:'2026-05-29', type:'LECAP'},
+  T30J6:  {pagoFinal:144.896, maturity:'2026-06-30', type:'BONCAP'},
+  S31L6:  {pagoFinal:117.677, maturity:'2026-07-31', type:'LECAP'},
+  S31G6:  {pagoFinal:127.064, maturity:'2026-08-31', type:'LECAP'},
+  S30S6:  {pagoFinal:117.536, maturity:'2026-09-30', type:'LECAP'},
+  S30O6:  {pagoFinal:135.278, maturity:'2026-10-30', type:'LECAP'},
+  S30N6:  {pagoFinal:129.888, maturity:'2026-11-30', type:'LECAP'},
+  T15E7:  {pagoFinal:161.104, maturity:'2027-01-15', type:'BONCAP'},
+  T30A7:  {pagoFinal:157.341, maturity:'2027-04-30', type:'BONCAP'},
+  T31Y7:  {pagoFinal:151.563, maturity:'2027-05-31', type:'BONCAP'},
+  T30J7:  {pagoFinal:156.037, maturity:'2027-06-30', type:'BONCAP'},
+};
+
+// ── Normalize data912 /live/arg_notes or /live/arg_bonds response ──
+// Response is array of objects: {ticker, c, q, o, h, l, ...}
+// c = último operado, q = volumen
+function lcNormalizeD912(arr, fallbackType) {
+  if(!Array.isArray(arr)) return [];
+  const results = [];
+  for(const item of arr) {
+    const ticker = (item.ticker || item.symbol || item.t || '').replace(/\s/g,'');
+    if(!ticker) continue;
+    const cfg = LC_CONFIG[ticker];
+    if(!cfg) continue; // skip instruments we don't have config for
+    const price = parseFloat(item.c || item.ultimo || item.last || item.price || 0);
+    if(!price || price <= 0) continue;
+    results.push({
+      ticker,
+      type: cfg.type,
+      price,
+      pagoFinal: cfg.pagoFinal,
+      maturity: cfg.maturity,
+    });
+  }
+  return results;
 }
 
+let lcAutoRefreshTimer = null;
+let lcCountdown = 15;
+let lcCountdownTimer = null;
+
+// ── Fetch helpers ──
+async function lcFetchUrl(url) {
+  const r = await fetch(url, { signal: AbortSignal.timeout(8000) });
+  if(!r.ok) throw new Error('HTTP ' + r.status);
+  return r.json();
+}
+
+async function lcFetchWithProxy(path) {
+  // Try direct first (works when data912 has CORS headers)
+  try {
+    const data = await lcFetchUrl('https://data912.com' + path);
+    return data;
+  } catch(e) { /* try proxy */ }
+
+  // Fallback 1: allorigins.win
+  try {
+    const res = await lcFetchUrl('https://api.allorigins.win/get?url=' + encodeURIComponent('https://data912.com' + path));
+    return JSON.parse(res.contents);
+  } catch(e) { /* try next */ }
+
+  // Fallback 2: corsproxy.io
+  try {
+    return await lcFetchUrl('https://corsproxy.io/?' + encodeURIComponent('https://data912.com' + path));
+  } catch(e) { /* all failed */ }
+
+  throw new Error('CORS / red');
+}
+
+// ── Recalculate pagoFinal for LECAP: capitaliza TEM mensualmente ──
+// Para cada instrumento verificamos si el pagoFinal en config sigue siendo correcto
+// (ya que capitaliza mes a mes desde la emisión). Para BONCAP el pago final es fijo.
+// Usamos siempre el valor de config que tenemos — son actualizados al último licitado.
+
 // ── Fetch from data912.com ──
-async function lcFetch() {
+async function lcFetch(silent = false) {
   const btn = document.getElementById('lc-refresh-btn');
   const pill = document.getElementById('lc-status-pill');
-  btn.classList.add('loading');
-  btn.textContent = '↻ CARGANDO...';
+
+  if(!silent) {
+    btn.classList.add('loading');
+    btn.textContent = '↻ CARGANDO...';
+  }
   pill.className = 'lc-status-pill loading';
   pill.textContent = 'CARGANDO...';
 
@@ -1769,48 +1921,79 @@ async function lcFetch() {
   const settleStr = settle.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
   document.getElementById('lc-settle-txt').textContent = 'Liquidación T+1: ' + settleStr;
 
-  // Candidate endpoints — try each until one works
-  const endpoints = [
-    'https://data912.com/live/letras',
-    'https://data912.com/live/bonos?tipo=lecap',
-    'https://data912.com/api/v1/letras',
-    'https://data912.com/letras',
-  ];
-
   let fetched = false;
-  for(const url of endpoints) {
-    try {
-      const r = await fetch(url, {signal: AbortSignal.timeout(6000)});
-      if(!r.ok) continue;
-      const raw = await r.json();
-      const normalized = lcNormalize(raw);
-      if(normalized.length > 0) {
-        lcData = normalized.map(b => ({...b, days: lcDaysTo(b.maturity), ...lcComputeYields(b.price, b.pagoFinal, lcDaysTo(b.maturity))}));
-        fetched = true;
-        break;
-      }
-    } catch(e) { /* try next */ }
+  let newData = [];
+  let errMsg = '';
+
+  try {
+    const [rawNotes, rawBonds] = await Promise.all([
+      lcFetchWithProxy('/live/arg_notes'),
+      lcFetchWithProxy('/live/arg_bonds'),
+    ]);
+
+    const notes = lcNormalizeD912(Array.isArray(rawNotes) ? rawNotes : (rawNotes.data || rawNotes.items || []), 'LECAP');
+    const bonds = lcNormalizeD912(Array.isArray(rawBonds) ? rawBonds : (rawBonds.data || rawBonds.items || []), 'BONCAP');
+    newData = [...notes, ...bonds];
+    if(newData.length > 0) fetched = true;
+    else errMsg = 'API respondió pero sin instrumentos conocidos';
+  } catch(e) {
+    errMsg = e.message || 'Error de red';
   }
 
   if(!fetched) {
-    // Use static fallback
-    lcData = LC_STATIC.map(b => ({...b, days: lcDaysTo(b.maturity), ...lcComputeYields(b.price, b.pagoFinal, lcDaysTo(b.maturity))}));
+    // Use static fallback prices if first load, else keep existing
+    if(lcData.length === 0) {
+      newData = Object.entries(LC_CONFIG).map(([ticker, cfg]) => ({
+        ticker, type: cfg.type, price: LC_STATIC_PRICES[ticker] || 100,
+        pagoFinal: cfg.pagoFinal, maturity: cfg.maturity,
+      }));
+    } else {
+      newData = lcData.map(b => ({
+        ticker: b.ticker, type: b.type, price: b.price,
+        pagoFinal: b.pagoFinal, maturity: b.maturity,
+      }));
+    }
     pill.className = 'lc-status-pill err';
-    pill.textContent = 'DATOS ESTÁTICOS';
-    document.getElementById('lc-last-update').textContent = '⚠ API no disponible — usando datos de referencia · ' + new Date().toLocaleTimeString('es-AR');
+    pill.textContent = '⚠ OFFLINE';
+    document.getElementById('lc-last-update').textContent =
+      '⚠ ' + errMsg + ' · datos de referencia · ' + new Date().toLocaleTimeString('es-AR');
   } else {
     pill.className = 'lc-status-pill ok';
     pill.textContent = 'LIVE ●';
-    document.getElementById('lc-last-update').textContent = '✓ Actualizado: ' + new Date().toLocaleTimeString('es-AR') + ' · ' + lcData.length + ' instrumentos';
+    document.getElementById('lc-last-update').innerHTML =
+      '✓ ' + new Date().toLocaleTimeString('es-AR') + ' · ' + newData.length +
+      ' instrumentos · próxima actualización <span id="lc-cd">15</span>s';
   }
+
+  // Compute yields and update state
+  lcData = newData.map(b => ({
+    ...b,
+    days: lcDaysTo(b.maturity),
+    ...lcComputeYields(b.price, b.pagoFinal, lcDaysTo(b.maturity))
+  }));
 
   btn.classList.remove('loading');
   btn.textContent = '↻ ACTUALIZAR';
   lcRender();
+  lcRenderCurve();
 
-  // Auto-refresh every 60s
-  clearTimeout(lcRefreshTimer);
-  lcRefreshTimer = setTimeout(lcFetch, 60000);
+  // Schedule next auto-refresh in 15s
+  lcStartCountdown();
+}
+
+function lcStartCountdown() {
+  clearInterval(lcCountdownTimer);
+  clearTimeout(lcAutoRefreshTimer);
+  lcCountdown = 15;
+  lcCountdownTimer = setInterval(() => {
+    lcCountdown--;
+    const el = document.getElementById('lc-cd');
+    if(el) el.textContent = lcCountdown;
+    if(lcCountdown <= 0) {
+      clearInterval(lcCountdownTimer);
+      lcFetch(true);
+    }
+  }, 1000);
 }
 
 // ── Set filter ──
@@ -1820,6 +2003,7 @@ function lcSetFilter(f) {
   const cls = f === 'lecap' ? 'on-green' : f === 'boncap' ? 'on-amber' : 'on';
   document.getElementById('lc-f-' + f).className = 'lc-ftab ' + cls;
   lcRender();
+  lcRenderCurve();
 }
 
 // ── Sort ──
@@ -1954,7 +2138,205 @@ document.addEventListener('keydown', e => {
   if(e.key === 'Escape') lcModalClose(null);
 });
 
-// Auto-load LECAP data on page start (preload so it's ready when tab is clicked)
+// ════════════════════════════════════════
+//  LECAP CURVES MODULE
+// ════════════════════════════════════════
+let lcCurveChart = null;
+let lcCurveMetric = 'tir';
+let lcCurveXAxis  = 'date';
+
+// Register datalabels plugin globally
+Chart.register(ChartDataLabels);
+
+function lcSetCurveMetric(m) {
+  lcCurveMetric = m;
+  ['tir','tna','tem'].forEach(k => {
+    document.getElementById('lc-cm-'+k).className = 'lc-cmtab' + (k===m ? ' on-'+k : '');
+  });
+  lcRenderCurve();
+}
+
+function lcSetXAxis(x) {
+  lcCurveXAxis = x;
+  ['date','days'].forEach(k => {
+    document.getElementById('lc-cx-'+k).className = 'lc-cmtab' + (k===x ? ' on-tir' : '');
+  });
+  lcRenderCurve();
+}
+
+function lcRenderCurve() {
+  if(!lcData.length) return;
+
+  const metricColors = {
+    tir: { line:'#22d68a', grd0:'rgba(34,214,138,.15)', grd1:'rgba(34,214,138,.0)' },
+    tna: { line:'#5b8def', grd0:'rgba(91,141,239,.15)', grd1:'rgba(91,141,239,.0)'  },
+    tem: { line:'#22d4f0', grd0:'rgba(34,212,240,.15)', grd1:'rgba(34,212,240,.0)'  },
+  };
+  const mc = metricColors[lcCurveMetric];
+  const metricLabel = {tir:'TIR (TEA %)', tna:'TNA %', tem:'TEM %'}[lcCurveMetric];
+
+  // Sort filtered instruments by days-to-maturity
+  const sorted = [...lcData]
+    .filter(b => lcFilter === 'all' || b.type.toLowerCase() === lcFilter)
+    .sort((a,b) => a.days - b.days);
+  const all = sorted;
+
+  const xVal = b => lcCurveXAxis === 'date'
+    ? new Date(b.maturity + 'T00:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'})
+    : b.days;
+
+  const xLabels = all.map(xVal);
+
+  // Stats
+  const vals = all.map(b => b[lcCurveMetric]);
+  const mn = Math.min(...vals), mx = Math.max(...vals);
+  const bMin = all[vals.indexOf(mn)], bMax = all[vals.indexOf(mx)];
+  const slope = vals.length > 1 ? (vals[vals.length-1] - vals[0]).toFixed(2) : 0;
+  const slopeSign = slope >= 0 ? '+' : '';
+
+  document.getElementById('lc-st-min').textContent     = mn.toFixed(2) + '%';
+  document.getElementById('lc-st-min-sub').textContent = bMin.ticker + ' · ' + lcFmtDate(bMin.maturity);
+  document.getElementById('lc-st-max').textContent     = mx.toFixed(2) + '%';
+  document.getElementById('lc-st-max-sub').textContent = bMax.ticker + ' · ' + lcFmtDate(bMax.maturity);
+  document.getElementById('lc-st-slope').textContent   = slopeSign + slope + '%';
+  document.getElementById('lc-st-slope-sub').textContent = slope > 0 ? 'curva empinada ▲' : slope < 0 ? 'curva invertida ▼' : 'curva plana';
+  document.getElementById('lc-st-count').textContent   = all.length;
+  document.getElementById('lc-st-count-sub').textContent = all.filter(b=>b.type==='LECAP').length + ' LECAP · ' + all.filter(b=>b.type==='BONCAP').length + ' BONCAP';
+
+  const canvas = document.getElementById('lc-curve-chart');
+  const ctx = canvas.getContext('2d');
+
+  // Gradient fill under the spline
+  const grad = ctx.createLinearGradient(0, 0, 0, 380);
+  grad.addColorStop(0, mc.grd0);
+  grad.addColorStop(1, mc.grd1);
+
+  // Point colors per instrument
+  const ptColors  = all.map(b => b.type==='LECAP' ? '#22d4f0' : '#f0b429');
+  const ptBorders = all.map(b => b.type==='LECAP' ? '#0a8090' : '#7a5a10');
+
+  const datasets = [
+    // ── Spline backdrop (no points, no labels) ──
+    {
+      label: 'curva',
+      data: all.map(b => b[lcCurveMetric]),
+      borderColor: mc.line,
+      backgroundColor: grad,
+      borderWidth: 2,
+      pointRadius: 0,
+      pointHoverRadius: 0,
+      tension: 0.35,
+      fill: true,
+      order: 3,
+      datalabels: { display: false },
+    },
+    // ── Scatter points with TICKER labels ──
+    {
+      label: metricLabel,
+      data: all.map(b => b[lcCurveMetric]),
+      borderColor: ptBorders,
+      backgroundColor: ptColors,
+      borderWidth: 2,
+      pointRadius: 7,
+      pointHoverRadius: 10,
+      pointStyle: all.map(b => b.type==='LECAP' ? 'circle' : 'rectRot'),
+      showLine: false,
+      fill: false,
+      order: 1,
+      datalabels: {
+        display: true,
+        align: 'top',
+        anchor: 'end',
+        offset: 4,
+        color: ctx => {
+          const idx = ctx.dataIndex;
+          return all[idx].type === 'LECAP' ? '#22d4f0' : '#f0b429';
+        },
+        font: {
+          family: "'JetBrains Mono', 'Courier New', monospace",
+          size: 10,
+          weight: '700',
+        },
+        formatter: (val, ctx) => all[ctx.dataIndex].ticker,
+        textStrokeColor: '#0a1020',
+        textStrokeWidth: 3,
+      },
+    },
+  ];
+
+  if(lcCurveChart) { lcCurveChart.destroy(); lcCurveChart = null; }
+
+  lcCurveChart = new Chart(ctx, {
+    type: 'line',
+    data: { labels: xLabels, datasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      animation: { duration: 400 },
+      layout: { padding: { top: 28, right: 16, left: 4, bottom: 4 } },
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        datalabels: {},   // handled per-dataset above
+        tooltip: {
+          backgroundColor: '#0a1828',
+          borderColor: '#2a4a7a',
+          borderWidth: 1,
+          titleColor: '#7aa3f0',
+          bodyColor: '#d0ddf5',
+          padding: 10,
+          titleFont: { family: "'JetBrains Mono', monospace", size: 11, weight: '700' },
+          bodyFont: { family: "'JetBrains Mono', monospace", size: 11 },
+          callbacks: {
+            title: items => {
+              const b = all[items[0].dataIndex];
+              return b.ticker + ' · ' + b.type + ' · ' + lcFmtDate(b.maturity);
+            },
+            label: item => {
+              if(item.datasetIndex === 0) return null;
+              const b = all[item.dataIndex];
+              return [
+                ' ' + metricLabel + ': ' + b[lcCurveMetric].toFixed(2) + '%',
+                ' TIR: ' + b.tir.toFixed(2) + '%  TNA: ' + b.tna.toFixed(2) + '%  TEM: ' + b.tem.toFixed(2) + '%',
+                ' Precio: ' + lcFmtNum(b.price,3) + '  →  Pago: ' + lcFmtNum(b.pagoFinal,3),
+                ' Días: ' + b.days,
+              ];
+            },
+            filter: item => item.datasetIndex !== 0,
+          },
+        },
+      },
+      scales: {
+        x: {
+          grid:  { color: 'rgba(42,74,122,.3)', tickLength: 0 },
+          ticks: {
+            color: '#7a99c4',
+            font:  { family: "'JetBrains Mono', monospace", size: 10 },
+            maxRotation: 35, minRotation: 35,
+          },
+          border: { color: 'rgba(42,74,122,.6)' },
+        },
+        y: {
+          grid:  { color: 'rgba(42,74,122,.3)' },
+          ticks: {
+            color: '#7a99c4',
+            font:  { family: "'JetBrains Mono', monospace", size: 11 },
+            callback: v => v.toFixed(1) + '%',
+          },
+          border: { color: 'rgba(42,74,122,.6)' },
+          title: {
+            display: true,
+            text: metricLabel,
+            color: '#7aa3f0',
+            font: { family: "'JetBrains Mono', monospace", size: 10, weight: '700' },
+          },
+        },
+      },
+    },
+  });
+}
+
+// Auto-load LECAP data on page start
 lcFetch();
 
 </script>

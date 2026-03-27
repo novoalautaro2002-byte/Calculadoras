@@ -921,7 +921,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 
   <!-- Footer -->
   <div class="r-footer">
-    <span id="r-footer-left">Fuentes: dolarapi.com · data912.com · Yahoo Finance</span>
+    <span id="r-footer-left">Fuentes: rendimientos.co · dolarapi.com · data912.com · Yahoo Finance</span>
     <span id="r-footer-right">Portfolio Investment · BYMA 2026</span>
   </div>
 
@@ -1098,7 +1098,7 @@ const df=n=>Number(n).toLocaleString('es-AR',{minimumFractionDigits:2,maximumFra
 const dfK=n=>{const v=Number(n);return v>=1e6?(v/1e6).toFixed(2)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':df(v);};
 const dfN=n=>Math.round(Number(n)).toLocaleString('es-AR');
 
-// Fetch with proxy fallback (same pattern as LECAP)
+// Fetch with multiple fallback strategies
 async function pfetch(url){
   try{const r=await fetch(url);if(r.ok)return r.json();}catch(e){}
   try{
@@ -1106,12 +1106,25 @@ async function pfetch(url){
     if(!r2.ok)throw new Error('proxy HTTP '+r2.status);
     const d=await r2.json();return JSON.parse(d.contents);
   }catch(e){}
-  // Second proxy fallback
   try{
     const r3=await fetch('https://corsproxy.io/?'+encodeURIComponent(url));
     if(r3.ok)return r3.json();
   }catch(e){}
   throw new Error('unreachable: '+url);
+}
+
+// Fetch from rendimientos.co proxy (Netlify Function) with fallback to direct
+async function rfetch(path, directUrl){
+  // 1. rendimientos.co proxy (CORS-enabled Netlify Function)
+  try{
+    const r=await fetch('https://rendimientos.co/api/'+path);
+    if(r.ok)return{data:await r.json(),src:'rendimientos.co'};
+  }catch(e){}
+  // 2. Direct to source
+  if(directUrl){
+    try{return{data:await pfetch(directUrl),src:'direct'};}catch(e){}
+  }
+  throw new Error('unreachable: '+path);
 }
 
 function rSetVal(id,txt){
@@ -1135,23 +1148,23 @@ async function dashFetch(){
   $$('r-upd-text').textContent='cargando...';
 
   let ok=0;
+  let sources=[];
 
   // ALL calls in parallel
-  const [rDolar,rBnaOficial,rBonds,rMerval,rSPY,rQQQ,rGLD,rBTC,rWTI,rBrent]=
+  // - dolarapi.com: direct (has CORS)
+  // - rendimientos.co/api/mundo: Yahoo Finance proxy (SPY, QQQ, GLD, BTC, WTI, Brent)
+  // - rendimientos.co/api/soberanos: data912 proxy (AL30, AL30D, AL30C, etc.)
+  // - data912/merval: via pfetch fallback chain
+  const [rDolar,rBnaOficial,rMundo,rSoberanos,rMerval]=
     await Promise.allSettled([
       pfetch('https://dolarapi.com/v1/dolares'),
       pfetch('https://dolarapi.com/v1/dolares/oficial'),
-      pfetch('https://data912.com/live/arg_bonds'),
+      rfetch('mundo', null),
+      rfetch('soberanos', 'https://data912.com/live/arg_bonds'),
       pfetch('https://data912.com/live/merval'),
-      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=2d'),
-      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/QQQ?interval=1d&range=2d'),
-      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/GLD?interval=1d&range=2d'),
-      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/BTC-USD?interval=1d&range=2d'),
-      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=2d'),
-      pfetch('https://query1.finance.yahoo.com/v8/finance/chart/BZ%3DF?interval=1d&range=2d'),
     ]);
 
-  // ── DÓLAR (bulk) ──
+  // ── DÓLAR (bulk desde dolarapi.com) ──
   if(rDolar.status==='fulfilled'){
     try{
       const by={};
@@ -1165,18 +1178,18 @@ async function dashFetch(){
       if(vMEP>0){rSetVal('r-mep','$'+df(vMEP));rSetChg('r-mep-chg',0,'Bolsa');}
       if(vMayo>0){rSetVal('r-bcra','$'+df(vMayo));rSetChg('r-bcra-chg',0,'BCRA');}
       if(vBlu>0){rSetVal('r-blue','$'+df(vBlu));rSetChg('r-blue-chg',0,'Blue');}
-      // Brecha CCL/Mayorista
       if(vCCL>0&&vMayo>0){
         const br=((vCCL/vMayo)-1)*100;
         rSetVal('r-brecha',br.toFixed(1)+'%');
         rSetChg('r-brecha-chg',br);
       }
+      sources.push('dolarapi.com');
       $$('r-fx-src').textContent='dolarapi.com · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
       ok++;
     }catch(e){console.warn('dolar parse:',e);}
   }
 
-  // ── BNA (same endpoint as descuento calculator: dolarapi.com/v1/dolares/oficial) ──
+  // ── BNA (dolarapi.com/v1/dolares/oficial — mismo que descuento) ──
   if(rBnaOficial.status==='fulfilled'){
     try{
       const d=rBnaOficial.value;
@@ -1185,10 +1198,87 @@ async function dashFetch(){
     }catch(e){console.warn('bna parse:',e);}
   }
 
-  // ── BONOS AL30 (data912) ──
-  if(rBonds.status==='fulfilled'){
+  // ── MUNDO (Yahoo Finance via rendimientos.co/api/mundo) ──
+  // Response format: array of {symbol, price, change, changePct, sparkline?}
+  // OR raw Yahoo chart format — handle both
+  if(rMundo.status==='fulfilled'){
     try{
-      const arr=Array.isArray(rBonds.value)?rBonds.value:(rBonds.value?.data||rBonds.value?.items||[]);
+      const raw=rMundo.value.data;
+      sources.push(rMundo.value.src);
+      // rendimientos.co mundo returns an array of objects
+      if(Array.isArray(raw)){
+        const byS={};
+        raw.forEach(item=>{
+          const s=(item.symbol||item.ticker||'').toUpperCase();
+          if(s)byS[s]=item;
+        });
+        const setMundo=(sym,vid,cid,fmt)=>{
+          const d=byS[sym];if(!d)return;
+          const p=parseFloat(d.price||d.last||d.c||0);
+          const chg=parseFloat(d.changePct||d.pct_change||d.change_pct||0);
+          if(p>0){rSetVal(vid,fmt(p));rSetChg(cid,chg);ok++;}
+        };
+        setMundo('SPY','r-spy-val','r-spy-chg',v=>'u$s'+df(v));
+        setMundo('QQQ','r-qqq-val','r-qqq-chg',v=>'u$s'+df(v));
+        setMundo('GLD','r-gold-val','r-gold-chg',v=>'u$s'+df(v));
+        setMundo('BTC-USD','r-btc-val','r-btc-chg',v=>'u$s'+dfK(v));
+        setMundo('CL=F','r-wti-val','r-wti-chg',v=>'u$s'+df(v));
+        setMundo('BZ=F','r-brent-val','r-brent-chg',v=>'u$s'+df(v));
+        // Alternative tickers rendimientos.co might use
+        if(!byS['CL=F'])setMundo('CL','r-wti-val','r-wti-chg',v=>'u$s'+df(v));
+        if(!byS['BZ=F'])setMundo('BZ','r-brent-val','r-brent-chg',v=>'u$s'+df(v));
+        if(!byS['BTC-USD'])setMundo('BTC','r-btc-val','r-btc-chg',v=>'u$s'+dfK(v));
+      }
+      // If mundo returned object with symbols as keys
+      else if(raw&&typeof raw==='object'&&!raw.chart){
+        Object.entries(raw).forEach(([sym,d])=>{
+          const p=parseFloat(d?.price||d?.last||0);
+          const chg=parseFloat(d?.changePct||d?.pct_change||0);
+          const su=sym.toUpperCase();
+          if(p>0){
+            if(su.includes('SPY')){rSetVal('r-spy-val','u$s'+df(p));rSetChg('r-spy-chg',chg);ok++;}
+            else if(su.includes('QQQ')){rSetVal('r-qqq-val','u$s'+df(p));rSetChg('r-qqq-chg',chg);ok++;}
+            else if(su.includes('GLD')){rSetVal('r-gold-val','u$s'+df(p));rSetChg('r-gold-chg',chg);ok++;}
+            else if(su.includes('BTC')){rSetVal('r-btc-val','u$s'+dfK(p));rSetChg('r-btc-chg',chg);ok++;}
+            else if(su==='CL=F'||su==='CL'){rSetVal('r-wti-val','u$s'+df(p));rSetChg('r-wti-chg',chg);ok++;}
+            else if(su==='BZ=F'||su==='BZ'){rSetVal('r-brent-val','u$s'+df(p));rSetChg('r-brent-chg',chg);ok++;}
+          }
+        });
+      }
+    }catch(e){console.warn('mundo parse:',e);}
+  }
+
+  // Fallback: direct Yahoo Finance if mundo failed
+  if(rMundo.status!=='fulfilled'){
+    const ySyms=[
+      ['SPY','r-spy-val','r-spy-chg',v=>'u$s'+df(v)],
+      ['QQQ','r-qqq-val','r-qqq-chg',v=>'u$s'+df(v)],
+      ['GLD','r-gold-val','r-gold-chg',v=>'u$s'+df(v)],
+      ['BTC-USD','r-btc-val','r-btc-chg',v=>'u$s'+dfK(v)],
+      ['CL%3DF','r-wti-val','r-wti-chg',v=>'u$s'+df(v)],
+      ['BZ%3DF','r-brent-val','r-brent-chg',v=>'u$s'+df(v)],
+    ];
+    const yResults=await Promise.allSettled(
+      ySyms.map(([s])=>pfetch('https://query1.finance.yahoo.com/v8/finance/chart/'+s+'?interval=1d&range=2d'))
+    );
+    yResults.forEach((r,i)=>{
+      if(r.status!=='fulfilled')return;
+      try{
+        const meta=r.value?.chart?.result?.[0]?.meta;if(!meta)return;
+        const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||meta.previousClose;
+        const pct=prev>0?((price-prev)/prev)*100:0;
+        rSetVal(ySyms[i][1],ySyms[i][3](price));rSetChg(ySyms[i][2],pct);ok++;
+      }catch(e){}
+    });
+    if(yResults.some(r=>r.status==='fulfilled'))sources.push('Yahoo Finance');
+  }
+
+  // ── SOBERANOS (AL30/AL30D/AL30C via rendimientos.co/api/soberanos → data912) ──
+  if(rSoberanos.status==='fulfilled'){
+    try{
+      const raw=rSoberanos.value.data;
+      sources.push('data912');
+      const arr=Array.isArray(raw)?raw:(raw?.data||raw?.items||[]);
       const byT={};
       arr.forEach(b=>{const t=(b.ticker||b.t||'').trim().toUpperCase();if(t)byT[t]=b;});
       const getBondPrice=(tk)=>{
@@ -1209,11 +1299,11 @@ async function dashFetch(){
         rSetVal('r-canje-val',canje.toFixed(2)+'%');
         rSetChg('r-canje-chg',canje);
       }
-      $$('r-bond-src').textContent='data912.com · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
-    }catch(e){console.warn('bonds parse:',e);}
+      $$('r-bond-src').textContent=rSoberanos.value.src+' · '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+    }catch(e){console.warn('soberanos parse:',e);}
   }
 
-  // ── MERVAL (data912) ──
+  // ── MERVAL (data912 via pfetch fallback chain) ──
   if(rMerval.status==='fulfilled'){
     try{
       const arr=Array.isArray(rMerval.value)?rMerval.value:[rMerval.value];
@@ -1230,26 +1320,6 @@ async function dashFetch(){
     }catch(e){console.warn('merval parse:',e);}
   }
 
-  // ── YAHOO FINANCE (SPY, QQQ, GLD, BTC, WTI, Brent) ──
-  const yparse=(r,sym)=>{
-    if(r.status!=='fulfilled')return null;
-    try{
-      const meta=r.value?.chart?.result?.[0]?.meta;if(!meta)return null;
-      const price=meta.regularMarketPrice,prev=meta.chartPreviousClose||meta.previousClose;
-      return{price,pct:prev>0?((price-prev)/prev)*100:0};
-    }catch(e){return null;}
-  };
-  const setSym=(r,sym,vid,cid,fmt)=>{
-    const d=yparse(r,sym);if(!d)return;
-    rSetVal(vid,fmt(d.price));rSetChg(cid,d.pct);ok++;
-  };
-  setSym(rSPY,'SPY','r-spy-val','r-spy-chg',v=>'u$s'+df(v));
-  setSym(rQQQ,'QQQ','r-qqq-val','r-qqq-chg',v=>'u$s'+df(v));
-  setSym(rGLD,'GLD','r-gold-val','r-gold-chg',v=>'u$s'+df(v));
-  setSym(rBTC,'BTC-USD','r-btc-val','r-btc-chg',v=>'u$s'+dfK(v));
-  setSym(rWTI,'CL=F','r-wti-val','r-wti-chg',v=>'u$s'+df(v));
-  setSym(rBrent,'BZ=F','r-brent-val','r-brent-chg',v=>'u$s'+df(v));
-
   // ── STATUS ──
   const now=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
   if(ok>0){
@@ -1259,6 +1329,10 @@ async function dashFetch(){
     dot.className='r-live-dot off';
     lbl.className='r-status-label err';lbl.textContent='SIN DATOS';
   }
+
+  // Update footer with actual sources used
+  const srcUniq=[...new Set(sources)];
+  if(srcUniq.length>0) $$('r-footer-left').textContent='Fuentes: '+srcUniq.join(' · ');
 
   // Auto-refresh countdown 15s
   clearInterval(_dashTimer);

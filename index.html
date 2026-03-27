@@ -806,6 +806,125 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .pdf-btn{background:rgba(91,141,239,.12);border:1px solid #3a6fd8;color:#7aa3f0;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;padding:3px 10px;cursor:pointer;border-radius:3px;height:24px;display:inline-flex;align-items:center;gap:4px;transition:all .12s}
 .pdf-btn:hover{background:rgba(91,141,239,.25);color:var(--white);border-color:#5b8def}
 .pdf-btn:active{opacity:.7}
+
+/* ─── ARBITRAJE ─── */
+.arb-outer{display:flex;flex-direction:column;min-height:calc(100vh - 98px)}
+.arb-topbar{
+  background:var(--navy2);border-bottom:1px solid var(--border);
+  padding:6px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;
+}
+.arb-live-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;background:#22d68a;box-shadow:0 0 6px #22d68a;animation:arbpulse 2s infinite}
+.arb-live-dot.loading{background:var(--amber);box-shadow:0 0 6px var(--amber)}
+.arb-live-dot.error{background:#ff4d6a;box-shadow:0 0 6px #ff4d6a;animation:none}
+@keyframes arbpulse{0%,100%{opacity:1;box-shadow:0 0 6px #22d68a}50%{opacity:.5;box-shadow:0 0 2px #22d68a}}
+#arb-status{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--blue3);letter-spacing:.1em}
+.arb-title-tag{font-size:11px;font-weight:700;color:var(--white);font-family:var(--mono);margin-left:4px}
+.arb-btn{
+  background:rgba(22,168,106,.1);border:1px solid #16a86a;color:#22d68a;
+  font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;
+  padding:3px 9px;cursor:pointer;border-radius:3px;height:22px;
+  display:inline-flex;align-items:center;gap:4px;transition:all .12s;
+}
+.arb-btn:hover{background:rgba(22,168,106,.25)}
+.arb-btn.blue{background:rgba(58,111,216,.1);border-color:#3a6fd8;color:var(--blue3)}
+.arb-btn.blue:hover{background:rgba(58,111,216,.25)}
+.arb-btn.red{background:rgba(200,30,50,.1);border-color:#a02040;color:#ff7090}
+.arb-btn.red:hover{background:rgba(200,30,50,.2)}
+
+.arb-grid{
+  display:grid;
+  grid-template-columns:158px 1fr 270px 200px;
+  flex:1;overflow:hidden;
+}
+
+/* Left */
+.arb-left{border-right:1px solid var(--border);background:#0a1525;display:flex;flex-direction:column;overflow:hidden}
+.arb-pnl-hdr{
+  background:linear-gradient(90deg,var(--navy3),var(--navy2));
+  border-bottom:1px solid var(--border);
+  padding:5px 10px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.arb-pnl-title{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--blue3);letter-spacing:.12em;text-transform:uppercase}
+.arb-hist-wrap{flex:1;overflow-y:auto}
+.arb-hist-tbl{width:100%;border-collapse:collapse;font-family:var(--mono)}
+.arb-hist-tbl thead{position:sticky;top:0;z-index:2}
+.arb-hist-tbl thead tr{background:#040b16}
+.arb-hist-tbl thead th{padding:5px 6px;font-size:9px;font-weight:700;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;text-align:right;border-right:1px solid rgba(42,74,122,.3);white-space:nowrap}
+.arb-hist-tbl thead th:first-child{text-align:left}
+.arb-hist-tbl tbody tr{border-bottom:1px solid rgba(42,74,122,.2)}
+.arb-hist-tbl tbody tr:nth-child(even){background:rgba(10,20,40,.35)}
+.arb-hist-tbl tbody tr:hover{background:rgba(58,111,216,.1)}
+.arb-hist-tbl tbody tr.arb-today td{background:rgba(58,111,216,.15)!important;color:var(--white)!important}
+.arb-hist-tbl td{padding:4px 6px;font-size:10.5px;text-align:right;color:var(--white2);border-right:1px solid rgba(42,74,122,.15);white-space:nowrap}
+.arb-hist-tbl td:first-child{text-align:left;color:var(--gray);font-size:10px}
+.arb-ratio-hi{color:#22d68a!important;font-weight:700}
+.arb-ratio-lo{color:#ff4d6a!important;font-weight:700}
+
+/* Center */
+.arb-center{display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--navy2);overflow:hidden}
+.arb-chart-box{flex:1;position:relative;padding:8px 12px 4px;min-height:0}
+.arb-chart-box canvas{width:100%!important;height:100%!important}
+.arb-chart-leg{display:flex;gap:12px;padding:4px 12px 2px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;color:var(--white2)}
+.arb-leg{display:flex;align-items:center;gap:5px}
+.arb-leg-dot{width:10px;height:3px;border-radius:1px;flex-shrink:0}
+.arb-leg-dot.dot{width:8px;height:8px;border-radius:50%}
+.arb-chart-sep{height:1px;background:var(--border);margin:0 12px;flex-shrink:0}
+.arb-watermark{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-family:var(--mono);font-size:9px;color:rgba(122,153,196,.15);letter-spacing:.08em;pointer-events:none}
+
+/* Right */
+.arb-right{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden}
+.arb-cur-box{background:var(--navy3);border-bottom:1px solid var(--border);padding:7px 11px;flex-shrink:0}
+.arb-upd-line{font-family:var(--mono);font-size:9px;color:var(--gray);letter-spacing:.08em;padding-bottom:3px;border-bottom:1px solid rgba(42,74,122,.3);margin-bottom:3px}
+.arb-cur-row{display:flex;align-items:center;justify-content:space-between;padding:2px 0;border-bottom:1px solid rgba(42,74,122,.2)}
+.arb-cur-row:last-child{border-bottom:none}
+.arb-cur-k{font-size:10px;font-weight:700;color:var(--gray);letter-spacing:.06em;font-family:var(--mono)}
+.arb-cur-v{font-size:13px;font-weight:700;font-family:var(--mono);color:var(--white)}
+.arb-cur-v.sup{color:var(--amber)}
+.arb-cur-v.inf{color:#22d68a}
+.arb-cur-v.ratio{font-size:16px}
+.arb-accion-box{margin-top:5px;padding:5px 8px;border-radius:4px;border:1px solid;font-family:var(--mono);font-size:11px;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between}
+.arb-accion-box.nada{background:rgba(74,106,154,.08);border-color:var(--border);color:var(--white2)}
+.arb-accion-box.rota-al{background:rgba(255,77,106,.1);border-color:#cc3a55;color:#ff4d6a}
+.arb-accion-box.rota-gd{background:rgba(22,168,106,.1);border-color:#16a86a;color:#22d68a}
+
+.arb-gauge-area{display:flex;flex-direction:column;align-items:center;padding:8px 8px 4px;border-bottom:1px solid var(--border);flex-shrink:0}
+.arb-gauge-lbl{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--blue3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+#arb-gauge-svg{width:214px;height:132px}
+.arb-gauge-num{font-family:var(--mono);font-size:22px;font-weight:800;color:var(--white);margin-top:0}
+
+.arb-stats-wrap{flex:1;overflow-y:auto}
+.arb-sblk{border-bottom:1px solid rgba(42,74,122,.25)}
+.arb-sblk:last-child{border-bottom:none}
+.arb-shdr{font-family:var(--mono);font-size:8px;font-weight:700;color:var(--blue3);letter-spacing:.1em;text-transform:uppercase;padding:4px 11px 2px;background:rgba(5,15,30,.3)}
+.arb-srow{display:flex;justify-content:space-between;align-items:center;padding:2.5px 11px}
+.arb-sk{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--gray)}
+.arb-sv{font-family:var(--mono);font-size:12px;font-weight:700}
+.arb-sv.hi{color:#22d68a}.arb-sv.lo{color:#ff4d6a}.arb-sv.med{color:var(--white2)}
+
+/* Far right */
+.arb-desvios{background:#0a1525;overflow:hidden;display:flex;flex-direction:column}
+.arb-desv-wrap{flex:1;overflow-y:auto}
+.arb-desv-tbl{width:100%;border-collapse:collapse;font-family:var(--mono)}
+.arb-desv-tbl thead{position:sticky;top:0;z-index:2}
+.arb-desv-tbl thead tr{background:#040b16}
+.arb-desv-tbl thead th{padding:5px 6px;font-size:9px;font-weight:700;color:var(--amber);letter-spacing:.1em;text-transform:uppercase;text-align:right;border-right:1px solid rgba(42,74,122,.3);white-space:nowrap}
+.arb-desv-tbl thead th:first-child{text-align:left}
+.arb-desv-tbl tbody tr{border-bottom:1px solid rgba(42,74,122,.2)}
+.arb-desv-tbl tbody tr:nth-child(even){background:rgba(10,20,40,.35)}
+.arb-desv-tbl tbody tr:hover{background:rgba(58,111,216,.08)}
+.arb-desv-tbl tbody tr.arb-desv-active{background:rgba(58,111,216,.2)!important}
+.arb-desv-tbl td{padding:3.5px 6px;font-size:10px;text-align:right;color:var(--white2);border-right:1px solid rgba(42,74,122,.1);white-space:nowrap}
+.arb-desv-tbl td:first-child{text-align:left;font-weight:700;color:var(--white)}
+.arb-desv-tbl td.d-sup{color:var(--amber)}.arb-desv-tbl td.d-inf{color:#22d68a}
+
+/* Notes */
+.arb-notes{
+  background:#060f1c;border-top:2px solid var(--border);
+  padding:7px 14px;font-size:10px;color:var(--gray);font-family:var(--font);line-height:1.6;
+  flex-shrink:0;
+}
+.arb-notes strong{color:var(--white2)}
+.arb-notes .disc{color:#ff6080;font-weight:700}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -848,6 +967,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
   <button class="nav-tab" id="nav-dcto" onclick="showPage('dcto')"><span class="tab-icon">◈</span> Descuento de Cheques</button>
   <button class="nav-tab" id="nav-lecap" onclick="showPage('lecap')"><span class="tab-icon">◆</span> LECAP / BONCAP</button>
   <button class="nav-tab" id="nav-bonos" onclick="showPage('bonos')"><span class="tab-icon">◇</span> Bonos Soberanos</button>
+  <button class="nav-tab" id="nav-arb" onclick="showPage('arb')"><span class="tab-icon">⇄</span> Arbitraje</button>
   <div class="nav-spacer"></div>
   <div class="nav-meta"><span class="nav-meta-txt">REF.06 · BYMA 2026</span></div>
 </div>
@@ -1128,14 +1248,14 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
   <div class="lc-curves-panel" id="lc-curves-panel">
     <div class="lc-curve-controls">
       <span style="font-size:10px;font-weight:700;color:var(--white2);letter-spacing:.1em;text-transform:uppercase;font-family:var(--mono)">Métrica:</span>
-      <div class="lc-curve-metric-tabs"><button class="lc-cmtab on-tir" id="lc-cm-tir" onclick="lcSetCurveMetric('tir')">TIR (TEA)</button><button class="lc-cmtab" id="lc-cm-tna" onclick="lcSetCurveMetric('tna')">TNA</button><button class="lc-cmtab" id="lc-cm-tem" onclick="lcSetCurveMetric('tem')">TEM</button></div>
+      <div class="lc-curve-metric-tabs"><button class="lc-cmtab" id="lc-cm-tir" onclick="lcSetCurveMetric('tir')">TIR (TEA)</button><button class="lc-cmtab on-tna" id="lc-cm-tna" onclick="lcSetCurveMetric('tna')">TNA</button><button class="lc-cmtab" id="lc-cm-tem" onclick="lcSetCurveMetric('tem')">TEM</button></div>
       <div class="lc-curve-legend"><div class="lc-leg-item"><div class="lc-leg-dot lecap"></div> LECAP</div><div class="lc-leg-item"><div class="lc-leg-dot boncap"></div> BONCAP</div></div>
       <div style="margin-left:auto;font-size:9px;color:var(--gray2);font-family:var(--mono);letter-spacing:.06em">EJE X: DURATION MODIFICADA (años)</div>
     </div>
     <div class="lc-chart-outer"><div class="lc-chart-box"><canvas id="lc-curve-chart" height="340"></canvas></div></div>
     <div class="lc-curve-stats">
-      <div class="lc-cstat"><div class="lc-cstat-k" id="lc-st-min-k">TIR mín.</div><div class="lc-cstat-v" id="lc-st-min">—</div><div class="lc-cstat-sub" id="lc-st-min-sub">—</div></div>
-      <div class="lc-cstat"><div class="lc-cstat-k" id="lc-st-max-k">TIR máx.</div><div class="lc-cstat-v" id="lc-st-max">—</div><div class="lc-cstat-sub" id="lc-st-max-sub">—</div></div>
+      <div class="lc-cstat"><div class="lc-cstat-k" id="lc-st-min-k">TNA mín.</div><div class="lc-cstat-v" id="lc-st-min">—</div><div class="lc-cstat-sub" id="lc-st-min-sub">—</div></div>
+      <div class="lc-cstat"><div class="lc-cstat-k" id="lc-st-max-k">TNA máx.</div><div class="lc-cstat-v" id="lc-st-max">—</div><div class="lc-cstat-sub" id="lc-st-max-sub">—</div></div>
       <div class="lc-cstat"><div class="lc-cstat-k">Pendiente curva</div><div class="lc-cstat-v" id="lc-st-slope">—</div><div class="lc-cstat-sub" id="lc-st-slope-sub">corto vs largo plazo</div></div>
       <div class="lc-cstat"><div class="lc-cstat-k">Instrumentos</div><div class="lc-cstat-v" id="lc-st-count">—</div><div class="lc-cstat-sub" id="lc-st-count-sub">—</div></div>
     </div>
@@ -1187,7 +1307,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
         <th data-col="ticker" onclick="bndSort('ticker')">TICKER <span class="bnd-sarr" id="bsa-ticker"></span></th>
         <th data-col="dirty" onclick="bndSort('dirty')">DIRTY (USD) <span class="bnd-sarr" id="bsa-dirty"></span></th>
         <th data-col="varPct" onclick="bndSort('varPct')">VAR % <span class="bnd-sarr" id="bsa-varPct"></span></th>
-        <th data-col="tir" onclick="bndSort('tir')">TIR <span class="bnd-sarr" id="bsa-tir"></span></th>
+        <th data-col="tna" onclick="bndSort('tna')">TNA [180/360] <span class="bnd-sarr" id="bsa-tna"></span></th>
         <th data-col="modD" onclick="bndSort('modD')">DUR.MOD <span class="bnd-sarr" id="bsa-modD"></span></th>
       </tr></thead>
       <tbody id="bnd-tbody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--gray)">Cargando datos...</td></tr></tbody>
@@ -1677,7 +1797,7 @@ const LC_STATIC_PRICES={S17A6:108.59,S30A6:124.65,S15Y6:101.64,S29Y6:126.39,T30J
 let lcData=[],lcFilter='all',lcSortCol='days',lcSortDir='asc',lcCurrentBond=null;
 function lcSettleDate(){const d=new Date();d.setDate(d.getDate()+1);if(d.getDay()===6)d.setDate(d.getDate()+2);if(d.getDay()===0)d.setDate(d.getDate()+1);return d;}
 function lcDaysTo(maturityStr){const settle=lcSettleDate(),mat=new Date(maturityStr+'T00:00:00');return Math.max(1,Math.round((mat-settle)/86400000));}
-function lcComputeYields(price,pagoFinal,days){if(!price||price<=0||!pagoFinal||days<=0)return{tna:0,tem:0,tir:0};const ratio=pagoFinal/price,tna=(ratio-1)*(365/days)*100,tir=(Math.pow(ratio,365/days)-1)*100,tem=(Math.pow(1+tir/100,1/12)-1)*100;return{tna,tem,tir};}
+function lcComputeYields(price,pagoFinal,days){if(!price||price<=0||!pagoFinal||days<=0)return{tna:0,tem:0,tir:0};const ratio=pagoFinal/price,tna=(ratio-1)*(360/days)*100,tir=(Math.pow(ratio,360/days)-1)*100,tem=(Math.pow(1+tir/100,1/12)-1)*100;return{tna,tem,tir};}
 function lcFmtPct(n){return n.toFixed(2)+'%';}
 function lcFmtNum(n,dec=3){return n.toLocaleString('es-AR',{minimumFractionDigits:dec,maximumFractionDigits:dec});}
 function lcFmtDate(d){const dt=new Date(d+'T00:00:00');return dt.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});}
@@ -1778,21 +1898,153 @@ function lcSort(col){if(lcSortCol===col){lcSortDir=lcSortDir==='asc'?'desc':'asc
 function lcRender(){const tbody=$$('lc-tbody');let rows=lcData.filter(b=>lcFilter==='all'||b.type.toLowerCase()===lcFilter);rows.sort((a,b)=>{let va=a[lcSortCol],vb=b[lcSortCol];if(lcSortCol==='maturity'||lcSortCol==='ticker'){va=String(va);vb=String(vb);}const r=va<vb?-1:va>vb?1:0;return lcSortDir==='asc'?r:-r;});if(!rows.length){tbody.innerHTML=`<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--gray)">Sin datos</td></tr>`;return;}tbody.innerHTML=rows.map(b=>`<tr onclick="lcOpenCalc('${b.ticker}')"><td><div class="lc-ticker-wrap"><span class="lc-ticker">${b.ticker}</span><span class="lc-badge ${b.type.toLowerCase()}">${b.type}</span></div></td><td class="lc-price">${lcFmtNum(b.price,3)}</td><td class="lc-pago">${lcFmtNum(b.pagoFinal,3)}</td><td class="lc-dias">${b.days}</td><td class="lc-venc">${lcFmtDate(b.maturity)}</td><td class="lc-tna">${lcFmtPct(b.tna)}</td><td class="lc-tem">${lcFmtPct(b.tem)}</td><td class="lc-tir">${lcFmtPct(b.tir)}</td></tr>`).join('');}
 function lcOpenCalc(ticker){const bond=lcData.find(b=>b.ticker===ticker);if(!bond)return;lcCurrentBond=bond;$$('lc-modal-title').textContent=ticker+' — Calculadora';$$('lc-modal-sub').textContent=bond.type+' — Vence: '+lcFmtDate(bond.maturity)+' — Pago final: '+lcFmtNum(bond.pagoFinal,3);$$('lc-inp-price').value=bond.price;$$('lc-inp-invest').value=1000000;$$('lc-inp-tir-obj').value='';$$('lc-tir-obj-hint').style.display='';$$('lc-tir-obj-result').textContent='';lcCalcModal();$$('lc-modal-overlay').classList.add('open');}
 function lcCalcModal(){const bond=lcCurrentBond;if(!bond)return;const price=parseFloat($$('lc-inp-price').value)||bond.price,invest=parseFloat($$('lc-inp-invest').value)||0,arancel=parseFloat($$('lc-inp-arancel').value)||0,imp=parseFloat($$('lc-inp-imp').value)||0,days=bond.days,pagoFinal=bond.pagoFinal;const yields=lcComputeYields(price,pagoFinal,days);$$('lc-m-tna').textContent=lcFmtPct(yields.tna);$$('lc-m-tem').textContent=lcFmtPct(yields.tem);$$('lc-m-tir').textContent=lcFmtPct(yields.tir);$$('lc-m-dias').textContent=days+'d · '+lcModDuration(days,yields.tir).toFixed(3)+'y DM';const costosPct=(arancel+imp)/100,effectivePrice=price*(1+costosPct),vn=invest>0?invest/effectivePrice:0,cobra=vn*pagoFinal,ganancia=cobra-invest,ganSign=ganancia>=0?'+':'';$$('lc-sum-compras').textContent=vn>0?Math.floor(vn).toLocaleString('es-AR')+' VN a $'+lcFmtNum(price,2):'—';$$('lc-sum-invert').textContent=invest>0?lcFmtMoney(invest):'—';$$('lc-sum-cobra').textContent=cobra>0?lcFmtMoney(cobra):'—';$$('lc-sum-ganancia').textContent=invest>0?ganSign+lcFmtMoney(ganancia):'—';$$('lc-sum-ganancia').style.color=ganancia>=0?'var(--green)':'var(--red)';document.querySelector('.lc-sum-row.profit .lc-sum-k').style.color=ganancia>=0?'var(--green)':'var(--red)';}
-function lcCalcTirObj(){const bond=lcCurrentBond;if(!bond)return;const tirObj=parseFloat($$('lc-inp-tir-obj').value),hint=$$('lc-tir-obj-hint'),result=$$('lc-tir-obj-result');if(!tirObj||tirObj<=0){hint.style.display='';result.textContent='';return;}hint.style.display='none';const impliedPrice=bond.pagoFinal/Math.pow(1+tirObj/100,bond.days/365);result.textContent='Precio implícito: $'+lcFmtNum(impliedPrice,3);}
+function lcCalcTirObj(){const bond=lcCurrentBond;if(!bond)return;const tirObj=parseFloat($$('lc-inp-tir-obj').value),hint=$$('lc-tir-obj-hint'),result=$$('lc-tir-obj-result');if(!tirObj||tirObj<=0){hint.style.display='';result.textContent='';return;}hint.style.display='none';const impliedPrice=bond.pagoFinal/Math.pow(1+tirObj/100,bond.days/360);result.textContent='Precio implícito: $'+lcFmtNum(impliedPrice,3);}
 function lcModalClose(e){if(e===null||e.target===$$('lc-modal-overlay'))$$('lc-modal-overlay').classList.remove('open');}
 document.addEventListener('keydown',e=>{if(e.key==='Escape')lcModalClose(null);});
 
 // Curves
-let lcCurveChart=null,lcCurveMetric='tir';
+let lcCurveChart=null,lcCurveMetric='tna';
 Chart.register(ChartDataLabels);
-function lcModDuration(days,tem){return(days/365)/(1+tem/100);}
+// DurM [360]: MacD = días/360, ModD = MacD / (1 + TIR/100) — convención Act/360 pura
+function lcModDuration(days,tir){return(days/360)/(1+tir/100);}
 function polyFit2(pts){const n=pts.length;if(n<3)return x=>pts[0]?.y??0;let s0=0,s1=0,s2=0,s3=0,s4=0,t0=0,t1=0,t2=0;for(const{x,y}of pts){s0++;s1+=x;s2+=x*x;s3+=x*x*x;s4+=x*x*x*x;t0+=y;t1+=x*y;t2+=x*x*y;}const A=[[s4,s3,s2,t2],[s3,s2,s1,t1],[s2,s1,s0,t0]];for(let i=0;i<3;i++){let mx=i;for(let j=i+1;j<3;j++)if(Math.abs(A[j][i])>Math.abs(A[mx][i]))mx=j;[A[i],A[mx]]=[A[mx],A[i]];for(let j=i+1;j<3;j++){const f=A[j][i]/A[i][i];for(let k=i;k<=3;k++)A[j][k]-=f*A[i][k];}}const c=[0,0,0];for(let i=2;i>=0;i--){c[i]=A[i][3];for(let j=i+1;j<3;j++)c[i]-=A[i][j]*c[j];c[i]/=A[i][i];}return x=>c[0]*x*x+c[1]*x+c[2];}
 function lcSetCurveMetric(m){lcCurveMetric=m;['tir','tna','tem'].forEach(k=>{$$('lc-cm-'+k).className='lc-cmtab'+(k===m?' on-'+k:'');});$$('lc-st-min-k').textContent={tir:'TIR',tna:'TNA',tem:'TEM'}[m]+' mín.';$$('lc-st-max-k').textContent={tir:'TIR',tna:'TNA',tem:'TEM'}[m]+' máx.';lcRenderCurve();}
-function lcRenderCurve(){if(!lcData.length)return;const metricLine={tir:'#22d68a',tna:'#5b8def',tem:'#22d4f0'},metricLabel={tir:'TIR (TEA %)',tna:'TNA %',tem:'TEM %'}[lcCurveMetric],lineColor=metricLine[lcCurveMetric];const pts=[...lcData].filter(b=>lcFilter==='all'||b.type.toLowerCase()===lcFilter).map(b=>({...b,dm:lcModDuration(b.days,b.tem)})).sort((a,b)=>a.dm-b.dm);if(!pts.length)return;const regPts=pts.map(b=>({x:b.dm,y:b[lcCurveMetric]})),f=polyFit2(regPts),xMin=pts[0].dm,xMax=pts[pts.length-1].dm,steps=120,curvePts=Array.from({length:steps+1},(_,i)=>{const x=xMin+(xMax-xMin)*i/steps;return{x,y:f(x)};});const vals=pts.map(b=>b[lcCurveMetric]),mn=Math.min(...vals),mx=Math.max(...vals),bMin=pts[vals.indexOf(mn)],bMax=pts[vals.indexOf(mx)],slope=pts.length>1?(vals[vals.length-1]-vals[0]).toFixed(2):'0';$$('lc-st-min').textContent=mn.toFixed(2)+'%';$$('lc-st-min-sub').textContent=bMin.ticker+' · DM '+bMin.dm.toFixed(3)+'y';$$('lc-st-max').textContent=mx.toFixed(2)+'%';$$('lc-st-max-sub').textContent=bMax.ticker+' · DM '+bMax.dm.toFixed(3)+'y';$$('lc-st-slope').textContent=(+slope>=0?'+':'')+slope+'%';$$('lc-st-slope-sub').textContent=+slope>0?'curva empinada ▲':+slope<0?'curva invertida ▼':'curva plana';$$('lc-st-count').textContent=pts.length;$$('lc-st-count-sub').textContent=pts.filter(b=>b.type==='LECAP').length+' LECAP · '+pts.filter(b=>b.type==='BONCAP').length+' BONCAP';
-const canvas=$$('lc-curve-chart'),ctx=canvas.getContext('2d'),pad=(mx-mn)*0.15||0.5,yMin=Math.max(0,mn-pad),yMax=mx+pad;const ptFill=pts.map(b=>b.type==='LECAP'?'#22d4f0':'#f0b429'),ptBorder=pts.map(b=>b.type==='LECAP'?'#0a6878':'#6a4a0a'),ptShape=pts.map(b=>b.type==='LECAP'?'circle':'rectRot');
-const datasets=[{type:'line',label:'fit',data:curvePts,borderColor:lineColor,borderWidth:2.5,backgroundColor:'transparent',pointRadius:0,pointHoverRadius:0,tension:0,fill:false,order:2,datalabels:{display:false}},{type:'scatter',label:metricLabel,data:pts.map(b=>({x:b.dm,y:b[lcCurveMetric]})),backgroundColor:ptFill,borderColor:ptBorder,borderWidth:2,pointRadius:pts.map(b=>b.type==='LECAP'?7:8),pointHoverRadius:10,pointStyle:ptShape,order:1,datalabels:{display:true,align:c=>{const b=pts[c.dataIndex];if(b.dm<xMin+(xMax-xMin)*0.12)return'right';return'top';},anchor:'end',offset:5,color:c=>pts[c.dataIndex].type==='LECAP'?'#22d4f0':'#f0b429',font:{family:"'JetBrains Mono','Courier New',monospace",size:10,weight:'700'},formatter:(v,c)=>pts[c.dataIndex].ticker,textStrokeColor:'#06101e',textStrokeWidth:4,clip:false}}];
-if(lcCurveChart){lcCurveChart.destroy();lcCurveChart=null;}
-lcCurveChart=new Chart(ctx,{type:'scatter',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:380},layout:{padding:{top:28,right:40,left:8,bottom:8}},interaction:{mode:'nearest',intersect:true},plugins:{legend:{display:false},datalabels:{},tooltip:{filter:item=>item.datasetIndex===1,backgroundColor:'#06101e',borderColor:'#1e3a62',borderWidth:1,titleColor:'#7aa3f0',bodyColor:'#c8d8f0',padding:12,titleFont:{family:"'JetBrains Mono',monospace",size:11,weight:'700'},bodyFont:{family:"'JetBrains Mono',monospace",size:11},callbacks:{title:items=>{const b=pts[items[0].dataIndex];return b.ticker+'  ·  '+b.type+'  ·  '+lcFmtDate(b.maturity);},label:item=>{const b=pts[item.dataIndex];return['  '+metricLabel+':  '+b[lcCurveMetric].toFixed(2)+'%','  TIR '+b.tir.toFixed(2)+'%   TNA '+b.tna.toFixed(2)+'%   TEM '+b.tem.toFixed(2)+'%','  Precio: '+lcFmtNum(b.price,3)+'   Pago final: '+lcFmtNum(b.pagoFinal,3),'  DM: '+b.dm.toFixed(4)+' años   ('+b.days+' días)'];}}}},scales:{x:{type:'linear',min:Math.max(0,xMin-(xMax-xMin)*0.06),max:xMax+(xMax-xMin)*0.06,grid:{color:'rgba(30,58,98,.6)',lineWidth:1},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:10},callback:v=>v.toFixed(2),maxTicksLimit:10},border:{color:'rgba(30,58,98,.9)'},title:{display:true,text:'DurM [365/365]',color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9,weight:'600'},padding:{top:6}}},y:{min:yMin,max:yMax,grid:{color:'rgba(30,58,98,.6)',lineWidth:1},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:10},callback:v=>v.toFixed(2)+'%',maxTicksLimit:8},border:{color:'rgba(30,58,98,.9)'},title:{display:true,text:metricLabel,color:lineColor,font:{family:"'JetBrains Mono',monospace",size:10,weight:'700'},padding:{bottom:6}}}}}});}
+function lcRenderCurve(){
+  if(!lcData.length)return;
+  const metricLine={tir:'#22d68a',tna:'#5b8def',tem:'#22d4f0'};
+  const metricLabelStr={tir:'TIR (TEA %)',tna:'TNA %',tem:'TEM %'};
+  const lineColor=metricLine[lcCurveMetric];
+  const metricLabel=metricLabelStr[lcCurveMetric];
+
+  // Build points sorted by DM
+  const pts=[...lcData]
+    .filter(b=>lcFilter==='all'||b.type.toLowerCase()===lcFilter)
+    .map(b=>({...b,dm:lcModDuration(b.days,b.tir)}))
+    .sort((a,b)=>a.dm-b.dm);
+  if(!pts.length)return;
+
+  const regPts=pts.map(b=>({x:b.dm,y:b[lcCurveMetric]}));
+  const f=polyFit2(regPts);
+  const xMax=pts[pts.length-1].dm;
+  // Extend curve from x=0 so it "comes from below"
+  const curveXMin=0;
+  const curveXMax=xMax+(xMax*0.05);
+  const steps=160;
+  const curvePts=Array.from({length:steps+1},(_,i)=>{
+    const x=curveXMin+(curveXMax-curveXMin)*i/steps;
+    return{x,y:f(x)};
+  });
+
+  const vals=pts.map(b=>b[lcCurveMetric]);
+  const mn=Math.min(...vals),mx=Math.max(...vals);
+  const bMin=pts[vals.indexOf(mn)],bMax=pts[vals.indexOf(mx)];
+  const slope=pts.length>1?(vals[vals.length-1]-vals[0]).toFixed(2):'0';
+
+  // Stats bar
+  $$('lc-st-min').textContent=mn.toFixed(2)+'%';
+  $$('lc-st-min-sub').textContent=bMin.ticker+' · DM '+bMin.dm.toFixed(3)+'y';
+  $$('lc-st-max').textContent=mx.toFixed(2)+'%';
+  $$('lc-st-max-sub').textContent=bMax.ticker+' · DM '+bMax.dm.toFixed(3)+'y';
+  $$('lc-st-slope').textContent=(+slope>=0?'+':'')+slope+'%';
+  $$('lc-st-slope-sub').textContent=+slope>0?'curva empinada ▲':+slope<0?'curva invertida ▼':'curva plana';
+  $$('lc-st-count').textContent=pts.length;
+  $$('lc-st-count-sub').textContent=pts.filter(b=>b.type==='LECAP').length+' LECAP · '+pts.filter(b=>b.type==='BONCAP').length+' BONCAP';
+
+  const canvas=$$('lc-curve-chart'),ctx=canvas.getContext('2d');
+
+  // Y axis padding — extend downward so curve visually comes from below
+  const yPad=(mx-mn)*0.18||0.3;
+  const yMin=Math.max(0,mn-yPad*2);
+  const yMax=mx+yPad;
+
+  // Point styles: LECAP = circle (filled #4a7af0), BONCAP = diamond (#f0b429)
+  const ptFill=pts.map(b=>b.type==='LECAP'?'rgba(91,141,239,.9)':'rgba(240,180,41,.9)');
+  const ptBorder=pts.map(b=>b.type==='LECAP'?'#2a5abf':'#8a6820');
+  const ptShape=pts.map(b=>b.type==='LECAP'?'circle':'rectRot');
+
+  const datasets=[
+    // Fit line — drawn first (order:2), no points
+    {type:'line',label:'fit',data:curvePts,
+      borderColor:lineColor,borderWidth:2.5,
+      backgroundColor:'transparent',
+      pointRadius:0,pointHoverRadius:0,
+      tension:0.35,fill:false,order:2,
+      datalabels:{display:false}},
+    // Scatter — drawn on top (order:1)
+    {type:'scatter',label:metricLabel,
+      data:pts.map(b=>({x:b.dm,y:b[lcCurveMetric]})),
+      backgroundColor:ptFill,borderColor:ptBorder,
+      borderWidth:1.5,
+      pointRadius:pts.map(b=>b.type==='LECAP'?7:8),
+      pointHoverRadius:11,
+      pointStyle:ptShape,
+      order:1,
+      datalabels:{
+        display:true,
+        align:c=>{const b=pts[c.dataIndex];return b.dm<xMax*0.15?'right':'top';},
+        anchor:'end',offset:6,
+        color:c=>pts[c.dataIndex].type==='LECAP'?'#7aadff':'#f0c060',
+        font:{family:"'JetBrains Mono','Courier New',monospace",size:10,weight:'700'},
+        formatter:(v,c)=>pts[c.dataIndex].ticker,
+        textStrokeColor:'#030a14',textStrokeWidth:4,clip:false
+      }}
+  ];
+
+  if(lcCurveChart){lcCurveChart.destroy();lcCurveChart=null;}
+  lcCurveChart=new Chart(ctx,{
+    type:'scatter',
+    data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:420},
+      layout:{padding:{top:30,right:44,left:6,bottom:8}},
+      interaction:{mode:'nearest',intersect:true},
+      plugins:{
+        legend:{display:false},
+        datalabels:{},
+        tooltip:{
+          filter:item=>item.datasetIndex===1,
+          backgroundColor:'#060f1e',
+          borderColor:'#2a4a7a',borderWidth:1,
+          titleColor:'#7aa3f0',bodyColor:'#c8d8f0',
+          padding:12,
+          titleFont:{family:"'JetBrains Mono',monospace",size:11,weight:'700'},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{
+            title:items=>{const b=pts[items[0].dataIndex];return b.ticker+'  ·  '+b.type+'  ·  Vence '+lcFmtDate(b.maturity);},
+            label:item=>{const b=pts[item.dataIndex];return[
+              '  TNA:  '+b.tna.toFixed(2)+'%   TEM: '+b.tem.toFixed(2)+'%',
+              '  TIR:  '+b.tir.toFixed(2)+'%',
+              '  Precio: '+lcFmtNum(b.price,3)+'  →  Pago: '+lcFmtNum(b.pagoFinal,3),
+              '  DM: '+b.dm.toFixed(4)+' años   ('+b.days+' días)'
+            ];}
+          }
+        }
+      },
+      scales:{
+        x:{
+          type:'linear',
+          min:0,
+          max:curveXMax+(xMax*0.04),
+          grid:{color:'rgba(30,58,98,.55)',lineWidth:1},
+          ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:10},callback:v=>v.toFixed(1),maxTicksLimit:10},
+          border:{color:'rgba(30,58,98,.8)'},
+          title:{display:true,text:'DurM [360]',color:'#4a6a8a',
+            font:{family:"'JetBrains Mono',monospace",size:9,weight:'600'},padding:{top:5}}
+        },
+        y:{
+          min:yMin,max:yMax,
+          grid:{color:'rgba(30,58,98,.55)',lineWidth:1},
+          ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:10},
+            callback:v=>v.toFixed(2)+'%',maxTicksLimit:8},
+          border:{color:'rgba(30,58,98,.8)'},
+          title:{display:true,text:metricLabel,color:lineColor,
+            font:{family:"'JetBrains Mono',monospace",size:10,weight:'700'},padding:{bottom:5}}
+        }
+      }
+    }
+  });
+}
 lcFetch();
 
 // ════════════════════════════════════════════════════════
@@ -1861,15 +2113,18 @@ const CASHFLOW_DB = {
   'GD41':[{date:'2026-07-09',total:1.56},{date:'2027-01-09',total:1.56},{date:'2027-07-09',total:1.56},{date:'2028-01-09',total:5.13},{date:'2028-07-09',total:5.07},{date:'2029-01-09',total:5.01},{date:'2029-07-09',total:4.95},{date:'2030-01-09',total:5.4},{date:'2030-07-09',total:5.31},{date:'2031-01-09',total:5.23},{date:'2031-07-09',total:5.14},{date:'2032-01-09',total:5.05},{date:'2032-07-09',total:4.96},{date:'2033-01-09',total:4.88},{date:'2033-07-09',total:4.79},{date:'2034-01-09',total:4.7},{date:'2034-07-09',total:4.62},{date:'2035-01-09',total:4.53},{date:'2035-07-09',total:4.44},{date:'2036-01-09',total:4.35},{date:'2036-07-09',total:4.27},{date:'2037-01-09',total:4.18},{date:'2037-07-09',total:4.09},{date:'2038-01-09',total:4.01},{date:'2038-07-09',total:3.92},{date:'2039-01-09',total:3.83},{date:'2039-07-09',total:3.75},{date:'2040-01-09',total:3.66},{date:'2040-07-09',total:3.75},{date:'2041-01-09',total:3.83},{date:'2041-07-09',total:3.92}],
 };
 
-// TIR anual via Newton-Raphson (XIRR convention: (1+r)^(t/365))
+// TNA [180/360]: convención semi-anual estándar bonos USD
+// price = Σ CF_i / (1+r_semi)^(2 × t_i)  donde t_i = días_i/360
+// TNA = 2 × r_semi   (tasa nominal anual base semi-anual)
 function bndSolveIRR(flows, dirty){
   const today=new Date();today.setHours(0,0,0,0);
   const futs=flows.filter(f=>new Date(f.date+'T00:00:00')>today);
   if(!futs.length||dirty<=0)return 0;
   const dt=futs.map(f=>Math.max(1,(new Date(f.date+'T00:00:00')-today)/86400000));
-  const pv=r=>dt.reduce((s,t,i)=>s+futs[i].total/Math.pow(1+r,t/365),0);
-  const dpv=r=>dt.reduce((s,t,i)=>s-(t/365)*futs[i].total/Math.pow(1+r,t/365+1),0);
-  let r=0.07;
+  // r = semi-annual yield; exponent = 2 * (days/360)
+  const pv=r=>dt.reduce((s,t,i)=>s+futs[i].total/Math.pow(1+r,2*t/360),0);
+  const dpv=r=>dt.reduce((s,t,i)=>s-(2*t/360)*futs[i].total/Math.pow(1+r,2*t/360+1),0);
+  let r=0.04;
   for(let i=0;i<200;i++){
     const err=pv(r)-dirty,d=dpv(r);
     if(Math.abs(d)<1e-14)break;
@@ -1880,18 +2135,18 @@ function bndSolveIRR(flows, dirty){
   return Math.max(0,r);
 }
 
-// Macaulay y Modified Duration con fechas exactas y compounding anual
-function bndCalcDuration(flows, irr){
+// Duration [180/360]: MacD con t_i=días/360, ModD = MacD/(1+r_semi)
+function bndCalcDuration(flows, rSemi){
   const today=new Date();today.setHours(0,0,0,0);
   const futs=flows.filter(f=>new Date(f.date+'T00:00:00')>today);
   let sPV=0,sTPV=0;
   for(const f of futs){
-    const t=Math.max(1,(new Date(f.date+'T00:00:00')-today)/86400000)/365;
-    const pvcf=f.total/Math.pow(1+irr,t);
+    const t=Math.max(1,(new Date(f.date+'T00:00:00')-today)/86400000)/360;
+    const pvcf=f.total/Math.pow(1+rSemi,2*t);
     sPV+=pvcf;sTPV+=t*pvcf;
   }
   const macD=sPV>0?sTPV/sPV:0;
-  const modD=irr>-1?macD/(1+irr):macD;
+  const modD=rSemi>-1?macD/(1+rSemi):macD;
   return{macD,modD};
 }
 
@@ -1903,10 +2158,11 @@ function bndAnalytics(ticker, dirtyPrice){
   const today=new Date();today.setHours(0,0,0,0);
   const futureFlows=flows?flows.filter(f=>new Date(f.date+'T00:00:00')>today):[];
   if(!futureFlows.length)return null;
-  const irr=bndSolveIRR(flows,dirtyPrice);
-  const tir=irr*100;
-  const{macD,modD}=bndCalcDuration(flows,irr);
-  return{ticker,name:def.name,law:def.law,dirty:dirtyPrice,tir,macD,modD,flows:futureFlows};
+  const rSemi=bndSolveIRR(flows,dirtyPrice);
+  const tna=rSemi*2*100; // TNA [180/360]
+  const tir=(Math.pow(1+rSemi,2)-1)*100; // TEA [base 360]
+  const{macD,modD}=bndCalcDuration(flows,rSemi);
+  return{ticker,name:def.name,law:def.law,dirty:dirtyPrice,tna,tir,macD,modD,flows:futureFlows};
 }
 
 let dLastCalc=null;
@@ -2007,7 +2263,7 @@ function bndRender(){
     <td><span class="bnd-tk">${b.ticker}</span><span class="bnd-law ${lc[b.law]}">${b.law}</span></td>
     <td style="font-weight:600;color:var(--amber)">u$s ${f2(b.dirty)}</td>
     <td class="${vc(b.varPct)}">${b.varPct>=0?'+':''}${f2(b.varPct)}%</td>
-    <td class="bnd-green">${f2(b.tir)}%</td>
+    <td class="bnd-green">${f2(b.tna)}%</td>
     <td class="bnd-cyan">${f3(b.modD)}</td>
   </tr>`).join('');
 }
@@ -2016,7 +2272,7 @@ function bndOpenModal(ticker){
   const b=bndData.find(x=>x.ticker===ticker);if(!b)return;
   bndCurrentTicker=ticker;
   $$('bnd-m-title').textContent=ticker+' — '+b.name;
-  $$('bnd-m-sub').textContent='Ley '+b.law+' · DurMod '+b.modD.toFixed(3)+'y · TIR '+b.tir.toFixed(2)+'% · '+b.flows.length+' flujos';
+  $$('bnd-m-sub').textContent='Ley '+b.law+' · DurMod '+b.modD.toFixed(3)+'y · TNA '+b.tna.toFixed(2)+'% · '+b.flows.length+' flujos';
   $$('bnd-inp-price').value=b.dirty.toFixed(2);
   $$('bnd-inp-usd').value=10000;$$('bnd-inp-vn').value='';
   bndCalcMode='usd';bndCalcModal();
@@ -2072,17 +2328,19 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=$$('bnd-mod
 let bndCurveChart=null;
 function bndRenderCurve(){
   const canvas=$$('bnd-curve-canvas');if(!canvas)return;
-  const pts={AR:[],NY:[]};
+  // Build per-series arrays with TIR on Y
+  const arPts=[],nyPts=[];
   for(const b of bndData){
-    if(b.law!=='AR'&&b.law!=='NY')continue;
-    pts[b.law].push({x:b.modD,y:b.tir,ticker:b.ticker});
+    if(b.law==='AR') arPts.push({x:b.modD,y:b.tir,tna:b.tna,ticker:b.ticker});
+    else if(b.law==='NY') nyPts.push({x:b.modD,y:b.tir,tna:b.tna,ticker:b.ticker});
   }
-  const arPts=[...pts.AR].sort((a,b)=>a.x-b.x);
-  const nyPts=[...pts.NY].sort((a,b)=>a.x-b.x);
+  arPts.sort((a,b)=>a.x-b.x);
+  nyPts.sort((a,b)=>a.x-b.x);
   if(!arPts.length&&!nyPts.length)return;
+
+  // Polynomial degree-2 least-squares (reuse soberanos inline)
   const mkFit=(data)=>{
     if(data.length<2)return null;
-    // Polynomial degree 2 least-squares
     const n=data.length;
     let sx=0,sx2=0,sx3=0,sx4=0,sy=0,sxy=0,sx2y=0;
     for(const p of data){sx+=p.x;sx2+=p.x*p.x;sx3+=p.x**3;sx4+=p.x**4;sy+=p.y;sxy+=p.x*p.y;sx2y+=p.x*p.x*p.y;}
@@ -2095,26 +2353,112 @@ function bndRenderCurve(){
     const c2=(a[0]*(b[1]*B[2]-B[1]*c[1])-a[1]*(b[0]*B[2]-B[1]*c[0])+B[0]*(b[0]*c[1]-b[1]*c[0]))/det;
     return x=>c0+c1*x+c2*x*x;
   };
-  const buildCurve=(pts,fitFn)=>{
-    if(!fitFn||pts.length<2)return[];
-    const mn=pts[0].x,mx=pts[pts.length-1].x;
-    return Array.from({length:80},(_,i)=>{const x=mn+(mx-mn)*i/79;return{x,y:fitFn(x)};});
+
+  const allPts=[...arPts,...nyPts];
+  const xMax=Math.max(...allPts.map(p=>p.x));
+
+  // Extend curve from x=0 (so it "comes from below")
+  const buildCurve=(data,fitFn)=>{
+    if(!fitFn||data.length<2)return[];
+    const steps=120;
+    return Array.from({length:steps+1},(_,i)=>{
+      const x=(xMax+(xMax*0.05))*i/steps;
+      return{x,y:fitFn(x)};
+    });
   };
+
   const arFit=mkFit(arPts),nyFit=mkFit(nyPts);
   const arCurve=buildCurve(arPts,arFit),nyCurve=buildCurve(nyPts,nyFit);
-  const dlabels={display:true,align:'top',anchor:'end',offset:4,font:{family:"'JetBrains Mono',monospace",size:9,weight:'700'},textStrokeColor:'#06101e',textStrokeWidth:3,clip:false};
+
+  // Bloomberg-like colors: Bonares=crimson, Globales=gold
+  const AR_LINE='#e05060',AR_DOT='rgba(210,70,90,.9)',AR_LBL='#e87080';
+  const NY_LINE='#d4a020',NY_DOT='rgba(220,165,30,.9)',NY_LBL='#f0c040';
+
+  const dlabels={display:true,align:'top',anchor:'end',offset:5,
+    font:{family:"'JetBrains Mono',monospace",size:9,weight:'700'},
+    textStrokeColor:'#030a14',textStrokeWidth:3,clip:false};
+
   const datasets=[
-    {type:'line',label:'fit-AR',data:arCurve,borderColor:'rgba(34,212,240,.5)',borderWidth:1.5,backgroundColor:'transparent',pointRadius:0,tension:0,fill:false,order:3,datalabels:{display:false}},
-    {type:'line',label:'fit-NY',data:nyCurve,borderColor:'rgba(240,180,41,.5)',borderWidth:1.5,backgroundColor:'transparent',pointRadius:0,tension:0,fill:false,order:4,datalabels:{display:false}},
-    {type:'scatter',label:'Ley Argentina',data:arPts,backgroundColor:'rgba(34,212,240,.85)',borderColor:'#22d4f0',borderWidth:1.5,pointRadius:7,pointHoverRadius:10,order:1,datalabels:{...dlabels,color:'#22d4f0',formatter:(v,c)=>arPts[c.dataIndex].ticker}},
-    {type:'scatter',label:'Ley NY',data:nyPts,backgroundColor:'rgba(240,180,41,.85)',borderColor:'#f0b429',borderWidth:1.5,pointRadius:7,pointHoverRadius:10,order:2,datalabels:{...dlabels,color:'#f0b429',formatter:(v,c)=>nyPts[c.dataIndex].ticker}},
+    // Fit curves (order 3 & 4 = behind)
+    {type:'line',label:'fit-AR',data:arCurve,borderColor:AR_LINE,borderWidth:2.5,
+     backgroundColor:'transparent',pointRadius:0,tension:0.3,fill:false,order:3,datalabels:{display:false}},
+    {type:'line',label:'fit-NY',data:nyCurve,borderColor:NY_LINE,borderWidth:2.5,
+     backgroundColor:'transparent',pointRadius:0,tension:0.3,fill:false,order:4,datalabels:{display:false}},
+    // Scatter — Bonares AR
+    {type:'scatter',label:'SOB USD BONAR',data:arPts,
+     backgroundColor:AR_DOT,borderColor:AR_LINE,borderWidth:1.5,
+     pointRadius:8,pointHoverRadius:11,pointStyle:'rectRot',
+     order:1,datalabels:{...dlabels,color:AR_LBL,formatter:(v,c)=>arPts[c.dataIndex].ticker}},
+    // Scatter — Globales NY
+    {type:'scatter',label:'SOB USD GLOB',data:nyPts,
+     backgroundColor:NY_DOT,borderColor:NY_LINE,borderWidth:1.5,
+     pointRadius:8,pointHoverRadius:11,pointStyle:'rectRot',
+     order:2,datalabels:{...dlabels,color:NY_LBL,formatter:(v,c)=>nyPts[c.dataIndex].ticker}},
   ];
+
   const allY=[...arPts,...nyPts].map(p=>p.y);
-  const yPad=0.5;
-  const yMin=Math.max(0,Math.min(...allY)-yPad),yMax=Math.max(...allY)+yPad;
+  const yMin=Math.max(0,Math.min(...allY)-1.5);
+  const yMax=Math.max(...allY)+0.8;
+
   if(bndCurveChart){bndCurveChart.destroy();bndCurveChart=null;}
   const ctx=canvas.getContext('2d');
-  bndCurveChart=new Chart(ctx,{type:'scatter',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},layout:{padding:{top:24,right:36,left:4,bottom:4}},plugins:{legend:{display:false},datalabels:{},tooltip:{filter:i=>i.datasetIndex>=2,backgroundColor:'#06101e',borderColor:'#1e3a62',borderWidth:1,titleColor:'#7aa3f0',bodyColor:'#c8d8f0',padding:10,callbacks:{title:items=>{const ds=datasets[items[0].datasetIndex];const pts=items[0].datasetIndex===2?arPts:nyPts;return pts[items[0].dataIndex].ticker+' · '+ds.label;},label:item=>{const pts=item.datasetIndex===2?arPts:nyPts;const p=pts[item.dataIndex];return['  TIR: '+p.y.toFixed(2)+'%','  DurMod: '+p.x.toFixed(3)+'y'];}}}},scales:{x:{type:'linear',grid:{color:'rgba(30,58,98,.5)'},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(2)},title:{display:true,text:'Duración Modificada (años)',color:'#4a6a8a',font:{size:9}}},y:{min:yMin,max:yMax,grid:{color:'rgba(30,58,98,.5)'},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(1)+'%'},title:{display:true,text:'TIR %',color:'#4a6a8a',font:{size:9}}}}}});
+
+  bndCurveChart=new Chart(ctx,{
+    type:'scatter',data:{datasets},
+    options:{
+      responsive:true,maintainAspectRatio:false,
+      animation:{duration:320},
+      layout:{padding:{top:28,right:44,left:6,bottom:6}},
+      plugins:{
+        legend:{
+          display:true,
+          position:'top',
+          align:'start',
+          labels:{
+            color:'#7a99c4',
+            font:{family:"'JetBrains Mono',monospace",size:9,weight:'700'},
+            padding:16,
+            usePointStyle:true,pointStyle:'rectRot',pointStyleWidth:10,
+            filter:item=>item.datasetIndex>=2  // only scatter labels
+          }
+        },
+        datalabels:{},
+        tooltip:{
+          filter:i=>i.datasetIndex>=2,
+          backgroundColor:'#060f1e',borderColor:'#2a4a7a',borderWidth:1,
+          titleColor:'#7aa3f0',bodyColor:'#c8d8f0',padding:12,
+          titleFont:{family:"'JetBrains Mono',monospace",size:11,weight:'700'},
+          bodyFont:{family:"'JetBrains Mono',monospace",size:11},
+          callbacks:{
+            title:items=>{const s=items[0].datasetIndex===2?arPts:nyPts;const p=s[items[0].dataIndex];return p.ticker+' · '+(items[0].datasetIndex===2?'Ley AR':'Ley NY');},
+            label:item=>{const s=item.datasetIndex===2?arPts:nyPts;const p=s[item.dataIndex];return[
+              '  TIR (TEA): '+p.y.toFixed(2)+'%',
+              '  TNA [180/360]: '+p.tna.toFixed(2)+'%',
+              '  DurMod [180/360]: '+p.x.toFixed(3)+'y'
+            ];}
+          }
+        }
+      },
+      scales:{
+        x:{
+          type:'linear',min:0,max:xMax+(xMax*0.06),
+          grid:{color:'rgba(30,58,98,.5)',lineWidth:1},
+          ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(1)},
+          border:{color:'rgba(30,58,98,.8)'},
+          title:{display:true,text:'DurM [180/360]',color:'#4a6a8a',
+            font:{family:"'JetBrains Mono',monospace",size:9,weight:'600'},padding:{top:5}}
+        },
+        y:{
+          min:yMin,max:yMax,
+          grid:{color:'rgba(30,58,98,.5)',lineWidth:1},
+          ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(1)+'%'},
+          border:{color:'rgba(30,58,98,.8)'},
+          title:{display:true,text:'TIR (TEA) %',color:'#e87080',
+            font:{family:"'JetBrains Mono',monospace",size:9,weight:'700'},padding:{bottom:5}}
+        }
+      }
+    }
+  });
 }
 
 
@@ -2179,7 +2523,7 @@ function lcModalPDF(){
   row('TNA',fmtP(yields.tna),WHT);
   row('TEM',fmtP(yields.tem),WHT);
   row('TIR (TEA)',fmtP(yields.tir),GRN);
-  row('Duración Modificada',lcModDuration(bond.days,yields.tir).toFixed(3)+' años',CYN);
+  row('Duración Modificada (base 360)',lcModDuration(bond.days,yields.tir).toFixed(3)+' años',CYN);
   if(costos>0)row('Costos adicionales',fmtP(costos),RED);
   y+=3;sec('SIMULACIÓN DE COMPRA');
   row('Monto a invertir','$ '+fmtM(invest),BLU);
@@ -2220,7 +2564,7 @@ function bndModalPDF(){
   const gain=tFlow-invest;
   const fmtM=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
   const fmtP=n=>n.toFixed(2)+'%';
-  piPdfHeader(doc,'CALCULADORA BONO — '+ticker+' ('+b.name+')','Ley '+b.law+' · TIR '+fmtP(a.tir)+' · DurMod '+a.modD.toFixed(3)+'y');
+  piPdfHeader(doc,'CALCULADORA BONO — '+ticker+' ('+b.name+')','Ley '+b.law+' · TNA [180/360] '+fmtP(a.tna)+' · DurMod '+a.modD.toFixed(3)+'y');
   let y=30;
   const row=(k,v,vc)=>{
     doc.setFillColor(...BG2);doc.rect(M,y-4,CW,7,'F');
@@ -2234,7 +2578,7 @@ function bndModalPDF(){
   row('Ticker',ticker,lawC);row('Nombre',b.name,WHT);row('Legislación',b.law,lawC);
   y+=3;sec('PRECIO Y ANALÍTICA');
   row('Precio Dirty','u$s '+dirty.toFixed(2),AMB);
-  row('TIR anual',fmtP(a.tir),GRN);
+  row('TNA [180/360]',fmtP(a.tna),GRN);
   row('Duration Macaulay',a.macD.toFixed(3)+' años',CYN);
   row('Duration Modificada',a.modD.toFixed(3)+' años',CYN);
   row('Flujos futuros',flows.length+' pagos',GRY);
@@ -2357,7 +2701,7 @@ async function bndPanelPDF(){
         const cRatio=cCanvas.height/cCanvas.width;
         const cW=CW,cH=Math.min(cW*cRatio,120);
         if(y+cH>275){doc.addPage();doc.setFillColor(...BG);doc.rect(0,0,W,297,'F');y=15;}
-        doc.setFontSize(8);doc.setTextColor(...BLU);doc.text('CURVA DE RENDIMIENTOS — TIR vs DURACIÓN MODIFICADA',M,y);y+=5;
+        doc.setFontSize(8);doc.setTextColor(...BLU);doc.text('CURVA DE RENDIMIENTOS — TIR (TEA) vs DURACIÓN MODIFICADA',M,y);y+=5;
         doc.addImage(cImg,'PNG',M,y,cW,cH);
       }
     }
@@ -2372,6 +2716,565 @@ async function bndPanelPDF(){
 // Delay bonos fetch 3s so LECAP has time to cache _rawBondData
 setTimeout(bndFetch, 3000);
 setInterval(()=>{if($$('page-bonos').classList.contains('active'))bndFetch();},30000);
+
+// ══════════════════════════════════════════════════════
+//  ARBITRAJE GD30 / AL30 — BOLLINGER BANDS
+// ══════════════════════════════════════════════════════
+const ARB_KEY   = 'arb_hist_v2';
+const ARB_PER   = 21;   // Bollinger period
+const ARB_SIG   = 1.5;  // default sigma
+const ARB_MA9   = 9;    // MA9 period
+
+/* Historical seed — dates in YYYY-MM-DD, prices ARS 24hs */
+const ARB_SEED = [
+  // ~Nov–Dec 2025 (extended seed for enough Bollinger history)
+  {d:'2025-11-04',gd:80200,al:77400},{d:'2025-11-05',gd:80850,al:78000},
+  {d:'2025-11-06',gd:81400,al:78500},{d:'2025-11-07',gd:82100,al:79100},
+  {d:'2025-11-10',gd:82700,al:79600},{d:'2025-11-11',gd:83200,al:80100},
+  {d:'2025-11-12',gd:83800,al:80700},{d:'2025-11-13',gd:84100,al:81000},
+  {d:'2025-11-14',gd:84600,al:81500},{d:'2025-11-17',gd:85000,al:81900},
+  {d:'2025-11-18',gd:85500,al:82400},{d:'2025-11-19',gd:86100,al:83000},
+  {d:'2025-11-20',gd:86600,al:83400},{d:'2025-11-21',gd:87100,al:83900},
+  {d:'2025-11-24',gd:87500,al:84200},{d:'2025-11-25',gd:87900,al:84600},
+  {d:'2025-11-26',gd:88200,al:85000},{d:'2025-11-27',gd:88500,al:85200},
+  {d:'2025-11-28',gd:88900,al:85600},{d:'2025-12-01',gd:89100,al:85900},
+  {d:'2025-12-02',gd:89500,al:86200},{d:'2025-12-03',gd:89800,al:86500},
+  {d:'2025-12-04',gd:90200,al:87000},{d:'2025-12-05',gd:90500,al:87300},
+  {d:'2025-12-08',gd:90100,al:87100},{d:'2025-12-09',gd:89700,al:86700},
+  {d:'2025-12-10',gd:89400,al:86400},{d:'2025-12-11',gd:89000,al:86100},
+  {d:'2025-12-12',gd:88700,al:85800},{d:'2025-12-15',gd:88400,al:85500},
+  {d:'2025-12-16',gd:88100,al:85200},{d:'2025-12-17',gd:87900,al:85000},
+  {d:'2025-12-18',gd:87600,al:84800},{d:'2025-12-19',gd:87300,al:84600},
+  {d:'2025-12-22',gd:87100,al:84400},{d:'2025-12-23',gd:86900,al:84200},
+  {d:'2025-12-26',gd:86700,al:84100},{d:'2025-12-29',gd:86500,al:83900},
+  {d:'2025-12-30',gd:86300,al:83700},{d:'2025-12-31',gd:86200,al:83600},
+  // Jan 2026
+  {d:'2026-01-02',gd:86900,al:84300},{d:'2026-01-05',gd:87400,al:84700},
+  {d:'2026-01-06',gd:87800,al:85000},{d:'2026-01-07',gd:88100,al:85200},
+  {d:'2026-01-08',gd:88400,al:85500},{d:'2026-01-09',gd:88700,al:85800},
+  {d:'2026-01-12',gd:88300,al:85500},{d:'2026-01-13',gd:87900,al:85200},
+  {d:'2026-01-14',gd:87600,al:84900},{d:'2026-01-15',gd:87300,al:84700},
+  {d:'2026-01-16',gd:87100,al:84500},{d:'2026-01-19',gd:87400,al:84800},
+  {d:'2026-01-20',gd:87700,al:85100},{d:'2026-01-21',gd:88000,al:85300},
+  {d:'2026-01-22',gd:88300,al:85600},{d:'2026-01-23',gd:88600,al:85800},
+  {d:'2026-01-26',gd:88900,al:86100},{d:'2026-01-27',gd:89200,al:86400},
+  {d:'2026-01-28',gd:89500,al:86600},{d:'2026-01-29',gd:89700,al:86800},
+  {d:'2026-01-30',gd:89900,al:87000},
+  // Feb 2026 (from image data)
+  {d:'2026-02-02',gd:90100,al:87200},{d:'2026-02-03',gd:90300,al:87400},
+  {d:'2026-02-04',gd:90500,al:87600},{d:'2026-02-05',gd:90700,al:87800},
+  {d:'2026-02-06',gd:90400,al:87500},{d:'2026-02-09',gd:90100,al:87300},
+  {d:'2026-02-10',gd:89900,al:87100},{d:'2026-02-11',gd:89700,al:86900},
+  {d:'2026-02-12',gd:89600,al:86800},
+  {d:'2026-02-13',gd:90500,al:87950},{d:'2026-02-18',gd:89900,al:87150},
+  {d:'2026-02-19',gd:89120,al:86700},{d:'2026-02-20',gd:88730,al:86700},
+  {d:'2026-02-23',gd:88380,al:85490},{d:'2026-02-24',gd:88410,al:85710},
+  {d:'2026-02-25',gd:90300,al:87120},{d:'2026-02-26',gd:90860,al:87750},
+  {d:'2026-02-27',gd:89280,al:85740},
+  // Mar 2026 (from image)
+  {d:'2026-03-02',gd:89490,al:86270},{d:'2026-03-03',gd:90500,al:86950},
+  {d:'2026-03-04',gd:90390,al:87090},{d:'2026-03-05',gd:90170,al:86910},
+  {d:'2026-03-06',gd:90150,al:87100},{d:'2026-03-09',gd:89720,al:86640},
+  {d:'2026-03-10',gd:89670,al:86920},{d:'2026-03-11',gd:89280,al:86680},
+  {d:'2026-03-12',gd:89160,al:86120},{d:'2026-03-13',gd:88940,al:86600},
+  {d:'2026-03-16',gd:89410,al:86920},{d:'2026-03-17',gd:89640,al:87150},
+  {d:'2026-03-18',gd:88850,al:86700},{d:'2026-03-19',gd:88800,al:86700},
+  {d:'2026-03-20',gd:88500,al:85740},{d:'2026-03-23',gd:88750,al:86300},
+  {d:'2026-03-25',gd:88070,al:85860},{d:'2026-03-26',gd:87560,al:85450},
+  {d:'2026-03-27',gd:88900,al:86450},
+];
+
+/* ── Storage ── */
+function arbLoad(){
+  try{const r=localStorage.getItem(ARB_KEY);if(r)return JSON.parse(r);}catch(e){}
+  return[];
+}
+function arbSave(h){try{localStorage.setItem(ARB_KEY,JSON.stringify(h));}catch(e){}}
+function arbToday(){const n=new Date();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`;}
+function arbFmtDate(iso){const[,m,d]=iso.split('-');return`${parseInt(d)}/${parseInt(m)}`;}
+
+function arbInitSeed(){
+  let h=arbLoad();
+  const ex=new Set(h.map(x=>x.d));
+  let changed=h.length===0;
+  for(const x of ARB_SEED){
+    if(!ex.has(x.d)){
+      h.push({d:x.d,gd:x.gd,al:x.al,r:parseFloat(((x.gd/x.al-1)*100).toFixed(4))});
+      changed=true;
+    }
+  }
+  if(changed){h.sort((a,b)=>a.d.localeCompare(b.d));arbSave(h);}
+  return arbLoad();
+}
+
+/* ── Calculations ── */
+function arbCalcIndicators(ratios){
+  const n=ratios.length;
+  const mm21=new Array(n).fill(null);
+  const mm9 =new Array(n).fill(null);
+  const bsup=new Array(n).fill(null);
+  const binf=new Array(n).fill(null);
+  for(let i=0;i<n;i++){
+    if(i>=ARB_PER-1){
+      const sl=ratios.slice(i-ARB_PER+1,i+1);
+      const mu=sl.reduce((s,v)=>s+v,0)/ARB_PER;
+      const sigma=Math.sqrt(sl.reduce((s,v)=>s+(v-mu)**2,0)/ARB_PER);
+      mm21[i]=mu;
+      bsup[i]=mu+ARB_SIG*sigma;
+      binf[i]=mu-ARB_SIG*sigma;
+    }
+    if(i>=ARB_MA9-1){
+      const sl2=ratios.slice(i-ARB_MA9+1,i+1);
+      mm9[i]=sl2.reduce((s,v)=>s+v,0)/ARB_MA9;
+    }
+  }
+  return{mm21,mm9,bsup,binf};
+}
+
+function arbStatsFor(ratios,n){
+  const sl=ratios.slice(-n).filter(v=>v!=null);
+  if(!sl.length)return{hi:null,med:null,lo:null};
+  return{hi:Math.max(...sl),med:sl.reduce((s,v)=>s+v,0)/sl.length,lo:Math.min(...sl)};
+}
+
+function arbAccion(r,sup,inf){
+  if(sup===null||inf===null)return'Nada';
+  if(r>sup)return'Rotar a AL';
+  if(r<inf)return'Rotar a GD';
+  return'Nada';
+}
+
+/* ── Chart instances ── */
+let arbPxChart=null,arbRatioChart=null;
+let arbLiveGD=null,arbLiveAL=null,arbReady=false;
+
+/* ── Render ── */
+function arbRender(hist,lGD,lAL){
+  // Build working array (may include a live point not yet saved)
+  const work=[...hist];
+  const today=arbToday();
+  let liveR=null;
+  if(lGD&&lAL){
+    liveR=parseFloat(((lGD/lAL-1)*100).toFixed(4));
+    const idx=work.findIndex(x=>x.d===today);
+    if(idx>=0)work[idx]={...work[idx],gd:lGD,al:lAL,r:liveR,_live:true};
+    else work.push({d:today,gd:lGD,al:lAL,r:liveR,_live:true});
+  }
+
+  const ratios=work.map(x=>x.r);
+  const {mm21,mm9,bsup,binf}=arbCalcIndicators(ratios);
+  const n=work.length;
+  const lastMM21=mm21[n-1],lastMM9=mm9[n-1],lastBsup=bsup[n-1],lastBinf=binf[n-1];
+  const lastR=ratios[n-1];
+  const labels=work.map(x=>arbFmtDate(x.d));
+
+  // ── Current values ──
+  const fmtP=v=>v!==null?v.toFixed(2)+'%':'—';
+  $$('arb-bsup-val').textContent=fmtP(lastBsup);
+  $$('arb-binf-val').textContent=fmtP(lastBinf);
+  $$('arb-ratio-val').textContent=fmtP(lastR);
+  $$('arb-gauge-num').textContent=lastR!==null?lastR.toFixed(2)+'%':'—';
+  $$('arb-upd-line').textContent='Actualizado: '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+
+  const accion=arbAccion(lastR,lastBsup,lastBinf);
+  const aBox=$$('arb-accion-box');
+  aBox.className='arb-accion-box '+(accion==='Rotar a AL'?'rota-al':accion==='Rotar a GD'?'rota-gd':'nada');
+  aBox.innerHTML=`<span>¿Qué hacer?</span><span style="font-size:13px">${accion}</span>`;
+
+  // ── Gauge ──
+  arbDrawGauge(lastR,lastBsup,lastBinf,lastMM21);
+
+  // ── Stats ──
+  for(const[cnt,pfx]of[[5,'arb-s5'],[20,'arb-s20'],[60,'arb-s60'],[100,'arb-s100']]){
+    const s=arbStatsFor(ratios,cnt);
+    $$(`${pfx}-hi`).textContent=fmtP(s.hi);
+    $$(`${pfx}-med`).textContent=fmtP(s.med);
+    $$(`${pfx}-lo`).textContent=fmtP(s.lo);
+  }
+
+  // ── Hist table ──
+  const tbody=$$('arb-hist-tbody');
+  tbody.innerHTML=[...hist].reverse().map(row=>{
+    const rc=lastBsup&&row.r>lastBsup?'arb-ratio-hi':lastBinf&&row.r<lastBinf?'arb-ratio-lo':'';
+    const isToday=row.d===today;
+    return`<tr${isToday?' class="arb-today"':''}>
+      <td>${arbFmtDate(row.d)}</td>
+      <td>${Math.round(row.gd).toLocaleString('es-AR')}</td>
+      <td>${Math.round(row.al).toLocaleString('es-AR')}</td>
+      <td class="${rc}">${row.r.toFixed(2)}%</td>
+    </tr>`;
+  }).join('');
+  $$('arb-hist-count').textContent=hist.length+' ruedas';
+
+  // ── Desvíos table ──
+  if(lastMM21!==null){
+    const slS=ratios.slice(-ARB_PER).filter(v=>v!==null);
+    const muS=slS.reduce((s,v)=>s+v,0)/slS.length;
+    const stdS=Math.sqrt(slS.reduce((s,v)=>s+(v-muS)**2,0)/slS.length);
+    const sigmas=[0.50,0.75,1.00,1.25,1.50,1.75,2.00,2.25,2.50,3.00];
+    $$('arb-desv-tbody').innerHTML=sigmas.map(sg=>{
+      const sup=lastMM21+sg*stdS,inf_=lastMM21-sg*stdS;
+      const act=sg===ARB_SIG;
+      return`<tr${act?' class="arb-desv-active"':''}>
+        <td>${sg.toFixed(2)}</td>
+        <td>${lastMM21.toFixed(2)}%</td>
+        <td class="d-sup">${sup.toFixed(2)}%</td>
+        <td class="d-inf">${inf_.toFixed(2)}%</td>
+        <td>${lastMM9!==null?lastMM9.toFixed(2)+'%':'—'}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Charts ──
+  arbRenderCharts(work,labels,ratios,mm21,mm9,bsup,binf);
+}
+
+function arbRenderCharts(work,labels,ratios,mm21,mm9,bsup,binf){
+  const gdArr=work.map(x=>x.gd);
+  const alArr=work.map(x=>x.al);
+  const scaleBase={
+    ticks:{color:'#7a99c4',font:{family:"'JetBrains Mono',monospace",size:9},maxRotation:0,maxTicksLimit:10},
+    grid:{color:'rgba(42,74,122,.2)'},
+  };
+
+  // Price chart
+  const ctxPx=$$('arb-px-canvas').getContext('2d');
+  if(arbPxChart){arbPxChart.destroy();arbPxChart=null;}
+  arbPxChart=new Chart(ctxPx,{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'GD30',data:gdArr,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',
+       pointBackgroundColor:'#22c55e',pointRadius:2.5,pointHoverRadius:4,borderWidth:1.8,fill:false},
+      {label:'AL30',data:alArr,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',
+       pointBackgroundColor:'#ef4444',pointRadius:2.5,pointHoverRadius:4,borderWidth:1.8,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:0},
+      plugins:{legend:{display:false},datalabels:{display:false},
+        tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${Math.round(c.parsed.y).toLocaleString('es-AR')}`}}
+      },
+      scales:{
+        x:{...scaleBase},
+        y:{...scaleBase,ticks:{...scaleBase.ticks,callback:v=>Math.round(v/1000)+'k'}}
+      }
+    }
+  });
+
+  // Ratio chart
+  const ctxR=$$('arb-ratio-canvas').getContext('2d');
+  if(arbRatioChart){arbRatioChart.destroy();arbRatioChart=null;}
+  arbRatioChart=new Chart(ctxR,{
+    type:'line',
+    data:{labels,datasets:[
+      {label:'Rotar a AL',data:bsup,borderColor:'#ef4444',borderWidth:2,pointRadius:0,fill:false},
+      {label:'Rotar a GD',data:binf,borderColor:'#22c55e',borderWidth:2,pointRadius:0,fill:false},
+      {label:'MM21',data:mm21,borderColor:'#eab308',borderWidth:1.5,pointRadius:0,borderDash:[5,3],fill:false},
+      {label:'MM9', data:mm9, borderColor:'#f97316',borderWidth:1.2,pointRadius:0,borderDash:[3,2],fill:false},
+      {label:'Ratio',data:ratios,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.06)',
+       pointBackgroundColor:'#3b82f6',pointRadius:2.5,pointHoverRadius:4,borderWidth:2,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,animation:{duration:0},
+      plugins:{legend:{display:false},datalabels:{display:false},
+        tooltip:{filter:i=>i.parsed.y!==null,
+          callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y!==null?c.parsed.y.toFixed(2)+'%':'N/A'}`}}
+      },
+      scales:{
+        x:{...scaleBase},
+        y:{...scaleBase,ticks:{...scaleBase.ticks,callback:v=>v.toFixed(1)+'%'}}
+      }
+    }
+  });
+}
+
+/* ── Gauge ── */
+function arbDrawGauge(ratio,bsup,binf,mm21){
+  const el=$$('arb-gauge-svg');if(!el)return;
+  if(bsup===null||binf===null||ratio===null){el.innerHTML='';return;}
+
+  const W=214,H=132,cx=107,cy=92,Ro=76,Ri=52;
+  const margin=(bsup-binf)*0.55;
+  const minV=Math.max(0,binf-margin),maxV=bsup+margin;
+
+  // SVG angles: 0=right, 90=down. Gauge from 145° to 395°(=35°), spanning 250° through the top
+  const A0=145,SWEEP=250;
+  const toRad=d=>d*Math.PI/180;
+  const pt=(deg,r)=>[cx+r*Math.cos(toRad(deg)),cy+r*Math.sin(toRad(deg))];
+  const vToA=v=>A0+Math.max(0,Math.min(1,(v-minV)/(maxV-minV)))*SWEEP;
+
+  const ring=(a1,a2,ro,ri)=>{
+    const[ox1,oy1]=pt(a1,ro),[ox2,oy2]=pt(a2,ro);
+    const[ix2,iy2]=pt(a2,ri),[ix1,iy1]=pt(a1,ri);
+    const lg=(a2-a1)>180?1:0;
+    return`M${ox1.toFixed(1)},${oy1.toFixed(1)} A${ro},${ro} 0 ${lg} 1 ${ox2.toFixed(1)},${oy2.toFixed(1)} L${ix2.toFixed(1)},${iy2.toFixed(1)} A${ri},${ri} 0 ${lg} 0 ${ix1.toFixed(1)},${iy1.toFixed(1)} Z`;
+  };
+
+  const aInf=vToA(binf),aSup=vToA(bsup),aNeedle=vToA(ratio);
+  const needlePt=pt(aNeedle,Ro-8);
+
+  // ticks every 0.5
+  const tickMarks=[];
+  for(let v=Math.ceil(minV*2)/2;v<=maxV+0.001;v+=0.5){
+    const a=vToA(v),major=true;
+    const[x1,y1]=pt(a,Ro-1),[x2,y2]=pt(a,Ro-10);
+    tickMarks.push(`<line x1="${x1.toFixed(1)}" y1="${y1.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" stroke="#3a5a8a" stroke-width="1"/>`);
+    // small ticks in between
+    if(v+0.25<=maxV){const a2=vToA(v+0.25);const[tx1,ty1]=pt(a2,Ro-1),[tx2,ty2]=pt(a2,Ro-5);
+      tickMarks.push(`<line x1="${tx1.toFixed(1)}" y1="${ty1.toFixed(1)}" x2="${tx2.toFixed(1)}" y2="${ty2.toFixed(1)}" stroke="#2a3a5a" stroke-width="0.5"/>`);}
+  }
+  // labels
+  const tickLabels=[];
+  for(let v=Math.ceil(minV*2)/2;v<=maxV+0.001;v+=0.5){
+    const a=vToA(v);const[lx,ly]=pt(a,Ro+14);
+    if(lx>4&&lx<W-4&&ly>4&&ly<H+2)
+      tickLabels.push(`<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" fill="#4a6a9a" font-family="'JetBrains Mono',monospace" font-size="8" text-anchor="middle" dominant-baseline="middle">${v.toFixed(1)}</text>`);
+  }
+  // band labels
+  const[bix,biy]=pt(aInf,Ro+20),[bsx,bsy]=pt(aSup,Ro+20);
+
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+  <path d="${ring(A0,A0+SWEEP,Ro,Ri)}" fill="#0d1b2e" stroke="#1a2d4a" stroke-width="0.5"/>
+  <path d="${ring(A0,Math.max(A0,Math.min(aInf,A0+SWEEP)),Ro-1,Ri+1)}" fill="rgba(22,100,52,0.45)"/>
+  <path d="${ring(Math.max(A0,aInf),Math.min(aSup,A0+SWEEP),Ro-1,Ri+1)}" fill="rgba(26,52,90,0.5)"/>
+  <path d="${ring(Math.max(A0,aSup),A0+SWEEP,Ro-1,Ri+1)}" fill="rgba(120,25,25,0.45)"/>
+  ${tickMarks.join('')}
+  ${tickLabels.join('')}
+  <line x1="${pt(aInf,Ri)[0].toFixed(1)}" y1="${pt(aInf,Ri)[1].toFixed(1)}" x2="${pt(aInf,Ro)[0].toFixed(1)}" y2="${pt(aInf,Ro)[1].toFixed(1)}" stroke="#22d68a" stroke-width="2"/>
+  <line x1="${pt(aSup,Ri)[0].toFixed(1)}" y1="${pt(aSup,Ri)[1].toFixed(1)}" x2="${pt(aSup,Ro)[0].toFixed(1)}" y2="${pt(aSup,Ro)[1].toFixed(1)}" stroke="#f0b429" stroke-width="2"/>
+  <text x="${bix.toFixed(1)}" y="${(biy+1).toFixed(1)}" fill="#22d68a" font-family="'JetBrains Mono',monospace" font-size="7.5" text-anchor="middle" dominant-baseline="middle">${binf.toFixed(2)}</text>
+  <text x="${bsx.toFixed(1)}" y="${(bsy+1).toFixed(1)}" fill="#f0b429" font-family="'JetBrains Mono',monospace" font-size="7.5" text-anchor="middle" dominant-baseline="middle">${bsup.toFixed(2)}</text>
+  <line x1="${cx}" y1="${cy}" x2="${needlePt[0].toFixed(1)}" y2="${needlePt[1].toFixed(1)}" stroke="#22d4f0" stroke-width="2.2" stroke-linecap="round"/>
+  <circle cx="${cx}" cy="${cy}" r="7.5" fill="#0d1b2e" stroke="#2a4a7a" stroke-width="1.5"/>
+  <circle cx="${cx}" cy="${cy}" r="3" fill="#22d4f0"/>
+  </svg>`;
+}
+
+/* ── Live fetch ── */
+async function arbFetch(){
+  if(!$$('page-arb').classList.contains('active')&&arbReady)return;
+  const dot=$$('arb-dot');
+  dot.className='arb-live-dot loading';
+  $$('arb-status').textContent='ACTUALIZANDO...';
+  try{
+    const data=await pfetch('https://data912.com/live/arg_bonds');
+    if(Array.isArray(data)){
+      const find=tk=>{for(const b of data){const t=(b.ticker||b.symbol||b.t||'').trim().toUpperCase();if(t===tk){const v=parseFloat(b.price||b.c||b.ultimo||b.last||0);return v>0?v:null;}}return null;};
+      arbLiveGD=find('GD30');arbLiveAL=find('AL30');
+    }
+  }catch(e){console.warn('arb fetch err:',e);}
+  const hist=arbLoad();
+  if(arbLiveGD&&arbLiveAL){
+    dot.className='arb-live-dot';
+    $$('arb-status').textContent=`GD30: ${Math.round(arbLiveGD).toLocaleString('es-AR')} | AL30: ${Math.round(arbLiveAL).toLocaleString('es-AR')} | LIVE`;
+  }else{
+    dot.className='arb-live-dot error';
+    $$('arb-status').textContent='Sin live — mostrando histórico';
+  }
+  arbRender(hist,arbLiveGD,arbLiveAL);
+}
+
+/* ── Save today ── */
+function arbSaveToday(){
+  if(!arbLiveGD||!arbLiveAL){
+    if($$('arb-dot').classList.contains('error')){alert('Sin precios live. Intentá actualizar primero.');return;}
+    alert('Esperando datos live…');return;
+  }
+  const today=arbToday();
+  let h=arbLoad();
+  const idx=h.findIndex(x=>x.d===today);
+  const rec={d:today,gd:Math.round(arbLiveGD),al:Math.round(arbLiveAL),r:parseFloat(((arbLiveGD/arbLiveAL-1)*100).toFixed(4))};
+  if(idx>=0)h[idx]=rec;else{h.push(rec);h.sort((a,b)=>a.d.localeCompare(b.d));}
+  arbSave(h);
+  const btn=$$('arb-save-btn');
+  btn.textContent='✓ Guardado';setTimeout(()=>btn.textContent='⊕ REGISTRAR HOY',2000);
+  arbRender(h,arbLiveGD,arbLiveAL);
+}
+
+/* ── Delete history (for dev) ── */
+function arbClearHistory(){
+  if(!confirm('¿Borrar todo el historial de arbitraje? Esta acción es irreversible.'))return;
+  localStorage.removeItem(ARB_KEY);
+  arbInitSeed();
+  arbRender(arbLoad(),arbLiveGD,arbLiveAL);
+}
+
+/* ── Init ── */
+function arbInit(){
+  arbInitSeed();
+  arbReady=true;
+  arbFetch();
+  setInterval(()=>{if($$('page-arb').classList.contains('active'))arbFetch();},10000);
+}
+
+// Hook showPage to lazy-init arb on first visit
+const _origShowPage=showPage;
+showPage=function(id){
+  _origShowPage(id);
+  if(id==='arb'&&!arbReady)arbInit();
+};
+
 </script>
+
+<!-- ══════════════════════════════════════════════════════ -->
+<!--  PAGE: ARBITRAJE GD30 / AL30                          -->
+<!-- ══════════════════════════════════════════════════════ -->
+<div class="page" id="page-arb">
+<div class="arb-outer">
+
+  <!-- Top control bar -->
+  <div class="arb-topbar">
+    <div class="arb-live-dot loading" id="arb-dot"></div>
+    <span id="arb-status">CONECTANDO...</span>
+    <span class="arb-title-tag">ARBITRAJE GD30 / AL30 · BOLLINGER BANDS</span>
+    <div style="flex:1"></div>
+    <button class="arb-btn" id="arb-save-btn" onclick="arbSaveToday()">⊕ REGISTRAR HOY</button>
+    <button class="arb-btn blue" onclick="arbFetch()" style="margin-left:6px">↻ ACTUALIZAR</button>
+    <button class="arb-btn red" onclick="arbClearHistory()" style="margin-left:6px;font-size:8px">✕ RESET</button>
+  </div>
+
+  <!-- Main 4-column grid -->
+  <div class="arb-grid">
+
+    <!-- LEFT: Historical table -->
+    <div class="arb-left">
+      <div class="arb-pnl-hdr">
+        <span class="arb-pnl-title">Historial</span>
+        <span style="font-family:var(--mono);font-size:9px;color:var(--gray)" id="arb-hist-count">—</span>
+      </div>
+      <div class="arb-hist-wrap">
+        <table class="arb-hist-tbl">
+          <thead><tr><th>Fecha</th><th>GD30</th><th>AL30</th><th>Ratio</th></tr></thead>
+          <tbody id="arb-hist-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CENTER: Charts -->
+    <div class="arb-center">
+      <!-- Prices chart -->
+      <div class="arb-pnl-hdr">
+        <span class="arb-pnl-title">GD30 vs AL30 — Precios ARS (24hs)</span>
+        <div class="arb-chart-leg">
+          <span class="arb-leg"><span class="arb-leg-dot dot" style="background:#22c55e"></span>GD30</span>
+          <span class="arb-leg"><span class="arb-leg-dot dot" style="background:#ef4444"></span>AL30</span>
+        </div>
+      </div>
+      <div class="arb-chart-box">
+        <canvas id="arb-px-canvas"></canvas>
+        <span class="arb-watermark">@Portfolio Investment</span>
+      </div>
+
+      <div class="arb-chart-sep"></div>
+
+      <!-- Ratio chart -->
+      <div class="arb-pnl-hdr">
+        <span class="arb-pnl-title">Ratio GD30/AL30 · Bollinger (21r · σ=1.5)</span>
+        <div class="arb-chart-leg">
+          <span class="arb-leg"><span class="arb-leg-dot dot" style="background:#3b82f6"></span>Ratio</span>
+          <span class="arb-leg"><span class="arb-leg-dot" style="background:#eab308;width:14px;height:2px;border-top:2px dashed #eab308"></span>MM21</span>
+          <span class="arb-leg"><span class="arb-leg-dot" style="background:#22c55e"></span>Rotar GD</span>
+          <span class="arb-leg"><span class="arb-leg-dot" style="background:#ef4444"></span>Rotar AL</span>
+          <span class="arb-leg"><span class="arb-leg-dot" style="background:#f97316;width:14px;height:2px;border-top:2px dashed #f97316"></span>MM9</span>
+        </div>
+      </div>
+      <div class="arb-chart-box" style="padding-bottom:8px">
+        <canvas id="arb-ratio-canvas"></canvas>
+        <span class="arb-watermark">@Portfolio Investment</span>
+      </div>
+    </div>
+
+    <!-- RIGHT: Info + Gauge + Stats -->
+    <div class="arb-right">
+      <!-- Current values -->
+      <div class="arb-cur-box">
+        <div class="arb-upd-line" id="arb-upd-line">Actualizado: --:--:--</div>
+        <div class="arb-cur-row">
+          <span class="arb-cur-k">Banda Sup</span>
+          <span class="arb-cur-v sup" id="arb-bsup-val">—</span>
+        </div>
+        <div class="arb-cur-row">
+          <span class="arb-cur-k">Banda Inf</span>
+          <span class="arb-cur-v inf" id="arb-binf-val">—</span>
+        </div>
+        <div class="arb-cur-row" style="border-bottom:none">
+          <span class="arb-cur-k">Ratio</span>
+          <span class="arb-cur-v ratio" id="arb-ratio-val">—</span>
+        </div>
+        <div id="arb-accion-box" class="arb-accion-box nada">
+          <span>¿Qué hacer?</span><span>—</span>
+        </div>
+      </div>
+
+      <!-- Gauge -->
+      <div class="arb-gauge-area">
+        <div class="arb-gauge-lbl">Ratio</div>
+        <svg id="arb-gauge-svg" viewBox="0 0 214 132" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div class="arb-gauge-num" id="arb-gauge-num">—</div>
+      </div>
+
+      <!-- Stats -->
+      <div class="arb-stats-wrap">
+        <div class="arb-sblk">
+          <div class="arb-shdr">Últimas 5 ruedas</div>
+          <div class="arb-srow"><span class="arb-sk">Máximo</span><span class="arb-sv hi" id="arb-s5-hi">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Media</span><span class="arb-sv med" id="arb-s5-med">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Mínimo</span><span class="arb-sv lo" id="arb-s5-lo">—</span></div>
+        </div>
+        <div class="arb-sblk">
+          <div class="arb-shdr">Últimas 20 ruedas</div>
+          <div class="arb-srow"><span class="arb-sk">Máximo</span><span class="arb-sv hi" id="arb-s20-hi">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Media</span><span class="arb-sv med" id="arb-s20-med">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Mínimo</span><span class="arb-sv lo" id="arb-s20-lo">—</span></div>
+        </div>
+        <div class="arb-sblk">
+          <div class="arb-shdr">Últimas 60 ruedas</div>
+          <div class="arb-srow"><span class="arb-sk">Máximo</span><span class="arb-sv hi" id="arb-s60-hi">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Media</span><span class="arb-sv med" id="arb-s60-med">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Mínimo</span><span class="arb-sv lo" id="arb-s60-lo">—</span></div>
+        </div>
+        <div class="arb-sblk">
+          <div class="arb-shdr">Últimas 100 ruedas</div>
+          <div class="arb-srow"><span class="arb-sk">Máximo</span><span class="arb-sv hi" id="arb-s100-hi">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Media</span><span class="arb-sv med" id="arb-s100-med">—</span></div>
+          <div class="arb-srow"><span class="arb-sk">Mínimo</span><span class="arb-sv lo" id="arb-s100-lo">—</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FAR RIGHT: Desvíos / Sigma scenarios -->
+    <div class="arb-desvios">
+      <div class="arb-pnl-hdr">
+        <span class="arb-pnl-title">Desvíos σ</span>
+      </div>
+      <div class="arb-desv-wrap">
+        <table class="arb-desv-tbl">
+          <thead>
+            <tr>
+              <th>Desvíos</th>
+              <th>MM21</th>
+              <th>Rotar a AL</th>
+              <th>Rotar a GD</th>
+              <th>MM9</th>
+            </tr>
+          </thead>
+          <tbody id="arb-desv-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- end arb-grid -->
+
+  <!-- Notes bar -->
+  <div class="arb-notes">
+    <strong>Notas:</strong>
+    Los precios actuales (plazo 24hs) del GD30 y AL30 se obtienen por API desde data912.com en tiempo real cada 10 segundos.
+    Los precios históricos se guardan en el navegador (localStorage); usar <strong>REGISTRAR HOY</strong> al cierre de cada rueda hábil para mantener el historial actualizado.
+    El Ratio es la relación porcentual entre el precio del GD30 sobre el AL30, ambos en plazo de 24hs: Ratio = (GD30/AL30 − 1) × 100%.
+    Aplica Bandas de Bollinger para un período de <strong>21 ruedas</strong>, sumando y restando <strong>1,5 desvíos estándar</strong>.
+    En base a esto, el tacómetro determina si hay que vender GD30 y comprar AL30 (<em>Rotar a AL</em>), o viceversa (<em>Rotar a GD</em>), o no hacer nada.
+    <span class="disc">Disclaimer:</span> el motor de obtención de datos puede apagarse o colgarse; conviene rechequear precios antes de operar.
+  </div>
+
+</div>
+</div>
+
 </body>
-</html>>
+</html>

@@ -803,9 +803,14 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .bnd-leg-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px}
 .bnd-leg-lbl{margin-right:8px}
 .bnd-sarr{font-size:9px;color:var(--amber);font-weight:700}
+.pdf-btn{background:rgba(91,141,239,.12);border:1px solid #3a6fd8;color:#7aa3f0;font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:.08em;padding:3px 10px;cursor:pointer;border-radius:3px;height:24px;display:inline-flex;align-items:center;gap:4px;transition:all .12s}
+.pdf-btn:hover{background:rgba(91,141,239,.25);color:var(--white);border-color:#5b8def}
+.pdf-btn:active{opacity:.7}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
 </head>
 <body>
@@ -1104,6 +1109,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
     <span class="lc-settle" id="lc-settle-txt">Liquidación T+1: —</span>
     <span class="lc-status-pill loading" id="lc-status-pill">CARGANDO...</span>
     <button class="lc-refresh-btn" id="lc-refresh-btn" onclick="lcFetch()">↻ ACTUALIZAR</button>
+    <button class="pdf-btn" onclick="lcPanelPDF()">⬇ PDF PANEL</button>
   </div>
   <div class="lc-table-panel" id="lc-table-panel"><div class="lc-table-wrap"><table class="lc-table" id="lc-table"><thead><tr>
     <th onclick="lcSort('ticker')" data-col="ticker">TICKER <span class="sort-arrow"></span></th>
@@ -1141,7 +1147,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 <!-- LECAP CALCULATOR MODAL -->
 <div class="lc-modal-overlay" id="lc-modal-overlay" onclick="lcModalClose(event)">
   <div class="lc-modal" onclick="event.stopPropagation()">
-    <div class="lc-modal-hdr"><div><div class="lc-modal-title" id="lc-modal-title">S17A6 — Calculadora</div><div class="lc-modal-sub" id="lc-modal-sub">LECAP — Vence: — — Pago final: —</div></div><button class="lc-modal-close" onclick="lcModalClose(null)">✕</button></div>
+    <div class="lc-modal-hdr"><div><div class="lc-modal-title" id="lc-modal-title">S17A6 — Calculadora</div><div class="lc-modal-sub" id="lc-modal-sub">LECAP — Vence: — — Pago final: —</div></div><div style="display:flex;align-items:center;gap:8px"><button class="pdf-btn" onclick="lcModalPDF()">⬇ PDF</button><button class="lc-modal-close" onclick="lcModalClose(null)">✕</button></div></div>
     <div class="lc-modal-body">
       <div class="lc-calc-top"><div class="lc-calc-field"><div class="lc-calc-lbl">Precio</div><input class="lc-calc-inp" type="number" id="lc-inp-price" oninput="lcCalcModal()" step="0.01" min="0.01"></div><div class="lc-calc-field"><div class="lc-calc-lbl">Monto a invertir ($)</div><input class="lc-calc-inp" type="number" id="lc-inp-invest" oninput="lcCalcModal()" step="10000" min="0" value="1000000"></div><div></div></div>
       <div class="lc-metrics-row"><div class="lc-met"><div class="lc-met-k">TNA</div><div class="lc-met-v tna" id="lc-m-tna">—</div></div><div class="lc-met"><div class="lc-met-k">TEM</div><div class="lc-met-v tem" id="lc-m-tem">—</div></div><div class="lc-met"><div class="lc-met-k">TIR</div><div class="lc-met-v tir" id="lc-m-tir">—</div></div><div class="lc-met"><div class="lc-met-k">Días</div><div class="lc-met-v dias" id="lc-m-dias">—</div></div></div>
@@ -1173,6 +1179,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
     <div class="bnd-spacer"></div>
     <span class="bnd-status loading" id="bnd-pill">CARGANDO...</span>
     <button class="lc-refresh-btn" onclick="bndFetch()">↻ ACTUALIZAR</button>
+    <button class="pdf-btn" onclick="bndPanelPDF()">⬇ PDF PANEL</button>
   </div>
   <div class="bnd-table-wrap">
     <table class="bnd-table" id="bnd-table">
@@ -1210,7 +1217,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 <div class="bnd-modal" onclick="event.stopPropagation()">
   <div class="bnd-modal-hdr">
     <div><div class="bnd-modal-title" id="bnd-m-title">AL30 — Calculadora</div><div class="bnd-modal-sub" id="bnd-m-sub">—</div></div>
-    <button class="bnd-modal-close" onclick="$$('bnd-modal-overlay').classList.remove('open')">✕</button>
+    <div style="display:flex;align-items:center;gap:8px"><button class="pdf-btn" onclick="bndModalPDF()">⬇ PDF</button><button class="bnd-modal-close" onclick="$$('bnd-modal-overlay').classList.remove('open')">✕</button></div>
   </div>
   <div class="bnd-modal-body">
     <div class="bnd-calc-row">
@@ -1485,7 +1492,85 @@ function cCalc(){
   $$('c-xls-btn').style.display='block';$$('c-pdf-btn').style.display='block';$$('c-status').className='s-ok';$$('c-status').textContent=`OK · ${isCol?'COL':'TOM'} · ${plazo}D · TNA ${fmtP(tasa)}`;
 }
 function cExport(){if(!cLastCalc){alert('Calculá primero.');return;}const d=cLastCalc;const sgn=d.isCol?'+':'-';const IC=d.isCol?'#22d68a':'#ff4d6a';const NC=d.intNeto>=0?'#22d68a':'#ff4d6a';const lbNet=d.isCol?'A cobrar neto':'A devolver neto';const BG='#0d1b2e',BG2='#122540',BLU='#5b8def',AMB='#f0b429',WHT='#f0f4ff',GRY='#7a99c4',RED='#ff4d6a';const css=`font-family:'Courier New',monospace;font-size:11pt;`;const html=`<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><meta charset="UTF-8"></head><body><table border="0" cellspacing="0" cellpadding="0" style="background:${BG};border-collapse:collapse;width:680px;"><tr><td colspan="2" style="${css}font-size:13pt;font-weight:800;background:#1e3a62;color:${BLU};padding:10px 14px;">Portfolio Investment — CAUCIONES BURSÁTILES</td></tr><tr><td colspan="2" style="${css}font-size:9pt;background:${BG2};color:${GRY};padding:3px 14px;">${d.isCol?'COLOCADORA':'TOMADORA'} · ${new Date().toLocaleDateString('es-AR')} · BYMA DIC 2025</td></tr><tr><td colspan="2" style="height:8px;background:${BG}"></td></tr><tr><td colspan="2" style="${css}font-size:9pt;font-weight:700;background:#1a3358;color:${BLU};padding:4px 14px;border-top:2px solid #3a6fd8;border-bottom:2px solid #3a6fd8;">PARÁMETROS</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">Capital nominal</td><td style="${css}background:${BG};color:${BLU};font-weight:700;text-align:right;padding:4px 14px;">$ ${fmtN(d.capital)}</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">TNA</td><td style="${css}background:${BG};color:${AMB};font-weight:700;text-align:right;padding:4px 14px;">${fmtP(d.tasa)}</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">Plazo</td><td style="${css}background:${BG};color:${WHT};font-weight:700;text-align:right;padding:4px 14px;">${d.plazo} días</td></tr><tr><td colspan="2" style="height:6px;background:${BG}"></td></tr><tr><td colspan="2" style="${css}font-size:9pt;font-weight:700;background:#1a3358;color:${BLU};padding:4px 14px;border-top:2px solid #3a6fd8;border-bottom:2px solid #3a6fd8;">RESULTADO</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">${d.isCol?'Intereses brutos':'Intereses a pagar'}</td><td style="${css}background:${BG};color:${IC};font-weight:700;text-align:right;padding:4px 14px;">${sgn} $ ${fmtN(d.intBruto)}</td></tr><tr><td style="${css}background:#1e3a62;color:${WHT};font-weight:700;padding:5px 14px;border-top:1px solid #3a6fd8;">Valor futuro bruto</td><td style="${css}background:#1e3a62;color:${AMB};font-weight:700;font-size:12pt;text-align:right;padding:5px 14px;border-top:1px solid #3a6fd8;">$ ${fmtN(d.vf)}</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">DDMM BYMA + IVA</td><td style="${css}background:${BG};color:${RED};font-weight:700;text-align:right;padding:4px 14px;">- $ ${fmtN(d.bTot)}</td></tr>${d.aTot>0?`<tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">Arancel ALyC + IVA</td><td style="${css}background:${BG};color:${RED};font-weight:700;text-align:right;padding:4px 14px;">- $ ${fmtN(d.aTot)}</td></tr>`:''}<tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">Total costos</td><td style="${css}background:${BG};color:${RED};font-weight:700;text-align:right;padding:4px 14px;">- $ ${fmtN(d.costos)}</td></tr><tr><td style="${css}background:#122a1a;color:${WHT};font-weight:800;font-size:12pt;padding:8px 14px;border-top:2px solid #22d68a;border-bottom:2px solid #22d68a;">${lbNet.toUpperCase()}</td><td style="${css}background:#122a1a;color:${NC};font-weight:800;font-size:14pt;text-align:right;padding:8px 14px;border-top:2px solid #22d68a;border-bottom:2px solid #22d68a;">$ ${fmtN(d.vfNeto)}</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">TEA equivalente</td><td style="${css}background:${BG};color:${IC};font-weight:700;text-align:right;padding:4px 14px;">${fmtP2(d.tea)}</td></tr><tr><td style="${css}background:${BG};color:${GRY};padding:4px 14px;font-size:9pt;">TNA neta post-costos</td><td style="${css}background:${BG};color:${NC};font-weight:700;text-align:right;padding:4px 14px;">${fmtP2(d.tnaNeta)}</td></tr><tr><td colspan="2" style="${css}font-size:8pt;background:${BG2};color:${GRY};padding:3px 14px;">CALC ORIENTATIVA · Portfolio Investment · BYMA DIC 2025</td></tr></table></body></html>`;const blob=new Blob([html],{type:'application/vnd.ms-excel;charset=utf-8'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`CAUC_${d.isCol?'COL':'TOM'}_${d.plazo}D_${new Date().toISOString().slice(0,10)}.xls`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);}
-function cPDF(){if(!cLastCalc){alert('Calculá primero.');return;}const d=cLastCalc;const w=window.open('','_blank');if(!w){alert('Habilitá ventanas emergentes');return;}w.document.write('<html><body><h2>PDF: ver versión original</h2></body></html>');w.document.close();}
+function cPDF(){
+  if(!cLastCalc){alert('Calculá primero.');return;}
+  const d=cLastCalc;
+  if(!window.jspdf){alert('Librería PDF no cargada aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,M=15,CW=W-M*2;
+  const BG=[13,27,46],BG2=[18,37,64],HDR=[30,58,98],BLU=[91,141,239],AMB=[240,180,41],GRN=[34,214,138],RED=[255,77,106],WHT=[240,244,255],GRY=[122,153,196];
+  const sgn=d.isCol?'+':'-',IC=d.isCol?GRN:RED,NC=d.intNeto>=0?GRN:RED;
+  const lbNet=d.isCol?'A COBRAR NETO':'A DEVOLVER NETO';
+  const today=new Date().toLocaleDateString('es-AR');
+  // Full page background
+  doc.setFillColor(...BG);doc.rect(0,0,210,297,'F');
+  // Header strip
+  doc.setFillColor(...HDR);doc.rect(0,0,210,22,'F');
+  doc.setTextColor(...BLU);doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text('PORTFOLIO INVESTMENT',M,9);
+  doc.setFontSize(9);doc.setTextColor(...GRY);
+  doc.text('CAUCIONES BURSÁTILES — '+(d.isCol?'COLOCADORA':'TOMADORA')+' · '+today,M,15);
+  doc.setTextColor(...GRY);doc.text('BYMA · Cálculo orientativo',M,20);
+  let y=32;
+  const row=(k,v,kc,vc,bg,bold=false)=>{
+    doc.setFillColor(...(bg||BG2));doc.rect(M,y-4,CW,7,'F');
+    doc.setFontSize(9);doc.setTextColor(...(kc||GRY));doc.setFont('helvetica',bold?'bold':'normal');
+    doc.text(k,M+2,y);
+    doc.setTextColor(...(vc||WHT));doc.setFont('helvetica','bold');
+    doc.text(v,M+CW-2,y,'right');
+    y+=8;
+  };
+  const sec=(t)=>{
+    y+=2;
+    doc.setFillColor(...HDR);doc.rect(M,y-4,CW,7,'F');
+    doc.setFontSize(8);doc.setTextColor(...BLU);doc.setFont('helvetica','bold');
+    doc.text(t,M+2,y);
+    y+=9;
+  };
+  const fmtM=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtP=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  sec('PARÁMETROS');
+  row('Capital nominal','$ '+fmtM(d.capital),GRY,BLU);
+  row('TNA',fmtP(d.tasa),GRY,AMB);
+  row('Plazo',d.plazo+' días',GRY,WHT);
+  y+=3;
+  sec('RESULTADO BRUTO');
+  row(d.isCol?'Intereses brutos':'Intereses a pagar',sgn+' $ '+fmtM(d.intBruto),GRY,IC);
+  y+=2;
+  doc.setFillColor(20,50,90);doc.rect(M,y-4,CW,9,'F');
+  doc.setFontSize(11);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text('Valor futuro bruto',M+2,y+1);
+  doc.setTextColor(...AMB);doc.text('$ '+fmtM(d.vf),M+CW-2,y+1,'right');
+  y+=12;
+  sec('COSTOS BYMA / ALyC');
+  row('DDMM BYMA neto','- $ '+fmtM(d.bBase),GRY,RED);
+  row('IVA 21% DDMM','- $ '+fmtM(d.bIva),GRY,RED);
+  row('Total DDMM','- $ '+fmtM(d.bTot),GRY,RED,HDR,true);
+  if(d.aTot>0){
+    y+=2;
+    row('Arancel ALyC neto','- $ '+fmtM(d.aBase),GRY,RED);
+    row('IVA 21% arancel','- $ '+fmtM(d.aIva),GRY,RED);
+    row('Total arancel','- $ '+fmtM(d.aTot),GRY,RED,HDR,true);
+  }
+  y+=2;
+  row('Total costos','- $ '+fmtM(d.costos),GRY,RED,HDR,true);
+  y+=5;
+  doc.setFillColor(10,40,22);doc.rect(M,y-4,CW,11,'F');
+  doc.setFontSize(13);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text(lbNet,M+2,y+2);
+  doc.setTextColor(...NC);doc.text('$ '+fmtM(d.vfNeto),M+CW-2,y+2,'right');
+  y+=15;
+  sec('TASAS');
+  row('TEA equivalente',fmtP(d.tea),GRY,IC);
+  row('TNA neta post-costos',fmtP(d.tnaNeta),GRY,NC);
+  // Footer
+  doc.setFillColor(...HDR);doc.rect(0,285,210,12,'F');
+  doc.setFontSize(7);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+  doc.text('Portfolio Investment · Cálculo orientativo · '+today,M,291);
+  doc.text('Página 1',210-M,291,'right');
+  doc.save('CAUC_'+(d.isCol?'COL':'TOM')+'_'+d.plazo+'D_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
 
 // ════════════════════════════════════════
 //  DESCUENTO (unchanged)
@@ -1507,9 +1592,83 @@ const montoBase=needsTC?montoInput*tc:montoInput,intereses=montoBase-(montoBase/
 const tcLine=needsTC?`<div class="bnr"><div><div class="bk">MONTO USD</div><div class="bv blue">USD ${fmtN(montoInput)}</div><div class="bsub">TC: $ ${fmtN(tc)} ARS/USD</div></div><div style="text-align:right"><div class="bk">EQUIVALENTE ARS</div><div class="bv amber">$ ${fmtN(montoBase)}</div><div class="bsub">OPERADO EN ARS</div></div></div>`:'';
 area.innerHTML=`<div class="big-nums">${tcLine}<div class="bnr"><div><div class="bk">MONTO NOMINAL</div><div class="bv blue">${fmtM(montoBase)}</div><div class="bsub">${plazo} DÍAS · ${dInstr.toUpperCase()}</div></div><div style="text-align:right"><div class="bk">TOTAL DESCUENTO</div><div class="bv red">- ${fmtM(totalDesc)}</div><div class="bsub">${fmtP2(totalDesc/montoBase*100)} DEL NOMINAL</div></div></div><div class="bnr"><div><div class="bk">MONTO FINAL A RECIBIR</div><div class="bv green">${fmtM(montoRecibir)}</div><div class="bsub">NOMINAL − DESCUENTO</div></div><div style="text-align:right"><div class="bk">COND. IVA</div><div class="bv" style="font-size:13px;color:${dRI?'var(--cyan)':'var(--gray)'}">${dRI?'RESP. INSCRIPTO':'CONS. FINAL'}</div></div></div></div><div class="metrics-bar" style="grid-template-columns:1fr 1fr"><div class="mc"><div class="mk">CFT ANUAL</div><div class="mv red">${fmtP2(cft)}<span class="munit">/ año</span></div></div><div class="mc"><div class="mk">COSTO DESC. EN TNA</div><div class="mv amber">${fmtP2(tnaTotalDesc)}<span class="munit">/ año</span></div></div></div>
 <div class="bk-table"><div class="bk-sec">DESCUENTO EN MERCADO DE CAPITALES</div><div class="bk-row"><span class="bk-k">Monto base operado</span><span class="bk-rate">—</span><span class="bk-v blue">${fmtM(montoBase)}</span></div><div class="bk-row"><span class="bk-k">Plazo</span><span class="bk-rate">—</span><span class="bk-v">${plazo} días</span></div><div class="bk-sec">INTERESES</div><div class="bk-row"><span class="bk-k">Intereses netos</span><span class="bk-rate">${fmtP2(tna)}</span><span class="bk-v cost">- ${fmtM(intereses)}</span></div>${dRI?`<div class="bk-row"><span class="bk-k">IVA 21% sobre intereses (RI)</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(interesesIva)}</span></div>`:`<div class="bk-row"><span class="bk-k" style="color:var(--blue3)">IVA — exento (CF)</span><span class="bk-rate"></span><span class="bk-v" style="color:var(--gray2)">—</span></div>`}<div class="bk-row tr"><span class="bk-k">Total intereses</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(interesTot)}</span></div><div class="bk-sec">ARANCEL ALYC</div><div class="bk-row"><span class="bk-k">Arancel neto</span><span class="bk-rate">${fmtP2(arancelPct)}</span><span class="bk-v cost">- ${fmtM(arancelAmt)}</span></div><div class="bk-row"><span class="bk-k">IVA 21%</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(arancelIva)}</span></div><div class="bk-row tr"><span class="bk-k">Total arancel</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(arancelTot)}</span></div>${dSeg==='avalado'?`<div class="bk-sec">COMISIÓN SGR</div>${sgrPct>0?`<div class="bk-row"><span class="bk-k">Comisión SGR neta</span><span class="bk-rate">${fmtP2(sgrPct)}</span><span class="bk-v cost">- ${fmtM(sgrAmt)}</span></div><div class="bk-row"><span class="bk-k">IVA 21%</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(sgrIva)}</span></div><div class="bk-row tr"><span class="bk-k">Total SGR</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(sgrTot)}</span></div>`:`<div class="bk-row"><span class="bk-k" style="color:var(--blue3)">Sin comisión SGR</span><span class="bk-rate"></span><span class="bk-v" style="color:var(--gray2)">—</span></div>`}`:''}<div class="bk-sec">DDMM BYMA — REF.06</div><div class="bk-row"><span class="bk-k">DDMM venta neto</span><span class="bk-rate">0,0600%</span><span class="bk-v cost">- ${fmtM(ddmmBase)}</span></div><div class="bk-row"><span class="bk-k">IVA 21%</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(ddmmIva)}</span></div><div class="bk-row tr"><span class="bk-k">Total DDMM</span><span class="bk-rate"></span><span class="bk-v cost">- ${fmtM(ddmmTot)}</span></div><div class="bk-sec">RESULTADO</div><div class="bk-row tr"><span class="bk-k" style="font-weight:700;color:var(--white)">Costo total</span><span class="bk-rate" style="color:var(--red)">${fmtP2(tnaTotalDesc)}</span><span class="bk-v cost" style="font-size:13px">- ${fmtM(totalDesc)}</span></div><div class="bk-row"><span class="bk-k">CFT anual efectivo</span><span class="bk-rate" style="color:var(--red)">${fmtP2(cft)}</span><span class="bk-v" style="color:var(--red);font-weight:700">${fmtP2(cft)} / año</span></div><div class="bk-row net-final"><span class="bk-k" style="color:var(--white);font-weight:800;font-size:12px;letter-spacing:.04em">MONTO FINAL A RECIBIR</span><span class="bk-rate"></span><span class="bk-v ${montoRecibir>=0?'net':'netneg'}">${fmtM(montoRecibir)}</span></div></div>`;
-if($$('d-pdf-btn'))$$('d-pdf-btn').style.display='block';$$('d-status').className='s-ok';$$('d-status').textContent=`OK · ${dInstr.toUpperCase()} · ${dMoneda.toUpperCase()} · ${plazo}D · TNA ${fmtP2(tna)} · CFT ${fmtP2(cft)} · ${dRI?'RI':'CF'}`;}
+if($$('d-pdf-btn'))$$('d-pdf-btn').style.display='block';$$('d-status').className='s-ok';$$('d-status').textContent=`OK · ${dInstr.toUpperCase()} · ${dMoneda.toUpperCase()} · ${plazo}D · TNA ${fmtP2(tna)} · CFT ${fmtP2(cft)} · ${dRI?'RI':'CF'}`;
+dLastCalc={montoInput,plazo,tna:tna,arancelPct,sgrPct,montoBase,intereses,interesesIva,interesTot,arancelAmt,arancelIva,arancelTot,sgrAmt,sgrIva,sgrTot,ddmmBase,ddmmIva,ddmmTot,totalDesc,montoRecibir,cft,tnaTotalDesc,dRI,dSeg,dInstr,dMoneda,tc:needsTC?(parseFloat($$('d-tc').value)||0):1};}
 dUpdateBadges();
-function dPDF(){alert('PDF: usá Ctrl+P para imprimir la pantalla.');}
+function dPDF(){
+  if(!dLastCalc){alert('Calculá primero.');return;}
+  const d=dLastCalc;
+  if(!window.jspdf){alert('Librería PDF no cargada aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=210,M=15,CW=W-M*2;
+  const BG=[13,27,46],BG2=[18,37,64],HDR=[30,58,98],BLU=[91,141,239],AMB=[240,180,41],GRN=[34,214,138],RED=[255,77,106],WHT=[240,244,255],GRY=[122,153,196],CYN=[34,212,240];
+  const today=new Date().toLocaleDateString('es-AR');
+  const isHD=d.dMoneda==='hd';
+  const fmtM=n=>isHD?'USD '+n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}):'$ '+n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtP=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})+'%';
+  doc.setFillColor(...BG);doc.rect(0,0,210,297,'F');
+  doc.setFillColor(...HDR);doc.rect(0,0,210,22,'F');
+  doc.setTextColor(...BLU);doc.setFontSize(14);doc.setFont('helvetica','bold');
+  doc.text('PORTFOLIO INVESTMENT',M,9);
+  doc.setFontSize(9);doc.setTextColor(...GRY);
+  doc.text('DESCUENTO DE CHEQUES — '+d.dInstr.toUpperCase()+' · '+today,M,15);
+  let y=32;
+  const row=(k,v,kc,vc,bg,bold=false)=>{
+    doc.setFillColor(...(bg||BG2));doc.rect(M,y-4,CW,7,'F');
+    doc.setFontSize(9);doc.setTextColor(...(kc||GRY));doc.setFont('helvetica',bold?'bold':'normal');
+    doc.text(k,M+2,y);
+    doc.setTextColor(...(vc||WHT));doc.setFont('helvetica','bold');
+    doc.text(String(v),M+CW-2,y,'right');
+    y+=8;
+  };
+  const sec=(t)=>{
+    y+=2;
+    doc.setFillColor(...HDR);doc.rect(M,y-4,CW,7,'F');
+    doc.setFontSize(8);doc.setTextColor(...BLU);doc.setFont('helvetica','bold');
+    doc.text(t,M+2,y);y+=9;
+  };
+  sec('PARÁMETROS');
+  if(d.dMoneda!=='ars')row('Tipo de cambio','$ '+d.tc.toLocaleString('es-AR',{minimumFractionDigits:2})+' ARS/USD',GRY,CYN);
+  row('Monto nominal',fmtM(d.montoBase),GRY,BLU);
+  row('Plazo',d.plazo+' días',GRY,WHT);
+  row('TNA descuento',fmtP(d.tna),GRY,AMB);
+  row('Condición IVA',d.dRI?'Resp. Inscripto':'Consumidor Final',GRY,CYN);
+  sec('INTERESES');
+  row('Intereses netos','- '+fmtM(d.intereses),GRY,RED);
+  if(d.dRI)row('IVA 21% (RI)','- '+fmtM(d.interesesIva),GRY,RED);
+  else row('IVA — exento (CF)','—',GRY,GRY);
+  row('Total intereses','- '+fmtM(d.interesTot),GRY,RED,HDR,true);
+  sec('ARANCEL ALyC');
+  row('Arancel neto ('+fmtP(d.arancelPct)+')','- '+fmtM(d.arancelAmt),GRY,RED);
+  row('IVA 21%','- '+fmtM(d.arancelIva),GRY,RED);
+  row('Total arancel','- '+fmtM(d.arancelTot),GRY,RED,HDR,true);
+  if(d.dSeg==='avalado'&&d.sgrPct>0){
+    sec('COMISIÓN SGR');
+    row('SGR neto ('+fmtP(d.sgrPct)+')','- '+fmtM(d.sgrAmt),GRY,RED);
+    row('IVA 21%','- '+fmtM(d.sgrIva),GRY,RED);
+    row('Total SGR','- '+fmtM(d.sgrTot),GRY,RED,HDR,true);
+  }
+  sec('DDMM BYMA — REF.06');
+  row('DDMM venta neto (0.0600%)','- '+fmtM(d.ddmmBase),GRY,RED);
+  row('IVA 21%','- '+fmtM(d.ddmmIva),GRY,RED);
+  row('Total DDMM','- '+fmtM(d.ddmmTot),GRY,RED,HDR,true);
+  y+=4;
+  row('COSTO TOTAL','- '+fmtM(d.totalDesc),GRY,RED,[20,10,10],true);
+  y+=3;
+  doc.setFillColor(10,40,22);doc.rect(M,y-4,CW,11,'F');
+  doc.setFontSize(13);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text('MONTO FINAL A RECIBIR',M+2,y+2);
+  doc.setTextColor(...GRN);doc.text(fmtM(d.montoRecibir),M+CW-2,y+2,'right');
+  y+=15;
+  sec('TASAS EFECTIVAS');
+  row('CFT anual efectivo',fmtP(d.cft),GRY,RED);
+  row('Costo desc. en TNA',fmtP(d.tnaTotalDesc),GRY,AMB);
+  doc.setFillColor(...HDR);doc.rect(0,285,210,12,'F');
+  doc.setFontSize(7);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+  doc.text('Portfolio Investment · Cálculo orientativo · '+today,M,291);
+  doc.save('DCTO_'+d.dInstr.toUpperCase()+'_'+d.plazo+'D_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
 
 // ════════════════════════════════════════
 //  LECAP / BONCAP (unchanged)
@@ -1750,6 +1909,7 @@ function bndAnalytics(ticker, dirtyPrice){
   return{ticker,name:def.name,law:def.law,dirty:dirtyPrice,tir,macD,modD,flows:futureFlows};
 }
 
+let dLastCalc=null;
 let bndData=[],bndFilterLaw='all',bndCurrentTicker=null,bndCalcMode='usd';
 
 // Store raw bond API data globally so bonos page can reuse it
@@ -1957,9 +2117,261 @@ function bndRenderCurve(){
   bndCurveChart=new Chart(ctx,{type:'scatter',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},layout:{padding:{top:24,right:36,left:4,bottom:4}},plugins:{legend:{display:false},datalabels:{},tooltip:{filter:i=>i.datasetIndex>=2,backgroundColor:'#06101e',borderColor:'#1e3a62',borderWidth:1,titleColor:'#7aa3f0',bodyColor:'#c8d8f0',padding:10,callbacks:{title:items=>{const ds=datasets[items[0].datasetIndex];const pts=items[0].datasetIndex===2?arPts:nyPts;return pts[items[0].dataIndex].ticker+' · '+ds.label;},label:item=>{const pts=item.datasetIndex===2?arPts:nyPts;const p=pts[item.dataIndex];return['  TIR: '+p.y.toFixed(2)+'%','  DurMod: '+p.x.toFixed(3)+'y'];}}}},scales:{x:{type:'linear',grid:{color:'rgba(30,58,98,.5)'},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(2)},title:{display:true,text:'Duración Modificada (años)',color:'#4a6a8a',font:{size:9}}},y:{min:yMin,max:yMax,grid:{color:'rgba(30,58,98,.5)'},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(1)+'%'},title:{display:true,text:'TIR %',color:'#4a6a8a',font:{size:9}}}}}});
 }
 
+
+// ════════════════════════════════════════
+//  PDF UTILITIES
+// ════════════════════════════════════════
+function piPdfHeader(doc,title,sub){
+  const M=15,W=210,BG=[13,27,46],HDR=[30,58,98],BLU=[91,141,239],GRY=[122,153,196];
+  doc.setFillColor(...BG);doc.rect(0,0,W,297,'F');
+  doc.setFillColor(...HDR);doc.rect(0,0,W,22,'F');
+  doc.setTextColor(...BLU);doc.setFontSize(13);doc.setFont('helvetica','bold');
+  doc.text('PORTFOLIO INVESTMENT',M,9);
+  doc.setFontSize(9);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+  doc.text(title,M,15);
+  if(sub)doc.text(sub,M,20);
+}
+function piPdfFooter(doc){
+  const M=15,W=210,HDR=[30,58,98],GRY=[122,153,196];
+  doc.setFillColor(...HDR);doc.rect(0,285,W,12,'F');
+  doc.setFontSize(7);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+  doc.text('Portfolio Investment · '+new Date().toLocaleDateString('es-AR'),M,291);
+  doc.text('Generado: '+new Date().toLocaleTimeString('es-AR'),W-M,291,'right');
+}
+
+// ── LECAP Modal PDF ─────────────────────────────────────────────────────────
+function lcModalPDF(){
+  const bond=lcCurrentBond;if(!bond){alert('Abrí una LECAP/BONCAP primero.');return;}
+  if(!window.jspdf){alert('Librería PDF no cargada aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const M=15,CW=180,BG=[13,27,46],BG2=[18,37,64],HDR=[30,58,98],BLU=[91,141,239],AMB=[240,180,41],GRN=[34,214,138],RED=[255,77,106],WHT=[240,244,255],GRY=[122,153,196],CYN=[34,212,240];
+  const price=parseFloat($$('lc-inp-price').value)||bond.price;
+  const invest=parseFloat($$('lc-inp-invest').value)||0;
+  const yields=lcComputeYields(price,bond.pagoFinal,bond.days);
+  const costos=(parseFloat($$('lc-inp-arancel').value)||0)+(parseFloat($$('lc-inp-imp').value)||0);
+  const effectivePrice=price*(1+costos/100);
+  const vn=invest>0?invest/effectivePrice:0;
+  const cobra=vn*bond.pagoFinal;
+  const ganancia=cobra-invest;
+  const lk=bond.type==='LECAP'?CYN:AMB;
+  const fmtM=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtP=n=>n.toFixed(2)+'%';
+  piPdfHeader(doc,'CALCULADORA '+bond.type+' — '+bond.ticker,'Vence: '+lcFmtDate(bond.maturity)+' · Pago final: '+lcFmtNum(bond.pagoFinal,3));
+  let y=30;
+  const row=(k,v,vc)=>{
+    doc.setFillColor(...BG2);doc.rect(M,y-4,CW,7,'F');
+    doc.setFontSize(9);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+    doc.text(k,M+2,y);
+    doc.setTextColor(...(vc||WHT));doc.setFont('helvetica','bold');
+    doc.text(v,M+CW-2,y,'right');
+    y+=8;
+  };
+  const sec=(t)=>{y+=2;doc.setFillColor(...HDR);doc.rect(M,y-4,CW,7,'F');doc.setFontSize(8);doc.setTextColor(...BLU);doc.setFont('helvetica','bold');doc.text(t,M+2,y);y+=9;};
+  sec('INSTRUMENTO');
+  row('Ticker',bond.ticker,lk);
+  row('Tipo',bond.type,lk);
+  row('Vencimiento',lcFmtDate(bond.maturity),WHT);
+  row('Días restantes',bond.days+' días',GRY);
+  row('Pago final por VN','$ '+lcFmtNum(bond.pagoFinal,3),AMB);
+  y+=3;sec('PRECIO Y RENDIMIENTOS');
+  row('Precio de compra','$ '+lcFmtNum(price,3),BLU);
+  row('TNA',fmtP(yields.tna),WHT);
+  row('TEM',fmtP(yields.tem),WHT);
+  row('TIR (TEA)',fmtP(yields.tir),GRN);
+  row('Duración Modificada',lcModDuration(bond.days,yields.tir).toFixed(3)+' años',CYN);
+  if(costos>0)row('Costos adicionales',fmtP(costos),RED);
+  y+=3;sec('SIMULACIÓN DE COMPRA');
+  row('Monto a invertir','$ '+fmtM(invest),BLU);
+  row('Nominales a comprar',Math.floor(vn).toLocaleString('es-AR')+' VN',WHT);
+  row('Precio efectivo','$ '+lcFmtNum(effectivePrice,3),GRY);
+  y+=3;
+  doc.setFillColor(10,40,22);doc.rect(M,y-4,CW,11,'F');
+  doc.setFontSize(12);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text('AL VENCIMIENTO COBRÁS',M+2,y+2);
+  doc.setTextColor(...GRN);doc.text('$ '+fmtM(cobra),M+CW-2,y+2,'right');
+  y+=15;
+  doc.setFillColor(...(ganancia>=0?[10,40,22]:[40,10,15]));doc.rect(M,y-4,CW,11,'F');
+  doc.setFontSize(12);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text('GANANCIA NETA',M+2,y+2);
+  const gc=ganancia>=0?GRN:RED;
+  doc.setTextColor(...gc);doc.text((ganancia>=0?'+ ':'- ')+'$ '+fmtM(Math.abs(ganancia)),M+CW-2,y+2,'right');
+  piPdfFooter(doc);
+  doc.save('LECAP_'+bond.ticker+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+
+// ── Soberanos Modal PDF ─────────────────────────────────────────────────────
+function bndModalPDF(){
+  const ticker=bndCurrentTicker;if(!ticker){alert('Abrí un bono primero.');return;}
+  const b=bndData.find(x=>x.ticker===ticker);if(!b){return;}
+  if(!window.jspdf){alert('Librería PDF no cargada aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const M=15,CW=180,BG=[13,27,46],BG2=[18,37,64],HDR=[30,58,98],BLU=[91,141,239],AMB=[240,180,41],GRN=[34,214,138],RED=[255,77,106],WHT=[240,244,255],GRY=[122,153,196],CYN=[34,212,240];
+  const lc={AR:CYN,NY:AMB,BCRA:[160,122,239]};
+  const lawC=lc[b.law]||WHT;
+  const dirty=parseFloat($$('bnd-inp-price').value)||b.dirty;
+  const a=bndAnalytics(ticker,dirty);if(!a)return;
+  const usd=parseFloat($$('bnd-inp-usd').value)||0;
+  const vn=dirty>0?(usd/dirty)*100:0;
+  const invest=vn*dirty/100;
+  const flows=a.flows;
+  const tFlow=flows.reduce((s,f)=>s+f.total*(vn/100),0);
+  const gain=tFlow-invest;
+  const fmtM=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const fmtP=n=>n.toFixed(2)+'%';
+  piPdfHeader(doc,'CALCULADORA BONO — '+ticker+' ('+b.name+')','Ley '+b.law+' · TIR '+fmtP(a.tir)+' · DurMod '+a.modD.toFixed(3)+'y');
+  let y=30;
+  const row=(k,v,vc)=>{
+    doc.setFillColor(...BG2);doc.rect(M,y-4,CW,7,'F');
+    doc.setFontSize(9);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+    doc.text(k,M+2,y);
+    doc.setTextColor(...(vc||WHT));doc.setFont('helvetica','bold');
+    doc.text(v,M+CW-2,y,'right');y+=8;
+  };
+  const sec=(t)=>{y+=2;doc.setFillColor(...HDR);doc.rect(M,y-4,CW,7,'F');doc.setFontSize(8);doc.setTextColor(...BLU);doc.setFont('helvetica','bold');doc.text(t,M+2,y);y+=9;};
+  sec('INSTRUMENTO');
+  row('Ticker',ticker,lawC);row('Nombre',b.name,WHT);row('Legislación',b.law,lawC);
+  y+=3;sec('PRECIO Y ANALÍTICA');
+  row('Precio Dirty','u$s '+dirty.toFixed(2),AMB);
+  row('TIR anual',fmtP(a.tir),GRN);
+  row('Duration Macaulay',a.macD.toFixed(3)+' años',CYN);
+  row('Duration Modificada',a.modD.toFixed(3)+' años',CYN);
+  row('Flujos futuros',flows.length+' pagos',GRY);
+  y+=3;sec('SIMULACIÓN DE COMPRA');
+  row('Inversión (USD)','u$s '+fmtM(usd),BLU);
+  row('Nominales a comprar',Math.round(vn).toLocaleString('es-AR')+' VN',WHT);
+  row('Precio dirty aplicado','u$s '+dirty.toFixed(2),AMB);
+  y+=3;
+  // Cashflow table (first 8 flows)
+  sec('FLUJO DE FONDOS (primeros pagos)');
+  doc.setFontSize(8);
+  const cfY=y;
+  doc.setFillColor(...HDR);doc.rect(M,cfY-4,CW,6,'F');
+  doc.setTextColor(...BLU);doc.setFont('helvetica','bold');
+  doc.text('Fecha',M+2,cfY-0.5);doc.text('Pago por VN',M+CW/2,cfY-0.5);doc.text('Pago total',M+CW-2,cfY-0.5,'right');
+  y+=7;
+  const maxFlows=Math.min(flows.length,10);
+  for(let i=0;i<maxFlows;i++){
+    const f=flows[i];const tot=f.total*(vn/100);
+    doc.setFillColor(...(i%2===0?BG2:BG));doc.rect(M,y-3.5,CW,6,'F');
+    doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+    doc.text(f.date,M+2,y);
+    doc.setTextColor(...WHT);doc.text(''+f.total.toFixed(3),M+CW/2,y);
+    doc.setTextColor(...GRN);doc.text('u$s '+fmtM(tot),M+CW-2,y,'right');
+    y+=6;
+  }
+  if(flows.length>10){doc.setFontSize(7);doc.setTextColor(...GRY);doc.text('... y '+(flows.length-10)+' pagos más',M+2,y);y+=6;}
+  y+=4;
+  doc.setFillColor(10,40,22);doc.rect(M,y-4,CW,11,'F');
+  doc.setFontSize(12);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text('TOTAL A COBRAR',M+2,y+2);
+  doc.setTextColor(...GRN);doc.text('u$s '+fmtM(tFlow),M+CW-2,y+2,'right');
+  y+=13;
+  doc.setFillColor(...(gain>=0?[10,40,22]:[40,10,15]));doc.rect(M,y-4,CW,11,'F');
+  doc.setFontSize(12);doc.setTextColor(...WHT);doc.setFont('helvetica','bold');
+  doc.text('GANANCIA NETA',M+2,y+2);
+  const gc=gain>=0?GRN:RED;
+  doc.setTextColor(...gc);doc.text((gain>=0?'+ ':'')+'u$s '+fmtM(gain),M+CW-2,y+2,'right');
+  piPdfFooter(doc);
+  doc.save('BONO_'+ticker+'_'+new Date().toISOString().slice(0,10)+'.pdf');
+}
+
+// ── LECAP Panel PDF (tabla + curva via html2canvas) ──────────────────────────
+async function lcPanelPDF(){
+  if(!window.jspdf||!window.html2canvas){alert('Librerías PDF no cargadas aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const btn=document.querySelector('[onclick="lcPanelPDF()"]');
+  if(btn){btn.textContent='⏳ generando...';btn.disabled=true;}
+  try{
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,M=10,CW=W-M*2;
+    const BG=[13,27,46],HDR=[30,58,98],BLU=[91,141,239],GRY=[122,153,196];
+    doc.setFillColor(...BG);doc.rect(0,0,W,297,'F');
+    doc.setFillColor(...HDR);doc.rect(0,0,W,20,'F');
+    doc.setTextColor(...BLU);doc.setFontSize(13);doc.setFont('helvetica','bold');
+    doc.text('PORTFOLIO INVESTMENT',M,8);
+    doc.setFontSize(9);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+    doc.text('LECAP / BONCAP — Tabla de precios y rendimientos · '+new Date().toLocaleDateString('es-AR'),M,14);
+    doc.text(lcData.length+' instrumentos · '+new Date().toLocaleTimeString('es-AR'),M,19);
+    // Tabla como imagen
+    const tableEl=document.querySelector('#lc-tbody').closest('table');
+    if(tableEl){
+      const tCanvas=await html2canvas(tableEl,{backgroundColor:'#0a1525',scale:2,logging:false,useCORS:true});
+      const tImg=tCanvas.toDataURL('image/png');
+      const tRatio=tCanvas.height/tCanvas.width;
+      const tW=CW,tH=Math.min(tW*tRatio,100);
+      doc.addImage(tImg,'PNG',M,23,tW,tH);
+      let y=23+tH+6;
+      // Curva como imagen
+      const chartEl=$$('lc-curve-chart');
+      if(chartEl){
+        const cCanvas=await html2canvas(chartEl,{backgroundColor:'#060f1c',scale:2,logging:false,useCORS:true});
+        const cImg=cCanvas.toDataURL('image/png');
+        const cRatio=cCanvas.height/cCanvas.width;
+        const cW=CW,cH=Math.min(cW*cRatio,110);
+        if(y+cH>275){doc.addPage();doc.setFillColor(...BG);doc.rect(0,0,W,297,'F');y=15;}
+        doc.setFontSize(8);doc.setTextColor(...BLU);doc.text('CURVA DE RENDIMIENTOS',M,y);y+=4;
+        doc.addImage(cImg,'PNG',M,y,cW,cH);
+        y+=cH;
+      }
+    }
+    doc.setFillColor(...HDR);doc.rect(0,285,W,12,'F');
+    doc.setFontSize(7);doc.setTextColor(...GRY);
+    doc.text('Portfolio Investment · LECAP/BONCAP · '+new Date().toLocaleDateString('es-AR'),M,291);
+    doc.save('LECAPS_'+new Date().toISOString().slice(0,10)+'.pdf');
+  }finally{
+    if(btn){btn.textContent='⬇ PDF PANEL';btn.disabled=false;}
+  }
+}
+
+// ── Soberanos Panel PDF (tabla + curva via html2canvas) ──────────────────────
+async function bndPanelPDF(){
+  if(!window.jspdf||!window.html2canvas){alert('Librerías PDF no cargadas aún.');return;}
+  const {jsPDF}=window.jspdf;
+  const btn=document.querySelector('[onclick="bndPanelPDF()"]');
+  if(btn){btn.textContent='⏳ generando...';btn.disabled=true;}
+  try{
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,M=10,CW=W-M*2;
+    const BG=[13,27,46],HDR=[30,58,98],BLU=[91,141,239],GRY=[122,153,196];
+    doc.setFillColor(...BG);doc.rect(0,0,W,297,'F');
+    doc.setFillColor(...HDR);doc.rect(0,0,W,20,'F');
+    doc.setTextColor(...BLU);doc.setFontSize(13);doc.setFont('helvetica','bold');
+    doc.text('PORTFOLIO INVESTMENT',M,8);
+    doc.setFontSize(9);doc.setTextColor(...GRY);doc.setFont('helvetica','normal');
+    doc.text('BONOS SOBERANOS — Tabla de precios y rendimientos · '+new Date().toLocaleDateString('es-AR'),M,14);
+    doc.text(bndData.length+' bonos · data912.com · '+new Date().toLocaleTimeString('es-AR'),M,19);
+    const tableEl=document.querySelector('#bnd-tbody').closest('table');
+    if(tableEl){
+      const tCanvas=await html2canvas(tableEl,{backgroundColor:'#0a1525',scale:2,logging:false,useCORS:true});
+      const tImg=tCanvas.toDataURL('image/png');
+      const tRatio=tCanvas.height/tCanvas.width;
+      const tW=CW,tH=Math.min(tW*tRatio,90);
+      doc.addImage(tImg,'PNG',M,23,tW,tH);
+      let y=23+tH+8;
+      const chartEl=$$('bnd-curve-canvas');
+      if(chartEl){
+        const cCanvas=await html2canvas(chartEl.closest('div'),{backgroundColor:'#060f1c',scale:2,logging:false,useCORS:true});
+        const cImg=cCanvas.toDataURL('image/png');
+        const cRatio=cCanvas.height/cCanvas.width;
+        const cW=CW,cH=Math.min(cW*cRatio,120);
+        if(y+cH>275){doc.addPage();doc.setFillColor(...BG);doc.rect(0,0,W,297,'F');y=15;}
+        doc.setFontSize(8);doc.setTextColor(...BLU);doc.text('CURVA DE RENDIMIENTOS — TIR vs DURACIÓN MODIFICADA',M,y);y+=5;
+        doc.addImage(cImg,'PNG',M,y,cW,cH);
+      }
+    }
+    doc.setFillColor(...HDR);doc.rect(0,285,W,12,'F');
+    doc.setFontSize(7);doc.setTextColor(...GRY);
+    doc.text('Portfolio Investment · Bonos Soberanos · '+new Date().toLocaleDateString('es-AR'),M,291);
+    doc.save('SOBERANOS_'+new Date().toISOString().slice(0,10)+'.pdf');
+  }finally{
+    if(btn){btn.textContent='⬇ PDF PANEL';btn.disabled=false;}
+  }
+}
 // Delay bonos fetch 3s so LECAP has time to cache _rawBondData
 setTimeout(bndFetch, 3000);
 setInterval(()=>{if($$('page-bonos').classList.contains('active'))bndFetch();},30000);
 </script>
 </body>
-</html>
+</html>>

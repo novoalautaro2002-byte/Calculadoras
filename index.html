@@ -1301,16 +1301,16 @@ async function dashFetch(){
   // All calls in parallel — same sources as rendimientos.co
   // 1. dolarapi.com (direct, has CORS) — FX
   // 2. dolarapi.com/v1/dolares/oficial (direct) — BNA
-  // 3. rendimientos.co/.netlify/functions/mundo — Yahoo Finance proxy
-  // 4. rendimientos.co/.netlify/functions/soberanos — data912 bonos proxy
+  // 3. rendimientos.co/api/mundo — Yahoo Finance proxy
+  // 4. rendimientos.co/api/soberanos — data912 bonos proxy
   // 5. data912.com/live/merval via pfetch — Merval index
   // 6. data912.com/live/arg_bonds via pfetch — AL30 pesos + fallback
   const [rDolar, rBnaOficial, rMundo, rSoberanos, rMerval, rBondsD912] =
     await Promise.allSettled([
       sfetch('https://dolarapi.com/v1/dolares'),
       sfetch('https://dolarapi.com/v1/dolares/oficial'),
-      sfetch('https://rendimientos.co/.netlify/functions/mundo'),
-      sfetch('https://rendimientos.co/.netlify/functions/soberanos'),
+      sfetch('https://rendimientos.co/api/mundo'),
+      sfetch('https://rendimientos.co/api/soberanos'),
       pfetch('https://data912.com/live/merval'),
       pfetch('https://data912.com/live/arg_bonds'),
     ]);
@@ -1579,7 +1579,7 @@ async function lcFetch(silent=false){
   pill.className='lc-status-pill loading';pill.textContent='CARGANDO...';
   const settle=lcSettleDate();$$('lc-settle-txt').textContent='Liquidación T+1: '+settle.toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric'});
   let fetched=false,newData=[],errMsg='';
-  try{const[rawNotes,rawBonds]=await Promise.all([lcFetchWithProxy('/live/arg_notes'),lcFetchWithProxy('/live/arg_bonds')]);const notes=lcNormalizeD912(Array.isArray(rawNotes)?rawNotes:(rawNotes.data||rawNotes.items||[]));const bonds=lcNormalizeD912(Array.isArray(rawBonds)?rawBonds:(rawBonds.data||rawBonds.items||[]));newData=[...notes,...bonds];if(newData.length>0)fetched=true;else errMsg='Sin instrumentos conocidos';}catch(e){errMsg=e.message||'Error de red';}
+  try{const[rawNotes,rawBonds]=await Promise.all([lcFetchWithProxy('/live/arg_notes'),lcFetchWithProxy('/live/arg_bonds')]);const notesArr=Array.isArray(rawNotes)?rawNotes:(rawNotes.data||rawNotes.items||[]);const bondsArr=Array.isArray(rawBonds)?rawBonds:(rawBonds.data||rawBonds.items||[]);_rawBondData=bondsArr;const notes=lcNormalizeD912(notesArr);const bonds=lcNormalizeD912(bondsArr);newData=[...notes,...bonds];if(newData.length>0)fetched=true;else errMsg='Sin instrumentos conocidos';}catch(e){errMsg=e.message||'Error de red';}
   if(!fetched){if(lcData.length===0){newData=Object.entries(LC_CONFIG).map(([ticker,cfg])=>({ticker,type:cfg.type,price:LC_STATIC_PRICES[ticker]||100,pagoFinal:cfg.pagoFinal,maturity:cfg.maturity}));}else{newData=lcData.map(b=>({ticker:b.ticker,type:b.type,price:b.price,pagoFinal:b.pagoFinal,maturity:b.maturity}));}pill.className='lc-status-pill err';pill.textContent='⚠ OFFLINE';$$('lc-last-update').textContent='⚠ '+errMsg+' · datos de referencia · '+new Date().toLocaleTimeString('es-AR');}else{pill.className='lc-status-pill ok';pill.textContent='LIVE ●';$$('lc-last-update').innerHTML='✓ '+new Date().toLocaleTimeString('es-AR')+' · '+newData.length+' instrumentos · próxima actualización <span id="lc-cd">15</span>s';}
   lcData=newData.map(b=>({...b,days:lcDaysTo(b.maturity),...lcComputeYields(b.price,b.pagoFinal,lcDaysTo(b.maturity))}));
   btn.classList.remove('loading');btn.textContent='↻ ACTUALIZAR';lcRender();lcRenderCurve();lcStartCountdown();
@@ -1740,60 +1740,76 @@ function bndAnalytics(ticker,cleanPrice){
 
 let bndData=[],bndFilterLaw='all',bndCurrentTicker=null,bndCalcMode='usd';
 
+// Store raw bond API data globally so bonos page can reuse it
+let _rawBondData = null;
+
 async function bndFetch(){
   const pill=$$('bnd-pill');
   pill.className='bnd-status loading';pill.textContent='CARGANDO...';
-  let prices={};
-  try{
-    // Use same proven fetch chain as LECAP module (lcFetchWithProxy)
-    // Fetch both endpoints — bonds are mainly in arg_bonds but some may be in arg_notes
-    const [rawBonds, rawNotes] = await Promise.allSettled([
-      lcFetchWithProxy('/live/arg_bonds'),
-      lcFetchWithProxy('/live/arg_notes'),
-    ]);
-    const parse = (r) => {
-      if(r.status!=='fulfilled') return;
-      const d = r.value;
-      const arr = Array.isArray(d) ? d : (d?.data || d?.items || []);
-      arr.forEach(b => {
-        const t = (b.ticker || b.t || '').trim().toUpperCase();
-        if(!t) return;
-        const price = parseFloat(b.c || b.ultimo || b.last || b.price || b.precio || 0);
-        const varPct = parseFloat(b.pct_change || b.variacion_pct || b.var || 0);
-        if(price > 0) prices[t] = { price, varPct };
-      });
-    };
-    parse(rawBonds);
-    parse(rawNotes);
-  } catch(e) {
-    console.warn('bndFetch error:', e);
-    pill.className='bnd-status err'; pill.textContent='⚠ ERROR';
-    return;
+
+  // ── SOLO NECESITAMOS PRECIOS USD MEP ──
+  // Todo lo demás (cashflows, cupones, amort) está en BOND_DEFS
+  let apiPrices = {};
+
+  // Strategy 1: reuse data already fetched by LECAP module (avoids double fetch)
+  if(_rawBondData && _rawBondData.length > 0){
+    _rawBondData.forEach(b => {
+      const tk = (b.ticker || '').trim().toUpperCase();
+      const price = parseFloat(b.c || 0);
+      const varPct = parseFloat(b.pct_change || 0);
+      if(tk && price > 0) apiPrices[tk] = {price, varPct};
+    });
   }
 
-  // Debug: log what tickers we got
-  console.log('Bonos API tickers found:', Object.keys(prices).filter(t => t.includes('AL') || t.includes('GD') || t.includes('BP')).join(', '));
+  // Strategy 2: fetch fresh if no cached data
+  if(Object.keys(apiPrices).length === 0){
+    try {
+      const raw = await lcFetchWithProxy('/live/arg_bonds');
+      const arr = Array.isArray(raw) ? raw : [];
+      _rawBondData = arr;
+      arr.forEach(b => {
+        const tk = (b.ticker || '').trim().toUpperCase();
+        const price = parseFloat(b.c || 0);
+        const varPct = parseFloat(b.pct_change || 0);
+        if(tk && price > 0) apiPrices[tk] = {price, varPct};
+      });
+    } catch(e) { console.warn('bndFetch live:', e); }
+  }
 
+  // Strategy 3: static fallback prices (approximate, for when API is down)
+  if(Object.keys(apiPrices).length === 0){
+    const fallback = {
+      AL29D:73.50, AL30D:72.80, AL35D:66.50, AL41D:62.00,
+      GD29D:75.00, GD30D:74.00, GD35D:68.00, GD38D:64.50,
+      GD41D:63.00, GD46D:60.50,
+      BPY26D:98.00, BPOA7D:96.00, BPD27D:95.00,
+    };
+    for(const [tk,px] of Object.entries(fallback)){
+      apiPrices[tk] = {price:px, varPct:0};
+    }
+    pill.textContent='⚠ OFFLINE (ref.)';
+  }
+
+  console.log('[BONOS] tickers en API:', Object.keys(apiPrices).filter(t=>/^(AL|GD|BP)/.test(t)&&t.endsWith('D')).join(', '));
+
+  // ── Cruzar BOND_DEFS (dato propio) con precios API ──
   bndData = [];
   for(const tk of Object.keys(BOND_DEFS)){
-    // Look up USD MEP price: ticker + "D" suffix (e.g. AL30 → AL30D)
-    const mepTicker = tk + 'D';
-    const p = prices[mepTicker];
-    if(!p) continue;
-    const a = bndAnalytics(tk, p.price);
-    if(a) { a.varPct = p.varPct; bndData.push(a); }
+    const mepPrice = apiPrices[tk + 'D']; // AL30 → busca AL30D en la API
+    if(!mepPrice) continue;
+    const analytics = bndAnalytics(tk, mepPrice.price);
+    if(analytics){ analytics.varPct = mepPrice.varPct; bndData.push(analytics); }
   }
 
   if(bndData.length > 0){
     pill.className='bnd-status ok';
-    pill.textContent='LIVE · ' + bndData.length;
+    pill.textContent='LIVE · '+bndData.length+' bonos';
   } else {
     pill.className='bnd-status err';
-    pill.textContent='⚠ SIN DATOS (' + Object.keys(prices).length + ' tickers)';
+    pill.textContent='⚠ SIN DATOS';
   }
-  $$('bnd-last-upd').textContent =
-    '✓ ' + new Date().toLocaleTimeString('es-AR') + ' · ' +
-    bndData.length + ' bonos · ' + Object.keys(prices).length + ' tickers API · data912.com';
+  $$('bnd-last-upd').textContent='✓ '+new Date().toLocaleTimeString('es-AR')+
+    ' · '+bndData.length+'/'+Object.keys(BOND_DEFS).length+' bonos · data912.com';
   bndRender();
 }
 
@@ -1884,7 +1900,8 @@ function bndCalcModal(){
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=$$('bnd-modal-overlay');if(o&&o.classList.contains('open'))o.classList.remove('open');}});
-bndFetch();
+// Delay bonos fetch 3s so LECAP has time to cache _rawBondData
+setTimeout(bndFetch, 3000);
 setInterval(()=>{if($$('page-bonos').classList.contains('active'))bndFetch();},30000);
 </script>
 </body>

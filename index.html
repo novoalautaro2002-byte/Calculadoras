@@ -1193,7 +1193,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 <div class="bnd-modal-overlay" id="bnd-modal-overlay" onclick="if(event.target===this)this.classList.remove('open')">
 <div class="bnd-modal" onclick="event.stopPropagation()">
   <div class="bnd-modal-hdr">
-    <div><div class="bnd-modal-title" id="bnd-m-title">AL30D — Calculadora</div><div class="bnd-modal-sub" id="bnd-m-sub">—</div></div>
+    <div><div class="bnd-modal-title" id="bnd-m-title">AL30 — Calculadora</div><div class="bnd-modal-sub" id="bnd-m-sub">—</div></div>
     <button class="bnd-modal-close" onclick="$$('bnd-modal-overlay').classList.remove('open')">✕</button>
   </div>
   <div class="bnd-modal-body">
@@ -1613,43 +1613,43 @@ lcFetch();
 // ════════════════════════════════════════════════════════
 
 const BOND_DEFS = {
-  'AL29D':{name:'Bonar 2029',law:'AR',payM:[1,7],payD:9,
+  'AL29':{name:'Bonar 2029',law:'AR',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2026-07-09',0.03875]],
     amort:{start:'2027-07-09',n:6,pct:16.6667},outst:1.0},
-  'AL30D':{name:'Bonar 2030',law:'AR',payM:[1,7],payD:9,
+  'AL30':{name:'Bonar 2030',law:'AR',payM:[1,7],payD:9,
     couponSteps:[['2024-07-09',0.03625],['2026-07-09',0.0425],['2027-07-09',0.0475],['2028-07-09',0.05]],
     amort:{start:'2025-07-09',n:10,pct:10},outst:0.8},
-  'AL35D':{name:'Bonar 2035',law:'AR',payM:[1,7],payD:9,
+  'AL35':{name:'Bonar 2035',law:'AR',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.03625],['2026-07-09',0.0475],['2027-07-09',0.05],['2029-07-09',0.055]],
     amort:{start:'2031-07-09',n:10,pct:10},outst:1.0},
-  'AL41D':{name:'Bonar 2041',law:'AR',payM:[1,7],payD:9,
+  'AL41':{name:'Bonar 2041',law:'AR',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],
     amort:{start:'2036-07-09',n:12,pct:8.3333},outst:1.0},
-  'GD29D':{name:'Global 2029',law:'NY',payM:[1,7],payD:9,
+  'GD29':{name:'Global 2029',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2026-07-09',0.03875]],
     amort:{start:'2027-07-09',n:6,pct:16.6667},outst:1.0},
-  'GD30D':{name:'Global 2030',law:'NY',payM:[1,7],payD:9,
+  'GD30':{name:'Global 2030',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2024-07-09',0.03625],['2026-07-09',0.0425],['2027-07-09',0.0475],['2028-07-09',0.05]],
     amort:{start:'2025-07-09',n:10,pct:10},outst:0.8},
-  'GD35D':{name:'Global 2035',law:'NY',payM:[1,7],payD:9,
+  'GD35':{name:'Global 2035',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.03625],['2026-07-09',0.0475],['2027-07-09',0.05],['2029-07-09',0.055]],
     amort:{start:'2031-07-09',n:10,pct:10},outst:1.0},
-  'GD38D':{name:'Global 2038',law:'NY',payM:[1,7],payD:9,
+  'GD38':{name:'Global 2038',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],
     amort:{start:'2033-01-09',n:12,pct:8.3333},outst:1.0},
-  'GD41D':{name:'Global 2041',law:'NY',payM:[1,7],payD:9,
+  'GD41':{name:'Global 2041',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],
     amort:{start:'2036-07-09',n:12,pct:8.3333},outst:1.0},
-  'GD46D':{name:'Global 2046',law:'NY',payM:[1,7],payD:9,
+  'GD46':{name:'Global 2046',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],
     amort:{start:'2041-07-09',n:12,pct:8.3333},outst:1.0},
-  'BPY26D':{name:'Bopreal S2',law:'BCRA',payM:[3,6,9,12],payD:30,
+  'BPY26':{name:'Bopreal S2',law:'BCRA',payM:[3,6,9,12],payD:30,
     couponSteps:[['2024-01-01',0.0]],
     amort:{start:'2025-06-30',n:5,pct:20},outst:0.6},
-  'BPOA7D':{name:'Bopreal S1A',law:'BCRA',payM:[1,4,7,10],payD:31,
+  'BPOA7':{name:'Bopreal S1A',law:'BCRA',payM:[1,4,7,10],payD:31,
     couponSteps:[['2024-01-01',0.05]],
     amort:{start:'2025-04-30',n:12,pct:8.3333},outst:0.75},
-  'BPD27D':{name:'Bopreal S1B',law:'BCRA',payM:[3,6,9,12],payD:31,
+  'BPD27':{name:'Bopreal S1B',law:'BCRA',payM:[3,6,9,12],payD:31,
     couponSteps:[['2024-01-01',0.05]],
     amort:{start:'2025-06-30',n:12,pct:8.3333},outst:0.75},
 };
@@ -1743,27 +1743,57 @@ let bndData=[],bndFilterLaw='all',bndCurrentTicker=null,bndCalcMode='usd';
 async function bndFetch(){
   const pill=$$('bnd-pill');
   pill.className='bnd-status loading';pill.textContent='CARGANDO...';
-  let prices={},srcLabel='';
+  let prices={};
   try{
-    const res=await rfetch('soberanos','https://data912.com/live/arg_bonds');
-    srcLabel=res.src;
-    const arr=Array.isArray(res.data)?res.data:(res.data?.data||res.data?.items||[]);
-    arr.forEach(b=>{
-      const t=(b.ticker||b.t||'').trim().toUpperCase();if(!t)return;
-      const price=parseFloat(b.c||b.precio||b.last||b.price||0);
-      const varPct=parseFloat(b.pct_change||b.variacion_pct||b.var||0);
-      if(price>0)prices[t]={price,varPct};
-    });
-  }catch(e){console.warn('bndFetch:',e);pill.className='bnd-status err';pill.textContent='⚠ ERROR';return;}
-  bndData=[];
-  for(const tk of Object.keys(BOND_DEFS)){
-    const p=prices[tk];if(!p)continue;
-    const a=bndAnalytics(tk,p.price);
-    if(a){a.varPct=p.varPct;bndData.push(a);}
+    // Use same proven fetch chain as LECAP module (lcFetchWithProxy)
+    // Fetch both endpoints — bonds are mainly in arg_bonds but some may be in arg_notes
+    const [rawBonds, rawNotes] = await Promise.allSettled([
+      lcFetchWithProxy('/live/arg_bonds'),
+      lcFetchWithProxy('/live/arg_notes'),
+    ]);
+    const parse = (r) => {
+      if(r.status!=='fulfilled') return;
+      const d = r.value;
+      const arr = Array.isArray(d) ? d : (d?.data || d?.items || []);
+      arr.forEach(b => {
+        const t = (b.ticker || b.t || '').trim().toUpperCase();
+        if(!t) return;
+        const price = parseFloat(b.c || b.ultimo || b.last || b.price || b.precio || 0);
+        const varPct = parseFloat(b.pct_change || b.variacion_pct || b.var || 0);
+        if(price > 0) prices[t] = { price, varPct };
+      });
+    };
+    parse(rawBonds);
+    parse(rawNotes);
+  } catch(e) {
+    console.warn('bndFetch error:', e);
+    pill.className='bnd-status err'; pill.textContent='⚠ ERROR';
+    return;
   }
-  pill.className=bndData.length>0?'bnd-status ok':'bnd-status err';
-  pill.textContent=bndData.length>0?'LIVE · '+bndData.length:'⚠ SIN DATOS';
-  $$('bnd-last-upd').textContent='✓ '+new Date().toLocaleTimeString('es-AR')+' · '+bndData.length+' bonos · '+srcLabel;
+
+  // Debug: log what tickers we got
+  console.log('Bonos API tickers found:', Object.keys(prices).filter(t => t.includes('AL') || t.includes('GD') || t.includes('BP')).join(', '));
+
+  bndData = [];
+  for(const tk of Object.keys(BOND_DEFS)){
+    // Look up USD MEP price: ticker + "D" suffix (e.g. AL30 → AL30D)
+    const mepTicker = tk + 'D';
+    const p = prices[mepTicker];
+    if(!p) continue;
+    const a = bndAnalytics(tk, p.price);
+    if(a) { a.varPct = p.varPct; bndData.push(a); }
+  }
+
+  if(bndData.length > 0){
+    pill.className='bnd-status ok';
+    pill.textContent='LIVE · ' + bndData.length;
+  } else {
+    pill.className='bnd-status err';
+    pill.textContent='⚠ SIN DATOS (' + Object.keys(prices).length + ' tickers)';
+  }
+  $$('bnd-last-upd').textContent =
+    '✓ ' + new Date().toLocaleTimeString('es-AR') + ' · ' +
+    bndData.length + ' bonos · ' + Object.keys(prices).length + ' tickers API · data912.com';
   bndRender();
 }
 
@@ -1785,7 +1815,7 @@ function bndRender(){
   const lc={AR:'ar',NY:'ny',BCRA:'bcra'};
   const vc=v=>v>0.05?'bnd-green':v<-0.05?'bnd-red':'';
   tbody.innerHTML=rows.map(b=>`<tr onclick="bndOpenModal('${b.ticker}')">
-    <td><span class="bnd-tk">${b.ticker.replace('D','')}</span><span class="bnd-law ${lc[b.law]}">${b.law}</span></td>
+    <td><span class="bnd-tk">${b.ticker}</span><span class="bnd-law ${lc[b.law]}">${b.law}</span></td>
     <td style="font-weight:600;color:var(--white)">u$s ${f2(b.clean)}</td>
     <td style="color:var(--amber)">u$s ${f2(b.dirty)}</td>
     <td class="${vc(b.varPct)}">${b.varPct>=0?'+':''}${f2(b.varPct)}%</td>
@@ -1799,7 +1829,7 @@ function bndRender(){
 function bndOpenModal(ticker){
   const b=bndData.find(x=>x.ticker===ticker);if(!b)return;
   bndCurrentTicker=ticker;
-  $$('bnd-m-title').textContent=ticker.replace('D','')+' — '+b.name;
+  $$('bnd-m-title').textContent=ticker+' — '+b.name;
   $$('bnd-m-sub').textContent='Ley '+b.law+' · DurMod '+b.modD.toFixed(3)+'y · '+b.flows.length+' flujos';
   $$('bnd-inp-price').value=b.clean.toFixed(2);
   $$('bnd-inp-usd').value=10000;$$('bnd-inp-vn').value='';

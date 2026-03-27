@@ -862,7 +862,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 
 /* Center */
 .arb-center{display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--navy2);overflow:hidden}
-.arb-chart-box{flex:1;position:relative;padding:8px 12px 4px;min-height:0}
+.arb-chart-box{position:relative;padding:8px 12px 4px;height:180px;flex-shrink:0}
 .arb-chart-box canvas{width:100%!important;height:100%!important}
 .arb-chart-leg{display:flex;gap:12px;padding:4px 12px 2px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;color:var(--white2)}
 .arb-leg{display:flex;align-items:center;gap:5px}
@@ -2837,10 +2837,10 @@ function arbStatsFor(ratios,n){
   return{hi:Math.max(...sl),med:sl.reduce((s,v)=>s+v,0)/sl.length,lo:Math.min(...sl)};
 }
 
-function arbAccion(r,sup,inf){
-  if(sup===null||inf===null)return'Nada';
-  if(r>sup)return'Rotar a AL';
-  if(r<inf)return'Rotar a GD';
+function arbAccion(r,sup,inf,mm21){
+  if(mm21===null)return'Nada';
+  if(r>mm21)return'Rotar a AL';
+  if(r<mm21)return'Rotar a GD';
   return'Nada';
 }
 
@@ -2876,7 +2876,7 @@ function arbRender(hist,lGD,lAL){
   $$('arb-gauge-num').textContent=lastR!==null?lastR.toFixed(2)+'%':'—';
   $$('arb-upd-line').textContent='Actualizado: '+new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 
-  const accion=arbAccion(lastR,lastBsup,lastBinf);
+  const accion=arbAccion(lastR,lastBsup,lastBinf,lastMM21);
   const aBox=$$('arb-accion-box');
   aBox.className='arb-accion-box '+(accion==='Rotar a AL'?'rota-al':accion==='Rotar a GD'?'rota-gd':'nada');
   aBox.innerHTML=`<span>¿Qué hacer?</span><span style="font-size:13px">${accion}</span>`;

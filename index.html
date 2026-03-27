@@ -1198,7 +1198,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
         <span class="bnd-leg-dot" style="background:#f0b429"></span><span class="bnd-leg-lbl">Ley NY</span>
       </div>
     </div>
-    <div style="position:relative;height:280px;padding:8px 12px 4px">
+    <div style="position:relative;height:50vh;max-width:900px;margin:0 auto;padding:12px 24px 12px">
       <canvas id="bnd-curve-canvas"></canvas>
     </div>
   </div>
@@ -1762,50 +1762,42 @@ async function bndFetch(){
   let apiPrices={};
   let bndSrc='';
 
-  // ── Estrategia 1: reusar _rawBondData del módulo LECAP (evita doble fetch) ──
-  if(Object.keys(apiPrices).length===0&&_rawBondData&&_rawBondData.length>0){
-    _rawBondData.forEach(b=>{
-      const tk=(b.ticker||'').trim().toUpperCase();
-      const price=parseFloat(b.c||0);
-      const varPct=parseFloat(b.pct_change||0);
-      if(tk&&price>0) apiPrices[tk]={price,varPct};
-    });
-    bndSrc='data912 (cache)';
-  }
-
-  // ── Estrategia 2: data912.com directo ─────────────────────────────────────
-  if(Object.keys(apiPrices).length===0){
-    try{
-      const raw=await lcFetchUrl('https://data912.com/live/arg_bonds').catch(()=>null);
-      const arr=raw?(Array.isArray(raw)?raw:(raw.data||[])):[];
+  // Fetch directo a data912.com/live/arg_bonds (siempre fresco, con CORS proxy fallback)
+  try{
+    const raw=await pfetch('https://data912.com/live/arg_bonds');
+    const arr=Array.isArray(raw)?raw:(raw.data||raw.items||[]);
+    if(arr.length>0){
       _rawBondData=arr;
       arr.forEach(b=>{
-        const tk=(b.ticker||'').trim().toUpperCase();
-        const price=parseFloat(b.c||0);
-        const varPct=parseFloat(b.pct_change||0);
+        const tk=(b.ticker||b.symbol||b.t||'').replace(/\s+/g,'').toUpperCase();
+        const price=parseFloat(b.c||b.ultimo||b.last||b.price||0);
+        const varPct=parseFloat(b.pct_change||b.variacion_pct||b.var||0);
         if(tk&&price>0) apiPrices[tk]={price,varPct};
       });
       bndSrc='data912.com';
-    }catch(e){console.warn('bndFetch live:',e);}
-  }
+      console.log('[BONOS] tickers disponibles:',Object.keys(apiPrices).filter(t=>t.length<=8).sort().join(', '));
+    }
+  }catch(e){console.warn('bndFetch data912:',e);}
 
-  // ── Estrategia 4: fallback estático ──────────────────────────────────────
+  // Fallback estatico si API no responde
   if(Object.keys(apiPrices).length===0){
-    const fallback={AL29D:73.50,AL30D:72.80,AL35D:66.50,AL41D:62.00,GD29D:75.00,GD30D:74.00,GD35D:68.00,GD38D:64.50,GD41D:63.00,GD46D:60.50,BPY26D:98.00,BPOA7D:96.00,BPD27D:95.00};
+    const fallback={AL29D:73.50,AL30D:60.80,AL35D:66.50,AL41D:62.00,GD29D:75.00,GD30D:62.00,GD35D:68.00,GD38D:64.50,GD41D:63.00,GD46D:60.50,AO27D:97.00,AO27:97.00,BPY26D:98.00,BPOA7D:96.00,BPD27D:95.00};
     for(const[tk,px]of Object.entries(fallback)) apiPrices[tk]={price:px,varPct:0};
-    bndSrc='referencia estática';
+    bndSrc='referencia estatica';
     pill.textContent='⚠ OFFLINE (ref.)';
   }
 
-  console.log('[BONOS] tickers en API:',Object.keys(apiPrices).filter(t=>/^(AL|GD|BP|AO|AN|AE)/.test(t)&&t.endsWith('D')).join(', '));
-
-  // ── Cruzar BOND_DEFS con precios API ─────────────────────────────────────
+  // Cruzar BOND_DEFS con precios API
+  // Para cada bono busca: 1) ticker+D  2) ticker+C  3) ticker directo
+  // data912 cotiza dirty en pesos para 'D' (MEP) y 'C' (cable)
   bndData=[];
   for(const tk of Object.keys(BOND_DEFS)){
-    const mepPrice=apiPrices[tk+'D'];
-    if(!mepPrice)continue;
-    const analytics=bndAnalytics(tk,mepPrice.price);
-    if(analytics){analytics.varPct=mepPrice.varPct;bndData.push(analytics);}
+    const candidates=[tk+'D',tk+'C',tk];
+    let found=null;
+    for(const c of candidates){if(apiPrices[c]){found={...apiPrices[c],apiTk:c};break;}}
+    if(!found)continue;
+    const analytics=bndAnalytics(tk,found.price);
+    if(analytics){analytics.varPct=found.varPct;analytics.apiTk=found.apiTk;bndData.push(analytics);}
   }
 
   if(bndData.length>0){

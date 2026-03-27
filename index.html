@@ -796,6 +796,13 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 .bnd-sum-row:last-child{border-bottom:none}
 .bnd-sum-k{color:var(--white2)}.bnd-sum-v{font-weight:600;color:var(--white)}
 .bnd-sum-row.profit .bnd-sum-k,.bnd-sum-row.profit .bnd-sum-v{color:var(--green);font-weight:700;font-size:13px}
+.bnd-curve-wrap{background:#060f1c;border-top:1px solid var(--border)}
+.bnd-curve-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 16px 2px;border-bottom:1px solid rgba(30,58,98,.6)}
+.bnd-curve-title{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--blue3);letter-spacing:.1em;text-transform:uppercase}
+.bnd-curve-legend{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:9px;color:var(--white2)}
+.bnd-leg-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:3px}
+.bnd-leg-lbl{margin-right:8px}
+.bnd-sarr{font-size:9px;color:var(--amber);font-weight:700}
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
@@ -1170,21 +1177,30 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
   <div class="bnd-table-wrap">
     <table class="bnd-table" id="bnd-table">
       <thead><tr>
-        <th data-col="ticker">TICKER</th>
-        <th data-col="clean">CLEAN (USD)</th>
-        <th data-col="dirty">DIRTY (USD)</th>
-        <th data-col="var">VAR %</th>
-        <th data-col="tna">TNA</th>
-        <th data-col="tea">TEA</th>
-        <th data-col="durmod">DUR.MOD</th>
-        <th data-col="paridad">PARIDAD</th>
+        <th data-col="ticker" onclick="bndSort('ticker')">TICKER <span class="bnd-sarr" id="bsa-ticker"></span></th>
+        <th data-col="dirty" onclick="bndSort('dirty')">DIRTY (USD) <span class="bnd-sarr" id="bsa-dirty"></span></th>
+        <th data-col="varPct" onclick="bndSort('varPct')">VAR % <span class="bnd-sarr" id="bsa-varPct"></span></th>
+        <th data-col="tir" onclick="bndSort('tir')">TIR <span class="bnd-sarr" id="bsa-tir"></span></th>
+        <th data-col="modD" onclick="bndSort('modD')">DUR.MOD <span class="bnd-sarr" id="bsa-modD"></span></th>
       </tr></thead>
-      <tbody id="bnd-tbody"><tr><td colspan="8" style="text-align:center;padding:30px;color:var(--gray)">Cargando datos...</td></tr></tbody>
+      <tbody id="bnd-tbody"><tr><td colspan="5" style="text-align:center;padding:30px;color:var(--gray)">Cargando datos...</td></tr></tbody>
     </table>
   </div>
   <div class="bnd-statusbar">
     <span id="bnd-last-upd" style="color:var(--gray)">—</span>
-    <span style="color:var(--blue3)">ArgentinaDatos · data912.com · Precios USD MEP</span>
+    <span style="color:var(--blue3)">data912.com · Precios USD MEP · Flujos de fondos propios</span>
+  </div>
+  <div class="bnd-curve-wrap">
+    <div class="bnd-curve-hdr">
+      <span class="bnd-curve-title">CURVA DE RENDIMIENTOS — TIR vs DURACIÓN MODIFICADA</span>
+      <div class="bnd-curve-legend">
+        <span class="bnd-leg-dot" style="background:#22d4f0"></span><span class="bnd-leg-lbl">Ley Argentina</span>
+        <span class="bnd-leg-dot" style="background:#f0b429"></span><span class="bnd-leg-lbl">Ley NY</span>
+      </div>
+    </div>
+    <div style="position:relative;height:280px;padding:8px 12px 4px">
+      <canvas id="bnd-curve-canvas"></canvas>
+    </div>
   </div>
 </div>
 </div>
@@ -1198,17 +1214,15 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
   </div>
   <div class="bnd-modal-body">
     <div class="bnd-calc-row">
-      <div class="bnd-calc-field"><div class="bnd-calc-lbl">Precio Clean (USD)</div><input class="bnd-calc-inp" type="number" id="bnd-inp-price" oninput="bndCalcModal()" step="0.01"></div>
+      <div class="bnd-calc-field"><div class="bnd-calc-lbl">Precio Dirty (USD)</div><input class="bnd-calc-inp" type="number" id="bnd-inp-price" oninput="bndCalcModal()" step="0.01"></div>
       <div class="bnd-calc-field"><div class="bnd-calc-lbl">Invertir (USD)</div><input class="bnd-calc-inp" type="number" id="bnd-inp-usd" value="10000" oninput="bndCalcMode='usd';bndCalcModal()" step="100"></div>
       <div class="bnd-calc-field"><div class="bnd-calc-lbl">ó Nominales (VN)</div><input class="bnd-calc-inp" type="number" id="bnd-inp-vn" placeholder="—" oninput="bndCalcMode='vn';bndCalcModal()" step="1"></div>
     </div>
     <div class="bnd-metrics-strip" id="bnd-m-metrics">
-      <div class="bnd-met"><div class="bnd-met-k">TNA</div><div class="bnd-met-v" id="bm-tna">—</div></div>
-      <div class="bnd-met"><div class="bnd-met-k">TEA</div><div class="bnd-met-v green" id="bm-tea">—</div></div>
+      <div class="bnd-met"><div class="bnd-met-k">TIR (anual)</div><div class="bnd-met-v green" id="bm-tir">—</div></div>
+      <div class="bnd-met"><div class="bnd-met-k">Dur.Mac</div><div class="bnd-met-v" id="bm-mac">—</div></div>
       <div class="bnd-met"><div class="bnd-met-k">Dur.Mod</div><div class="bnd-met-v cyan" id="bm-dm">—</div></div>
-      <div class="bnd-met"><div class="bnd-met-k">Paridad</div><div class="bnd-met-v amber" id="bm-par">—</div></div>
-      <div class="bnd-met"><div class="bnd-met-k">Dirty</div><div class="bnd-met-v" id="bm-dirty">—</div></div>
-      <div class="bnd-met"><div class="bnd-met-k">Accrued</div><div class="bnd-met-v" id="bm-acc">—</div></div>
+      <div class="bnd-met"><div class="bnd-met-k">Flujos restantes</div><div class="bnd-met-v amber" id="bm-nflows">—</div></div>
     </div>
     <div class="bnd-cf-title">FLUJO DE FONDOS — POR POSICIÓN</div>
     <div class="bnd-cf-wrap"><table class="bnd-cf-table"><thead><tr>
@@ -1655,6 +1669,9 @@ const BOND_DEFS = {
   'GD41':{name:'Global 2041',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],
     amort:{start:'2036-07-09',n:12,pct:8.3333},outst:1.0},
+  'AO27':{name:'Obligacion 2027',law:'AR',payM:[1,2,3,4,5,6,7,8,9,10,11,12],payD:30,couponSteps:[['2026-01-01',0.06]],amort:{start:'2027-10-30',n:1,pct:100},outst:1.0},
+  'AN29':{name:'Argentina 2029 EUR',law:'AR',payM:[6,12],payD:1,couponSteps:[['2026-01-01',0.065]],amort:{start:'2029-11-30',n:1,pct:100},outst:1.0},
+  'AE38':{name:'Argentina 2038',law:'AR',payM:[1,7],payD:9,couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],amort:{start:'2033-01-09',n:12,pct:8.3333},outst:1.0},
   'GD46':{name:'Global 2046',law:'NY',payM:[1,7],payD:9,
     couponSteps:[['2025-07-09',0.035],['2027-07-09',0.0475],['2029-07-09',0.05],['2033-07-09',0.055]],
     amort:{start:'2041-07-09',n:12,pct:8.3333},outst:1.0},
@@ -1669,88 +1686,68 @@ const BOND_DEFS = {
     amort:{start:'2025-06-30',n:12,pct:8.3333},outst:0.75},
 };
 
-function bndGenFlows(def){
-  const today=new Date();today.setHours(0,0,0,0);
-  const flows=[];
-  const{payM,payD,couponSteps,amort}=def;
-  const perYear=payM.length;
-  const dates=[];
-  for(let y=2026;y<=2050;y++)for(const m of payM){const ld=new Date(y,m,0).getDate();dates.push(new Date(y,m-1,Math.min(payD,ld)));}
-  dates.sort((a,b)=>a-b);
-  const getRate=d=>{let r=0;for(const[ds,rv]of couponSteps)if(d>=new Date(ds+'T00:00:00'))r=rv;return r;};
-  let bal=100,amDone=0;
-  const amDate=amort.start?new Date(amort.start+'T00:00:00'):null;
-  const amPer=(def.outst<1)?(amort.pct/def.outst/100*100):amort.pct;
-  for(const d of dates){
-    if(d<=today)continue;if(bal<=0.01)break;
-    const rate=getRate(d);const cpn=+(bal*rate/perYear).toFixed(4);
-    let am=0;
-    if(amDate&&d>=amDate&&amDone<amort.n){am=+Math.min(amPer,bal).toFixed(4);amDone++;}
-    flows.push({date:d.toISOString().slice(0,10),coupon:cpn,amort:am,total:+(cpn+am).toFixed(4)});
-    bal=+(bal-am).toFixed(4);
-  }
-  return flows;
-}
+// ── CASHFLOW DATABASE (por 100 VN, futuros flujos del Excel) ─────────────────
+const CASHFLOW_DB = {
+  'AO27':[{date:'2026-03-31',total:0.57},{date:'2026-04-30',total:0.5},{date:'2026-05-29',total:0.48},{date:'2026-06-30',total:0.52},{date:'2026-07-31',total:0.5},{date:'2026-08-31',total:0.5},{date:'2026-09-30',total:0.5},{date:'2026-10-30',total:0.5},{date:'2026-11-30',total:0.5},{date:'2026-12-31',total:0.5},{date:'2027-01-29',total:0.5},{date:'2027-02-26',total:0.5},{date:'2027-03-31',total:0.5},{date:'2027-04-30',total:0.5},{date:'2027-05-31',total:0.5},{date:'2027-06-30',total:0.5},{date:'2027-07-30',total:0.5},{date:'2027-08-31',total:0.5},{date:'2027-09-30',total:0.5},{date:'2027-10-30',total:100.5}],
+  'AL29':[{date:'2026-07-09',total:10.35},{date:'2027-01-09',total:10.3},{date:'2027-07-09',total:10.25},{date:'2028-01-09',total:10.2},{date:'2028-07-09',total:10.15},{date:'2029-01-09',total:10.1},{date:'2029-07-09',total:10.05}],
+  'GD29':[{date:'2026-07-09',total:10.35},{date:'2027-01-09',total:10.3},{date:'2027-07-09',total:10.25},{date:'2028-01-09',total:10.2},{date:'2028-07-09',total:10.15},{date:'2029-01-09',total:10.1},{date:'2029-07-09',total:10.05}],
+  'AL30':[{date:'2026-07-09',total:8.27},{date:'2027-01-09',total:8.24},{date:'2027-07-09',total:8.21},{date:'2028-01-09',total:8.42},{date:'2028-07-09',total:8.35},{date:'2029-01-09',total:8.28},{date:'2029-07-09',total:8.21},{date:'2030-01-09',total:8.14},{date:'2030-07-09',total:8.07}],
+  'GD30':[{date:'2026-07-09',total:8.27},{date:'2027-01-09',total:8.24},{date:'2027-07-09',total:8.21},{date:'2028-01-09',total:8.42},{date:'2028-07-09',total:8.35},{date:'2029-01-09',total:8.28},{date:'2029-07-09',total:8.21},{date:'2030-01-09',total:8.14},{date:'2030-07-09',total:8.07}],
+  'AN29':[{date:'2026-06-01',total:3.03},{date:'2026-11-30',total:3.25},{date:'2027-05-31',total:3.25},{date:'2027-11-30',total:3.25},{date:'2028-05-30',total:3.25},{date:'2028-11-30',total:3.25},{date:'2029-05-30',total:3.25},{date:'2029-11-30',total:103.25}],
+  'AE38':[{date:'2026-07-09',total:2.5},{date:'2027-01-09',total:2.5},{date:'2027-07-09',total:7.05},{date:'2028-01-09',total:6.93},{date:'2028-07-09',total:6.82},{date:'2029-01-09',total:6.7},{date:'2029-07-09',total:6.59},{date:'2030-01-09',total:6.48},{date:'2030-07-09',total:6.36},{date:'2031-01-09',total:6.25},{date:'2031-07-09',total:6.14},{date:'2032-01-09',total:6.02},{date:'2032-07-09',total:5.91},{date:'2033-01-09',total:5.8},{date:'2033-07-09',total:5.68},{date:'2034-01-09',total:5.57},{date:'2034-07-09',total:5.45},{date:'2035-01-09',total:5.34},{date:'2035-07-09',total:5.23},{date:'2036-01-09',total:5.11},{date:'2036-07-09',total:5.0},{date:'2037-01-09',total:4.89},{date:'2037-07-09',total:4.77},{date:'2038-01-09',total:4.66}],
+  'GD38':[{date:'2026-07-09',total:2.5},{date:'2027-01-09',total:2.5},{date:'2027-07-09',total:7.05},{date:'2028-01-09',total:6.93},{date:'2028-07-09',total:6.82},{date:'2029-01-09',total:6.7},{date:'2029-07-09',total:6.59},{date:'2030-01-09',total:6.48},{date:'2030-07-09',total:6.36},{date:'2031-01-09',total:6.25},{date:'2031-07-09',total:6.14},{date:'2032-01-09',total:6.02},{date:'2032-07-09',total:5.91},{date:'2033-01-09',total:5.8},{date:'2033-07-09',total:5.68},{date:'2034-01-09',total:5.57},{date:'2034-07-09',total:5.45},{date:'2035-01-09',total:5.34},{date:'2035-07-09',total:5.23},{date:'2036-01-09',total:5.11},{date:'2036-07-09',total:5.0},{date:'2037-01-09',total:4.89},{date:'2037-07-09',total:4.77},{date:'2038-01-09',total:4.66}],
+  'AL35':[{date:'2026-07-09',total:2.06},{date:'2027-01-09',total:2.06},{date:'2027-07-09',total:2.06},{date:'2028-01-09',total:2.38},{date:'2028-07-09',total:2.38},{date:'2029-01-09',total:2.5},{date:'2029-07-09',total:2.5},{date:'2030-01-09',total:2.5},{date:'2030-07-09',total:2.5},{date:'2031-01-09',total:12.5},{date:'2031-07-09',total:12.25},{date:'2032-01-09',total:12.0},{date:'2032-07-09',total:11.75},{date:'2033-01-09',total:11.5},{date:'2033-07-09',total:11.25},{date:'2034-01-09',total:11.0},{date:'2034-07-09',total:10.75},{date:'2035-01-09',total:10.5},{date:'2035-07-09',total:10.25}],
+  'GD35':[{date:'2026-07-09',total:2.06},{date:'2027-01-09',total:2.06},{date:'2027-07-09',total:2.06},{date:'2028-01-09',total:2.38},{date:'2028-07-09',total:2.38},{date:'2029-01-09',total:2.5},{date:'2029-07-09',total:2.5},{date:'2030-01-09',total:2.5},{date:'2030-07-09',total:2.5},{date:'2031-01-09',total:12.5},{date:'2031-07-09',total:12.25},{date:'2032-01-09',total:12.0},{date:'2032-07-09',total:11.75},{date:'2033-01-09',total:11.5},{date:'2033-07-09',total:11.25},{date:'2034-01-09',total:11.0},{date:'2034-07-09',total:10.75},{date:'2035-01-09',total:10.5},{date:'2035-07-09',total:10.25}],
+  'AL41':[{date:'2026-07-09',total:1.56},{date:'2027-01-09',total:1.56},{date:'2027-07-09',total:1.56},{date:'2028-01-09',total:5.13},{date:'2028-07-09',total:5.07},{date:'2029-01-09',total:5.01},{date:'2029-07-09',total:4.95},{date:'2030-01-09',total:5.4},{date:'2030-07-09',total:5.31},{date:'2031-01-09',total:5.23},{date:'2031-07-09',total:5.14},{date:'2032-01-09',total:5.05},{date:'2032-07-09',total:4.96},{date:'2033-01-09',total:4.88},{date:'2033-07-09',total:4.79},{date:'2034-01-09',total:4.7},{date:'2034-07-09',total:4.62},{date:'2035-01-09',total:4.53},{date:'2035-07-09',total:4.44},{date:'2036-01-09',total:4.35},{date:'2036-07-09',total:4.27},{date:'2037-01-09',total:4.18},{date:'2037-07-09',total:4.09},{date:'2038-01-09',total:4.01},{date:'2038-07-09',total:3.92},{date:'2039-01-09',total:3.83},{date:'2039-07-09',total:3.75},{date:'2040-01-09',total:3.66},{date:'2040-07-09',total:3.75},{date:'2041-01-09',total:3.83},{date:'2041-07-09',total:3.92}],
+  'GD41':[{date:'2026-07-09',total:1.56},{date:'2027-01-09',total:1.56},{date:'2027-07-09',total:1.56},{date:'2028-01-09',total:5.13},{date:'2028-07-09',total:5.07},{date:'2029-01-09',total:5.01},{date:'2029-07-09',total:4.95},{date:'2030-01-09',total:5.4},{date:'2030-07-09',total:5.31},{date:'2031-01-09',total:5.23},{date:'2031-07-09',total:5.14},{date:'2032-01-09',total:5.05},{date:'2032-07-09',total:4.96},{date:'2033-01-09',total:4.88},{date:'2033-07-09',total:4.79},{date:'2034-01-09',total:4.7},{date:'2034-07-09',total:4.62},{date:'2035-01-09',total:4.53},{date:'2035-07-09',total:4.44},{date:'2036-01-09',total:4.35},{date:'2036-07-09',total:4.27},{date:'2037-01-09',total:4.18},{date:'2037-07-09',total:4.09},{date:'2038-01-09',total:4.01},{date:'2038-07-09',total:3.92},{date:'2039-01-09',total:3.83},{date:'2039-07-09',total:3.75},{date:'2040-01-09',total:3.66},{date:'2040-07-09',total:3.75},{date:'2041-01-09',total:3.83},{date:'2041-07-09',total:3.92}],
+};
 
-function bndAccrued(def){
+// TIR anual via Newton-Raphson (XIRR convention: (1+r)^(t/365))
+function bndSolveIRR(flows, dirty){
   const today=new Date();today.setHours(0,0,0,0);
-  const{payM,payD,couponSteps}=def;const perYear=payM.length;
-  const dates=[];
-  for(let y=2024;y<=2028;y++)for(const m of payM){const ld=new Date(y,m,0).getDate();dates.push(new Date(y,m-1,Math.min(payD,ld)));}
-  dates.sort((a,b)=>a-b);
-  let lastC=dates[0],nextC=dates[dates.length-1];
-  for(let i=0;i<dates.length;i++)if(dates[i]>today){nextC=dates[i];lastC=dates[i-1]||dates[0];break;}
-  const pDays=(nextC-lastC)/864e5,elapsed=(today-lastC)/864e5;
-  if(pDays<=0)return 0;
-  let rate=0;for(const[ds,r]of couponSteps)if(nextC>=new Date(ds+'T00:00:00'))rate=r;
-  return+(100*rate/perYear*(elapsed/pDays)).toFixed(4);
-}
-
-function bndSolveYield(flows,dirty,perYear){
-  if(!flows.length||dirty<=0)return 0;
-  const today=new Date();today.setHours(0,0,0,0);
-  const base=perYear===4?91.25:182.5;
-  const dt=flows.map(f=>Math.max(1,(new Date(f.date+'T00:00:00')-today)/864e5));
-  const pv=y=>{let s=0;for(let i=0;i<flows.length;i++)s+=flows[i].total/Math.pow(1+y,dt[i]/base);return s;};
-  const dpv=y=>{let s=0;for(let i=0;i<flows.length;i++){const t=dt[i]/base;s-=t*flows[i].total/Math.pow(1+y,t+1);}return s;};
-  let y=0.04;
-  for(let it=0;it<200;it++){
-    const f=pv(y)-dirty,d=dpv(y);
+  const futs=flows.filter(f=>new Date(f.date+'T00:00:00')>today);
+  if(!futs.length||dirty<=0)return 0;
+  const dt=futs.map(f=>Math.max(1,(new Date(f.date+'T00:00:00')-today)/86400000));
+  const pv=r=>dt.reduce((s,t,i)=>s+futs[i].total/Math.pow(1+r,t/365),0);
+  const dpv=r=>dt.reduce((s,t,i)=>s-(t/365)*futs[i].total/Math.pow(1+r,t/365+1),0);
+  let r=0.07;
+  for(let i=0;i<200;i++){
+    const err=pv(r)-dirty,d=dpv(r);
     if(Math.abs(d)<1e-14)break;
-    const step=f/d;y-=step;
-    if(y<-0.5)y=0.001;if(y>2)y=0.5;
+    const step=err/d;r-=step;
+    if(r<-0.5)r=0.001;if(r>5)r=0.5;
     if(Math.abs(step)<1e-10)break;
   }
-  return y;
+  return Math.max(0,r);
 }
 
-function bndDuration(flows,yPer,perYear){
+// Macaulay y Modified Duration con fechas exactas y compounding anual
+function bndCalcDuration(flows, irr){
   const today=new Date();today.setHours(0,0,0,0);
-  const base=perYear===4?91.25:182.5;
+  const futs=flows.filter(f=>new Date(f.date+'T00:00:00')>today);
   let sPV=0,sTPV=0;
-  for(const f of flows){
-    const d=Math.max(1,(new Date(f.date+'T00:00:00')-today)/864e5);
-    const t=d/365,p=d/base;
-    const pvcf=f.total/Math.pow(1+yPer,p);
+  for(const f of futs){
+    const t=Math.max(1,(new Date(f.date+'T00:00:00')-today)/86400000)/365;
+    const pvcf=f.total/Math.pow(1+irr,t);
     sPV+=pvcf;sTPV+=t*pvcf;
   }
   const macD=sPV>0?sTPV/sPV:0;
-  return{macD,modD:macD/(1+yPer)};
+  const modD=irr>-1?macD/(1+irr):macD;
+  return{macD,modD};
 }
 
-function bndAnalytics(ticker,cleanPrice){
+// Analytics principal — usa dirty price de API y cashflows del Excel
+function bndAnalytics(ticker, dirtyPrice){
   const def=BOND_DEFS[ticker];
-  if(!def||!cleanPrice||cleanPrice<=0)return null;
-  const flows=bndGenFlows(def);if(!flows.length)return null;
-  const perYear=def.payM.length;
-  const accrued=bndAccrued(def);
-  const dirty=+(cleanPrice+accrued).toFixed(4);
-  const yPer=bndSolveYield(flows,dirty,perYear);
-  const tna=yPer*perYear;
-  const tea=Math.pow(1+yPer,perYear)-1;
-  const{macD,modD}=bndDuration(flows,yPer,perYear);
-  return{ticker,name:def.name,law:def.law,clean:cleanPrice,dirty,accrued,
-    tna:tna*100,tea:tea*100,macD,modD,paridad:dirty,flows,perYear};
+  if(!def||!dirtyPrice||dirtyPrice<=0)return null;
+  const flows=CASHFLOW_DB[ticker];
+  const today=new Date();today.setHours(0,0,0,0);
+  const futureFlows=flows?flows.filter(f=>new Date(f.date+'T00:00:00')>today):[];
+  if(!futureFlows.length)return null;
+  const irr=bndSolveIRR(flows,dirtyPrice);
+  const tir=irr*100;
+  const{macD,modD}=bndCalcDuration(flows,irr);
+  return{ticker,name:def.name,law:def.law,dirty:dirtyPrice,tir,macD,modD,flows:futureFlows};
 }
 
 let bndData=[],bndFilterLaw='all',bndCurrentTicker=null,bndCalcMode='usd';
@@ -1800,7 +1797,7 @@ async function bndFetch(){
     pill.textContent='⚠ OFFLINE (ref.)';
   }
 
-  console.log('[BONOS] tickers en API:',Object.keys(apiPrices).filter(t=>/^(AL|GD|BP)/.test(t)&&t.endsWith('D')).join(', '));
+  console.log('[BONOS] tickers en API:',Object.keys(apiPrices).filter(t=>/^(AL|GD|BP|AO|AN|AE)/.test(t)&&t.endsWith('D')).join(', '));
 
   // ── Cruzar BOND_DEFS con precios API ─────────────────────────────────────
   bndData=[];
@@ -1821,6 +1818,7 @@ async function bndFetch(){
   $$('bnd-last-upd').textContent='✓ '+new Date().toLocaleTimeString('es-AR')+
     ' · '+bndData.length+'/'+Object.keys(BOND_DEFS).length+' bonos · '+bndSrc;
   bndRender();
+  bndRenderCurve();
 }
 
 function bndFilter(law){
@@ -1832,23 +1830,33 @@ function bndFilter(law){
   bndRender();
 }
 
+let bndSortCol='modD',bndSortDir='asc';
+function bndSort(col){
+  if(bndSortCol===col)bndSortDir=bndSortDir==='asc'?'desc':'asc';
+  else{bndSortCol=col;bndSortDir=col==='ticker'?'asc':'asc';}
+  document.querySelectorAll('.bnd-sarr').forEach(el=>el.textContent='');
+  const el=$$('bsa-'+col);if(el)el.textContent=bndSortDir==='asc'?' ↑':' ↓';
+  bndRender();
+}
+
 function bndRender(){
   const tbody=$$('bnd-tbody');
   let rows=bndData.filter(b=>bndFilterLaw==='all'||b.law===bndFilterLaw);
-  rows.sort((a,b)=>a.modD-b.modD);
-  if(!rows.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:30px;color:var(--gray)">Sin datos</td></tr>';return;}
+  rows.sort((a,b)=>{
+    let va=a[bndSortCol],vb=b[bndSortCol];
+    if(typeof va==='string')return bndSortDir==='asc'?va.localeCompare(vb):vb.localeCompare(va);
+    return bndSortDir==='asc'?va-vb:vb-va;
+  });
+  if(!rows.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--gray)">Sin datos</td></tr>';return;}
   const f2=n=>n.toFixed(2),f3=n=>n.toFixed(3);
   const lc={AR:'ar',NY:'ny',BCRA:'bcra'};
   const vc=v=>v>0.05?'bnd-green':v<-0.05?'bnd-red':'';
   tbody.innerHTML=rows.map(b=>`<tr onclick="bndOpenModal('${b.ticker}')">
     <td><span class="bnd-tk">${b.ticker}</span><span class="bnd-law ${lc[b.law]}">${b.law}</span></td>
-    <td style="font-weight:600;color:var(--white)">u$s ${f2(b.clean)}</td>
-    <td style="color:var(--amber)">u$s ${f2(b.dirty)}</td>
+    <td style="font-weight:600;color:var(--amber)">u$s ${f2(b.dirty)}</td>
     <td class="${vc(b.varPct)}">${b.varPct>=0?'+':''}${f2(b.varPct)}%</td>
-    <td>${f2(b.tna)}%</td>
-    <td class="bnd-green">${f2(b.tea)}%</td>
+    <td class="bnd-green">${f2(b.tir)}%</td>
     <td class="bnd-cyan">${f3(b.modD)}</td>
-    <td class="bnd-amber">${f2(b.paridad)}%</td>
   </tr>`).join('');
 }
 
@@ -1856,8 +1864,8 @@ function bndOpenModal(ticker){
   const b=bndData.find(x=>x.ticker===ticker);if(!b)return;
   bndCurrentTicker=ticker;
   $$('bnd-m-title').textContent=ticker+' — '+b.name;
-  $$('bnd-m-sub').textContent='Ley '+b.law+' · DurMod '+b.modD.toFixed(3)+'y · '+b.flows.length+' flujos';
-  $$('bnd-inp-price').value=b.clean.toFixed(2);
+  $$('bnd-m-sub').textContent='Ley '+b.law+' · DurMod '+b.modD.toFixed(3)+'y · TIR '+b.tir.toFixed(2)+'% · '+b.flows.length+' flujos';
+  $$('bnd-inp-price').value=b.dirty.toFixed(2);
   $$('bnd-inp-usd').value=10000;$$('bnd-inp-vn').value='';
   bndCalcMode='usd';bndCalcModal();
   $$('bnd-modal-overlay').classList.add('open');
@@ -1865,16 +1873,14 @@ function bndOpenModal(ticker){
 
 function bndCalcModal(){
   const ticker=bndCurrentTicker;if(!ticker)return;
-  const cleanPrice=parseFloat($$('bnd-inp-price').value)||0;
-  if(cleanPrice<=0)return;
-  const a=bndAnalytics(ticker,cleanPrice);if(!a)return;
-  const{dirty,accrued,tna,tea,modD,paridad,flows}=a;
-  $$('bm-tna').textContent=tna.toFixed(2)+'%';
-  $$('bm-tea').textContent=tea.toFixed(2)+'%';
+  const dirtyPrice=parseFloat($$('bnd-inp-price').value)||0;
+  if(dirtyPrice<=0)return;
+  const a=bndAnalytics(ticker,dirtyPrice);if(!a)return;
+  const{dirty,tir,macD,modD,flows}=a;
+  $$('bm-tir').textContent=tir.toFixed(2)+'%';
+  $$('bm-mac').textContent=macD.toFixed(3)+'y';
   $$('bm-dm').textContent=modD.toFixed(3)+'y';
-  $$('bm-par').textContent=paridad.toFixed(2)+'%';
-  $$('bm-dirty').textContent='u$s '+dirty.toFixed(2);
-  $$('bm-acc').textContent='u$s '+accrued.toFixed(4);
+  $$('bm-nflows').textContent=flows.length+' pagos';
   let vn=0;
   if(bndCalcMode==='usd'){
     const usd=parseFloat($$('bnd-inp-usd').value)||0;
@@ -1887,21 +1893,21 @@ function bndCalcModal(){
   }
   const scale=vn/100,invest=vn*dirty/100;
   const tbody=$$('bnd-cf-tbody');
-  let tCpn=0,tAm=0,tFlow=0,balVN=vn,html='';
+  let tFlow=0,balVN=vn,cfHtml='';
   for(const f of flows){
-    const c=f.coupon*scale,am=f.amort*scale,tot=c+am;
-    tCpn+=c;tAm+=am;tFlow+=tot;balVN-=am;
+    const tot=f.total*scale;
+    tFlow+=tot;
     const ds=new Date(f.date+'T00:00:00').toLocaleDateString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit'});
-    html+=`<tr><td>${ds}</td><td style="color:var(--green)">u$s ${c.toFixed(2)}</td><td style="color:var(--cyan)">${am>0?'u$s '+am.toFixed(2):'—'}</td><td style="color:var(--white);font-weight:600">u$s ${tot.toFixed(2)}</td><td>${Math.max(0,balVN).toFixed(0)}</td></tr>`;
+    cfHtml+=`<tr><td>${ds}</td><td style="color:var(--white);font-weight:600" colspan="3">u$s ${tot.toFixed(2)}</td><td>${Math.max(0,balVN).toFixed(0)}</td></tr>`;
   }
-  html+=`<tr class="bnd-cf-total"><td>TOTAL</td><td style="color:var(--green)">u$s ${tCpn.toFixed(2)}</td><td style="color:var(--cyan)">u$s ${tAm.toFixed(2)}</td><td style="color:var(--white)">u$s ${tFlow.toFixed(2)}</td><td>0</td></tr>`;
-  tbody.innerHTML=html;
+  cfHtml+=`<tr class="bnd-cf-total"><td>TOTAL</td><td style="color:var(--white)" colspan="3">u$s ${tFlow.toFixed(2)}</td><td>0</td></tr>`;
+  tbody.innerHTML=cfHtml;
   const gain=tFlow-invest;
   const fm=n=>n.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2});
   $$('bm-s-vn').textContent=Math.round(vn).toLocaleString('es-AR')+' VN';
   $$('bm-s-inv').textContent='u$s '+fm(invest);
-  $$('bm-s-cpn').textContent='u$s '+fm(tCpn);
-  $$('bm-s-amort').textContent='u$s '+fm(tAm);
+  $$('bm-s-cpn').textContent='u$s '+fm(tFlow);
+  $$('bm-s-amort').textContent='—';
   $$('bm-s-total').textContent='u$s '+fm(tFlow);
   $$('bm-s-gain').textContent=(gain>=0?'+':'')+' u$s '+fm(gain);
   $$('bm-s-gain').style.color=gain>=0?'var(--green)':'var(--red)';
@@ -1910,6 +1916,55 @@ function bndCalcModal(){
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){const o=$$('bnd-modal-overlay');if(o&&o.classList.contains('open'))o.classList.remove('open');}});
+
+let bndCurveChart=null;
+function bndRenderCurve(){
+  const canvas=$$('bnd-curve-canvas');if(!canvas)return;
+  const pts={AR:[],NY:[]};
+  for(const b of bndData){
+    if(b.law!=='AR'&&b.law!=='NY')continue;
+    pts[b.law].push({x:b.modD,y:b.tir,ticker:b.ticker});
+  }
+  const arPts=[...pts.AR].sort((a,b)=>a.x-b.x);
+  const nyPts=[...pts.NY].sort((a,b)=>a.x-b.x);
+  if(!arPts.length&&!nyPts.length)return;
+  const mkFit=(data)=>{
+    if(data.length<2)return null;
+    // Polynomial degree 2 least-squares
+    const n=data.length;
+    let sx=0,sx2=0,sx3=0,sx4=0,sy=0,sxy=0,sx2y=0;
+    for(const p of data){sx+=p.x;sx2+=p.x*p.x;sx3+=p.x**3;sx4+=p.x**4;sy+=p.y;sxy+=p.x*p.y;sx2y+=p.x*p.x*p.y;}
+    const A=[[n,sx,sx2],[sx,sx2,sx3],[sx2,sx3,sx4]];const B=[sy,sxy,sx2y];
+    const a=A[0],b=A[1],c=A[2];
+    const det=a[0]*(b[1]*c[2]-b[2]*c[1])-a[1]*(b[0]*c[2]-b[2]*c[0])+a[2]*(b[0]*c[1]-b[1]*c[0]);
+    if(Math.abs(det)<1e-12)return null;
+    const c0=(B[0]*(b[1]*c[2]-b[2]*c[1])-a[1]*(B[1]*c[2]-b[2]*B[2])+a[2]*(B[1]*c[1]-b[1]*B[2]))/det;
+    const c1=(a[0]*(B[1]*c[2]-b[2]*B[2])-B[0]*(b[0]*c[2]-b[2]*c[0])+a[2]*(b[0]*B[2]-B[1]*c[0]))/det;
+    const c2=(a[0]*(b[1]*B[2]-B[1]*c[1])-a[1]*(b[0]*B[2]-B[1]*c[0])+B[0]*(b[0]*c[1]-b[1]*c[0]))/det;
+    return x=>c0+c1*x+c2*x*x;
+  };
+  const buildCurve=(pts,fitFn)=>{
+    if(!fitFn||pts.length<2)return[];
+    const mn=pts[0].x,mx=pts[pts.length-1].x;
+    return Array.from({length:80},(_,i)=>{const x=mn+(mx-mn)*i/79;return{x,y:fitFn(x)};});
+  };
+  const arFit=mkFit(arPts),nyFit=mkFit(nyPts);
+  const arCurve=buildCurve(arPts,arFit),nyCurve=buildCurve(nyPts,nyFit);
+  const dlabels={display:true,align:'top',anchor:'end',offset:4,font:{family:"'JetBrains Mono',monospace",size:9,weight:'700'},textStrokeColor:'#06101e',textStrokeWidth:3,clip:false};
+  const datasets=[
+    {type:'line',label:'fit-AR',data:arCurve,borderColor:'rgba(34,212,240,.5)',borderWidth:1.5,backgroundColor:'transparent',pointRadius:0,tension:0,fill:false,order:3,datalabels:{display:false}},
+    {type:'line',label:'fit-NY',data:nyCurve,borderColor:'rgba(240,180,41,.5)',borderWidth:1.5,backgroundColor:'transparent',pointRadius:0,tension:0,fill:false,order:4,datalabels:{display:false}},
+    {type:'scatter',label:'Ley Argentina',data:arPts,backgroundColor:'rgba(34,212,240,.85)',borderColor:'#22d4f0',borderWidth:1.5,pointRadius:7,pointHoverRadius:10,order:1,datalabels:{...dlabels,color:'#22d4f0',formatter:(v,c)=>arPts[c.dataIndex].ticker}},
+    {type:'scatter',label:'Ley NY',data:nyPts,backgroundColor:'rgba(240,180,41,.85)',borderColor:'#f0b429',borderWidth:1.5,pointRadius:7,pointHoverRadius:10,order:2,datalabels:{...dlabels,color:'#f0b429',formatter:(v,c)=>nyPts[c.dataIndex].ticker}},
+  ];
+  const allY=[...arPts,...nyPts].map(p=>p.y);
+  const yPad=0.5;
+  const yMin=Math.max(0,Math.min(...allY)-yPad),yMax=Math.max(...allY)+yPad;
+  if(bndCurveChart){bndCurveChart.destroy();bndCurveChart=null;}
+  const ctx=canvas.getContext('2d');
+  bndCurveChart=new Chart(ctx,{type:'scatter',data:{datasets},options:{responsive:true,maintainAspectRatio:false,animation:{duration:300},layout:{padding:{top:24,right:36,left:4,bottom:4}},plugins:{legend:{display:false},datalabels:{},tooltip:{filter:i=>i.datasetIndex>=2,backgroundColor:'#06101e',borderColor:'#1e3a62',borderWidth:1,titleColor:'#7aa3f0',bodyColor:'#c8d8f0',padding:10,callbacks:{title:items=>{const ds=datasets[items[0].datasetIndex];const pts=items[0].datasetIndex===2?arPts:nyPts;return pts[items[0].dataIndex].ticker+' · '+ds.label;},label:item=>{const pts=item.datasetIndex===2?arPts:nyPts;const p=pts[item.dataIndex];return['  TIR: '+p.y.toFixed(2)+'%','  DurMod: '+p.x.toFixed(3)+'y'];}}}},scales:{x:{type:'linear',grid:{color:'rgba(30,58,98,.5)'},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(2)},title:{display:true,text:'Duración Modificada (años)',color:'#4a6a8a',font:{size:9}}},y:{min:yMin,max:yMax,grid:{color:'rgba(30,58,98,.5)'},ticks:{color:'#4a6a8a',font:{family:"'JetBrains Mono',monospace",size:9},callback:v=>v.toFixed(1)+'%'},title:{display:true,text:'TIR %',color:'#4a6a8a',font:{size:9}}}}}});
+}
+
 // Delay bonos fetch 3s so LECAP has time to cache _rawBondData
 setTimeout(bndFetch, 3000);
 setInterval(()=>{if($$('page-bonos').classList.contains('active'))bndFetch();},30000);

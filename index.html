@@ -862,7 +862,7 @@ html,body{background:var(--navy);color:var(--white);font-family:var(--font);font
 
 /* Center */
 .arb-center{display:flex;flex-direction:column;border-right:1px solid var(--border);background:var(--navy2);overflow:hidden}
-.arb-chart-box{position:relative;padding:8px 12px 4px;height:180px;flex-shrink:0}
+.arb-chart-box{position:relative;padding:8px 12px 4px;height:210px;flex-shrink:0}
 .arb-chart-box canvas{width:100%!important;height:100%!important}
 .arb-chart-leg{display:flex;gap:12px;padding:4px 12px 2px;flex-wrap:wrap;font-family:var(--mono);font-size:9px;color:var(--white2)}
 .arb-leg{display:flex;align-items:center;gap:5px}
@@ -2896,8 +2896,11 @@ function arbRender(hist,lGD,lAL){
 
   // ── Hist table ──
   const tbody=$$('arb-hist-tbody');
-  tbody.innerHTML=[...hist].reverse().map(row=>{
-    const rc=lastBsup&&row.r>lastBsup?'arb-ratio-hi':lastBinf&&row.r<lastBinf?'arb-ratio-lo':'';
+  tbody.innerHTML=[...hist].reverse().map((row,i,arr)=>{
+    // Get mm21 for this row by position in full work array
+    const wi=work.findIndex(x=>x.d===row.d);
+    const rowMM21=wi>=0?mm21[wi]:null;
+    const rc=rowMM21!==null?(row.r>rowMM21?'arb-ratio-hi':'arb-ratio-lo'):'';
     const isToday=row.d===today;
     return`<tr${isToday?' class="arb-today"':''}>
       <td>${arbFmtDate(row.d)}</td>
@@ -2930,77 +2933,81 @@ function arbRender(hist,lGD,lAL){
 }
 
 function arbRenderCharts(work,labels,ratios,mm21,mm9,bsup,binf){
-  // Show only last 30 days in charts
-  const W=30;
-  const sl=i=>i.slice(-W);
-  const gdArr=sl(work.map(x=>x.gd));
-  const alArr=sl(work.map(x=>x.al));
-  const lbl=sl(labels),rat=sl(ratios),m21=sl(mm21),m9=sl(mm9),bs=sl(bsup),bi=sl(binf);
-  const n=lbl.length;
+  // 30 calendar-day window: keep only entries from last 30 days
+  const cutoff=new Date(); cutoff.setDate(cutoff.getDate()-30);
+  const cutStr=cutoff.toISOString().slice(0,10);
+  const filtered=work.map((w,i)=>({...w,lbl:labels[i],r:ratios[i],m21:mm21[i],m9:mm9[i],bs:bsup[i],bi:binf[i]}))
+    .filter(w=>w.d>=cutStr);
+
+  const gdArr=filtered.map(x=>x.gd);
+  const alArr=filtered.map(x=>x.al);
+  const lbl=filtered.map(x=>x.lbl);
+  const rat=filtered.map(x=>x.r);
+  const m21=filtered.map(x=>x.m21);
+  const m9 =filtered.map(x=>x.m9);
+  const bs =filtered.map(x=>x.bs);
+  const bi =filtered.map(x=>x.bi);
 
   const scaleBase={
-    ticks:{color:'#7a99c4',font:{family:"'JetBrains Mono',monospace",size:9},maxRotation:35,maxTicksLimit:10},
+    ticks:{color:'#7a99c4',font:{family:"'JetBrains Mono',monospace",size:9},maxRotation:35,maxTicksLimit:15},
     grid:{color:'rgba(42,74,122,.2)'},
   };
 
-  // Datalabels: show only last point + every 5th to avoid clutter
-  function dlFilter(ctx){ const i=ctx.dataIndex,len=ctx.dataset.data.length; return i===len-1||i%5===0; }
-
-  // Price chart
+  // Price chart — full price on every point
   const ctxPx=$$('arb-px-canvas').getContext('2d');
   if(arbPxChart){arbPxChart.destroy();arbPxChart=null;}
   arbPxChart=new Chart(ctxPx,{
     type:'line',
     data:{labels:lbl,datasets:[
       {label:'GD30',data:gdArr,borderColor:'#22c55e',backgroundColor:'rgba(34,197,94,.08)',
-       pointBackgroundColor:'#22c55e',pointRadius:2.5,pointHoverRadius:4,borderWidth:1.8,fill:false,
+       pointBackgroundColor:'#22c55e',pointRadius:3,pointHoverRadius:5,borderWidth:1.8,fill:false,
        datalabels:{color:'#22c55e',font:{family:"'JetBrains Mono',monospace",size:7,weight:'700'},
-         formatter:v=>v?Math.round(v/1000)+'k':'',
-         align:'top',anchor:'end',offset:1,display:dlFilter,clamp:true}},
+         formatter:v=>v?Math.round(v).toLocaleString('es-AR'):'',
+         align:'top',anchor:'end',offset:2,display:true,clamp:true}},
       {label:'AL30',data:alArr,borderColor:'#ef4444',backgroundColor:'rgba(239,68,68,.08)',
-       pointBackgroundColor:'#ef4444',pointRadius:2.5,pointHoverRadius:4,borderWidth:1.8,fill:false,
+       pointBackgroundColor:'#ef4444',pointRadius:3,pointHoverRadius:5,borderWidth:1.8,fill:false,
        datalabels:{color:'#ef4444',font:{family:"'JetBrains Mono',monospace",size:7,weight:'700'},
-         formatter:v=>v?Math.round(v/1000)+'k':'',
-         align:'bottom',anchor:'start',offset:1,display:dlFilter,clamp:true}},
+         formatter:v=>v?Math.round(v).toLocaleString('es-AR'):'',
+         align:'bottom',anchor:'start',offset:2,display:true,clamp:true}},
     ]},
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:0},
-      layout:{padding:{top:14,bottom:2,left:2,right:18}},
+      layout:{padding:{top:18,bottom:16,left:2,right:8}},
       plugins:{legend:{display:false},
         datalabels:{},
         tooltip:{callbacks:{label:c=>` ${c.dataset.label}: ${Math.round(c.parsed.y).toLocaleString('es-AR')}`}}
       },
       scales:{
-        x:{...scaleBase,ticks:{...scaleBase.ticks}},
+        x:{...scaleBase},
         y:{...scaleBase,ticks:{...scaleBase.ticks,callback:v=>Math.round(v/1000)+'k'}}
       }
     }
   });
 
-  // Ratio chart
+  // Ratio chart — % label on every Ratio point
   const ctxR=$$('arb-ratio-canvas').getContext('2d');
   if(arbRatioChart){arbRatioChart.destroy();arbRatioChart=null;}
   arbRatioChart=new Chart(ctxR,{
     type:'line',
     data:{labels:lbl,datasets:[
-      {label:'Rotar a AL',data:bs,borderColor:'#ef4444',borderWidth:2,pointRadius:0,fill:false,datalabels:{display:false}},
-      {label:'Rotar a GD',data:bi,borderColor:'#22c55e',borderWidth:2,pointRadius:0,fill:false,datalabels:{display:false}},
+      {label:'Rotar a AL',data:bs,borderColor:'#ef4444',borderWidth:1.8,pointRadius:0,fill:false,datalabels:{display:false}},
+      {label:'Rotar a GD',data:bi,borderColor:'#22c55e',borderWidth:1.8,pointRadius:0,fill:false,datalabels:{display:false}},
       {label:'MM21',data:m21,borderColor:'#eab308',borderWidth:1.5,pointRadius:0,borderDash:[5,3],fill:false,datalabels:{display:false}},
       {label:'MM9', data:m9, borderColor:'#f97316',borderWidth:1.2,pointRadius:0,borderDash:[3,2],fill:false,datalabels:{display:false}},
       {label:'Ratio',data:rat,borderColor:'#3b82f6',backgroundColor:'rgba(59,130,246,.06)',
-       pointBackgroundColor:'#3b82f6',pointRadius:2.5,pointHoverRadius:4,borderWidth:2,fill:false,
+       pointBackgroundColor:'#3b82f6',pointRadius:3,pointHoverRadius:5,borderWidth:2,fill:false,
        datalabels:{color:'#93c5fd',font:{family:"'JetBrains Mono',monospace",size:7,weight:'700'},
          formatter:v=>v!==null?v.toFixed(2)+'%':'',
-         align:'top',anchor:'end',offset:1,display:dlFilter,clamp:true}},
+         align:'top',anchor:'end',offset:2,display:true,clamp:true}},
     ]},
     options:{responsive:true,maintainAspectRatio:false,animation:{duration:0},
-      layout:{padding:{top:14,bottom:2,left:2,right:18}},
+      layout:{padding:{top:18,bottom:4,left:2,right:8}},
       plugins:{legend:{display:false},
         datalabels:{},
         tooltip:{filter:i=>i.parsed.y!==null,
           callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y!==null?c.parsed.y.toFixed(2)+'%':'N/A'}`}}
       },
       scales:{
-        x:{...scaleBase,ticks:{...scaleBase.ticks}},
+        x:{...scaleBase},
         y:{...scaleBase,ticks:{...scaleBase.ticks,callback:v=>v.toFixed(1)+'%'}}
       }
     }
